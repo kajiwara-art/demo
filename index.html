@@ -391,8 +391,8 @@ h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px;margin-bo
     </div>
     <div class="roi-card">
       <div class="roi-card-label">導入コスト</div>
-      <div class="roi-card-value">初期¥150〜250万</div>
-      <div class="roi-card-detail">6エージェントの設計・構築・定着支援込み。月額ランニング¥15〜25万（API利用料・保守・継続改善含む）。</div>
+      <div class="roi-card-value">¥30万（8日間）</div>
+      <div class="roi-card-detail">シゴトAI伴奏プログラム。外注開発ではなく自分で作るから低コスト。月額ランニングはAPI利用料のみ（¥数千〜数万円）。</div>
     </div>
   </div>
 
@@ -651,7 +651,7 @@ function calcROICore(industry,staff,revM,boxId,titleId,gridId,summaryId){
   const revenueUp=Math.round(revAnnual*(revenueUpPct/100));
   const costDown=Math.round(staff*8*m);
   const annualGain=revenueUp+costDown;
-  const setupCost=Math.round((150+staff*1.5)*m);
+  const setupCost=30;
   const payback=Math.max(2,Math.round(setupCost/(annualGain/12)));
   const roi=Math.round(annualGain/setupCost*100);
   const indLabels={medical:'在宅医療',consulting:'コンサルティング',it:'IT・SaaS',manufacturing:'製造業',retail:'小売・サービス',construction:'建設・不動産',other:'その他'};
@@ -666,7 +666,7 @@ function calcROICore(industry,staff,revM,boxId,titleId,gridId,summaryId){
   ];
   const grid=document.getElementById(gridId);
   grid.innerHTML=cells.map(c=>`<div style="text-align:center;padding:10px 6px;background:#f9fafb;border-radius:8px;"><div style="font-size:10px;color:#666;margin-bottom:4px;font-weight:600;">${c.label}</div><div style="font-size:18px;font-weight:700;color:#111;line-height:1.2;">${c.value}</div><div style="font-size:10px;color:#aaa;margin-top:3px;">${c.sub}</div></div>`).join('');
-  document.getElementById(summaryId).innerHTML=`初期投資¥${setupCost}万を<strong style="color:#15803d">${payback}ヶ月で回収</strong>、年間¥${annualGain.toLocaleString()}万の純便益。スタッフを増やさず、社長の判断速度を上げ、収益を${revenueUpPct}%伸ばすための投資です。<br><span style="color:#bbb;font-size:11px;">※ 業種・規模・現状の業務効率により変動します。</span>`;
+  document.getElementById(summaryId).innerHTML=`シゴトAI伴奏プログラム（8日間・¥30万）で構築。<strong style="color:#15803d">${payback}ヶ月で回収</strong>、年間¥${annualGain.toLocaleString()}万の純便益。外注開発ではなく「自分で作る」から¥30万で済む。<br><span style="color:#bbb;font-size:11px;">※ 業種・規模・現状の業務効率により変動します。</span>`;
 }
 
 function calcROI(){
