@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>デモ生成ビルダー — シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f5f5f3;color:#1a1a1a;font-size:15px;line-height:1.7;}
+.wrap{max-width:640px;margin:0 auto;padding:32px 20px 80px;}
+.top-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:8px;}
+h1{font-size:24px;font-weight:700;margin-bottom:4px;}
+.sub{font-size:13px;color:#888;margin-bottom:28px;}
+
+/* ステップバー */
+.steps{display:flex;gap:0;margin-bottom:32px;border-radius:10px;overflow:hidden;border:1px solid #e0e0de;}
+.step-item{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:700;color:#bbb;background:#fafaf8;cursor:pointer;border-right:1px solid #e0e0de;transition:all .15s;}
+.step-item:last-child{border-right:none;}
+.step-item.active{background:#111;color:#fff;}
+.step-item.done{background:#f0fdf4;color:#16a34a;}
+.step-num{display:block;font-size:16px;font-weight:700;margin-bottom:2px;}
+
+/* パネル */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* 業種カード */
+.industry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.ind-card{border:2px solid #e5e5e5;border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s;background:#fff;}
+.ind-card:hover{border-color:#999;}
+.ind-card.selected{border-color:#111;background:#111;color:#fff;}
+.ind-card.selected .ind-sub{color:rgba(255,255,255,.5);}
+.ind-icon{font-size:22px;margin-bottom:6px;}
+.ind-name{font-size:14px;font-weight:700;}
+.ind-sub{font-size:11px;color:#888;margin-top:2px;}
+
+/* フォーム */
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.3px;}
+.field input,.field textarea,.field select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:14px;font-family:inherit;color:#1a1a1a;transition:border .15s;}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:#333;}
+.field textarea{resize:vertical;min-height:72px;line-height:1.65;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hint{font-size:11px;color:#aaa;margin-top:4px;}
+
+/* レポートブロック */
+.rpt-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.rpt-field-group{border:1px solid #e5e5e5;border-radius:8px;padding:12px;background:#fff;}
+.rpt-field-group .block-label{font-size:11px;font-weight:700;color:#888;margin-bottom:8px;}
+.rpt-field-group input{width:100%;padding:6px 8px;border-radius:6px;border:1px solid #ddd;font-size:13px;font-family:inherit;margin-bottom:5px;}
+.rpt-field-group input:focus{outline:none;border-color:#333;}
+.tag-row{display:flex;gap:6px;align-items:center;}
+.tag-row select{flex:1;padding:5px 8px;border-radius:6px;border:1px solid #ddd;font-size:12px;font-family:inherit;}
+
+/* エージェント */
+.agent-field{border:1px solid #e5e5e5;border-radius:8px;padding:12px;background:#fff;margin-bottom:10px;}
+.agent-field .ag-head{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.agent-field .ag-num{font-size:11px;font-weight:700;color:#aaa;}
+.agent-field input.ag-name{flex:1;padding:6px 10px;border-radius:6px;border:1px solid #ddd;font-size:13px;font-family:inherit;font-weight:700;}
+.agent-field input.ag-name:focus{outline:none;border-color:#333;}
+.agent-field textarea.ag-out{width:100%;padding:7px 10px;border-radius:6px;border:1px solid #ddd;font-size:12px;font-family:inherit;resize:vertical;min-height:64px;line-height:1.6;}
+.agent-field textarea.ag-out:focus{outline:none;border-color:#333;}
+
+/* ボタン */
+.btn-row{display:flex;gap:10px;margin-top:24px;}
+.btn{padding:12px 24px;border-radius:100px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;}
+.btn-next{background:#111;color:#fff;}
+.btn-next:hover{opacity:.85;}
+.btn-back{background:#fff;color:#666;border:1px solid #ddd;}
+.btn-back:hover{background:#f5f5f5;}
+.btn-gen{background:#22c55e;color:#fff;font-size:16px;padding:14px 32px;}
+.btn-gen:hover{opacity:.9;}
+
+/* 生成後 */
+.done-box{text-align:center;padding:32px 20px;}
+.done-icon{font-size:48px;margin-bottom:16px;}
+.done-title{font-size:20px;font-weight:700;margin-bottom:8px;}
+.done-sub{font-size:14px;color:#666;margin-bottom:24px;}
+.dl-btn{display:inline-block;padding:14px 32px;background:#111;color:#fff;border-radius:100px;font-size:15px;font-weight:700;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.dl-btn:hover{opacity:.85;}
+.another-btn{display:inline-block;margin-top:12px;padding:10px 24px;border-radius:100px;border:1px solid #ddd;background:#fff;color:#666;font-size:14px;cursor:pointer;font-family:inherit;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-label">シゴトAI — デモ生成ビルダー</div>
+  <h1>タブを進むだけで<br>カスタムデモが完成</h1>
+  <p class="sub">5ステップで見込み客専用のデモHTMLを自動生成します。</p>
+
+  <div class="steps">
+    <div class="step-item active" id="st0"><span class="step-num">1</span>業種</div>
+    <div class="step-item" id="st1"><span class="step-num">2</span>基本情報</div>
+    <div class="step-item" id="st2"><span class="step-num">3</span>理念</div>
+    <div class="step-item" id="st3"><span class="step-num">4</span>レポート</div>
+    <div class="step-item" id="st4"><span class="step-num">5</span>タスク</div>
+    <div class="step-item" id="st5"><span class="step-num">✓</span>生成</div>
+  </div>
+
+  <!-- STEP 1: 業種 -->
+  <div class="panel active" id="p0">
+    <div class="industry-grid" id="indGrid"></div>
+    <div class="btn-row"><button class="btn btn-next" onclick="next(0)">次へ →</button></div>
+  </div>
+
+  <!-- STEP 2: 基本情報 -->
+  <div class="panel" id="p1">
+    <div class="field"><label>会社名・クリニック名・事務所名</label><input type="text" id="companyName" placeholder="例：○○コンサルティング事務所"></div>
+    <div class="field field-row">
+      <div><label>スタッフ数（名）</label><input type="number" id="staffNum" min="1" max="500" value="3"></div>
+      <div><label>月売上（万円）</label><input type="number" id="revenueM" min="50" max="100000" value="350"></div>
+    </div>
+    <div class="field"><label>代表者の役職・呼称</label><input type="text" id="ownerTitle" placeholder="例：代表、院長、所長"></div>
+    <div class="btn-row"><button class="btn btn-back" onclick="back(1)">← 戻る</button><button class="btn btn-next" onclick="next(1)">次へ →</button></div>
+  </div>
+
+  <!-- STEP 3: 理念 -->
+  <div class="panel" id="p2">
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">5つの理念・行動原則を編集してください。そのままでも使えます。</p>
+    <div id="philFields"></div>
+    <div class="btn-row"><button class="btn btn-back" onclick="back(2)">← 戻る</button><button class="btn btn-next" onclick="next(2)">次へ →</button></div>
+  </div>
+
+  <!-- STEP 4: レポート -->
+  <div class="panel" id="p3">
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">月次レポートの6項目を編集してください。</p>
+    <div class="rpt-fields" id="rptFields"></div>
+    <div class="btn-row"><button class="btn btn-back" onclick="back(3)">← 戻る</button><button class="btn btn-next" onclick="next(3)">次へ →</button></div>
+  </div>
+
+  <!-- STEP 5: タスク -->
+  <div class="panel" id="p4">
+    <div class="field">
+      <label>経営者から届くタスク文（1〜2文）</label>
+      <textarea id="taskText" rows="3"></textarea>
+      <div class="hint">AIエージェントが受け取る「指示」として画面に表示されます</div>
+    </div>
+    <p style="font-size:12px;font-weight:700;color:#555;margin-bottom:10px;margin-top:4px;">6体のエージェント名と出力内容</p>
+    <div id="agentFields"></div>
+    <div class="btn-row"><button class="btn btn-back" onclick="back(4)">← 戻る</button><button class="btn btn-gen" onclick="generate()">デモを生成する ✓</button></div>
+  </div>
+
+  <!-- STEP 6: 完成 -->
+  <div class="panel" id="p5">
+    <div class="done-box">
+      <div class="done-icon">🎉</div>
+      <div class="done-title">デモが完成しました</div>
+      <div class="done-sub">ファイルをダウンロードして<br>そのままLINEやメールで送れます</div>
+      <button class="dl-btn" id="dlBtn">HTMLをダウンロード</button><br>
+      <button class="another-btn" onclick="restart()">別の会社でもう一度作る</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRESETS = {
+  consulting: {
+    label:'コンサルティング・士業', icon:'💼', sub:'経営コンサル・社労士・税理士',
+    ownerTitle:'代表', staffNum:3, revenueM:350,
+    phil:[
+      {icon:'🎯', label:'理念', text:'経営者が「正しい判断」ができる環境を設計する'},
+      {icon:'⚖️', label:'財務原則', text:'小さく試して、効果を確認してから拡大する'},
+      {icon:'👥', label:'組織原則', text:'3名で10名分の成果を出す仕組みを作る'},
+      {icon:'🌏', label:'戦略軸', text:'補助金×事業再生×創業支援の三角形で唯一無二のポジションを取る'},
+      {icon:'📋', label:'意思決定', text:'代表の時間をオペレーションではなく戦略に使う'},
+    ],
+    rpt:[
+      {label:'稼働案件数', main:'8件', sub:'補助金5件・事業再生2件・創業1件', tag:'代表1人で6件担当', tagType:'warn'},
+      {label:'代表稼働時間', main:'週62時間', sub:'うち書類作業：週28時間', tag:'適正の1.6倍', tagType:'down'},
+      {label:'補助金書類', main:'18時間/件', sub:'作成・レビュー・改善ループ', tag:'業界平均の2.2倍', tagType:'down'},
+      {label:'コンテンツ', main:'3ヶ月未更新', sub:'ブログ・ニュースレター停止中', tag:'登録者320名に未配信', tagType:'down'},
+      {label:'月次売上', main:'¥3,480,000', sub:'前月比 −¥200,000', tag:'新規案件獲得が停滞', tagType:'warn'},
+      {label:'士業連携コスト', main:'月42時間', sub:'調整・議事録・引き継ぎ作業', tag:'外注費も前年比+22%', tagType:'warn'},
+    ],
+    task:'「補助金書類のレビューと改善ループに毎週12時間以上取られている。ブログとニュースレターも3ヶ月止まっている。3名でこれ以上回せない。どこから自動化すればいい？」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'コンテンツ自動化・補助金書類効率化・士業連携整理・財務シミュレーション・戦略ポジショニングの5軸で並列処理を開始。業務レポートの数値を全エージェントに配布。'},
+      {role:'コンテンツ', name:'ブログ・ニュースレターAI', output:'NotebookLMで収集した情報をClaudeに渡し、週1本のブログ草稿を自動生成→代表が5分で確認→自動投稿のパイプラインを設計。登録者320名への配信再開で問い合わせ回復が見込める。実装工数：約2日。'},
+      {role:'補助金', name:'補助金申請AI', output:'現状の書類作成フローを分析。草稿作成とレビューの2工程をAIに代替できる。18時間/件→4時間/件に短縮。採択率向上のため過去の採択事例との差分チェックも組み込める。年間70時間の代表時間を創出。'},
+      {role:'財務検証', name:'数字で検証AI', output:'AI導入後：補助金書類削減で週14h解放、コンテンツ再開で新規問い合わせ月+3件。年間純便益：¥1,000〜1,400万。初期投資¥298,000の回収期間：約3ヶ月。3ヶ月後は自走可能、ランニングはAPI費用のみ。'},
+      {role:'論点整理', name:'参謀AI', output:'今月着手すべき3点。①補助金書類AIの構築（最も時間削減効果が高い）②NotebookLM→Claude→自動投稿の連携パイプライン設計③ニュースレターの配信再開宣言（登録者に復活メールを送るだけで信頼が回復する）。'},
+      {role:'事業設計', name:'事業再生・創業AI', output:'補助金×事業再生×創業支援を一気通貫で提供できる事務所は希少。AIで処理速度が上がれば「採択率が高い補助金事務所」としてのブランドが確立できる。コンテンツが集客チャネルになりAI活用が競合優位に直結。'},
+    ],
+  },
+  medical: {
+    label:'在宅医療・クリニック', icon:'🏥', sub:'訪問診療・訪問看護・在宅医療',
+    ownerTitle:'院長', staffNum:22, revenueM:1760,
+    phil:[
+      {icon:'🌿', label:'理念', text:'患者と家族が望む場所で、望む生き方ができるよう支える'},
+      {icon:'⚖️', label:'財務原則', text:'訪問件数の増加は、スタッフの疲弊なしに実現する'},
+      {icon:'👥', label:'組織原則', text:'医師・看護師・リハビリが対等に意見を言える組織を作る'},
+      {icon:'🌏', label:'戦略軸', text:'地域の在宅医療ニーズに応え続けることが最大の差別化になる'},
+      {icon:'📋', label:'意思決定', text:'院長は診療と経営判断に集中し、それ以外はチームに任せる'},
+    ],
+    rpt:[
+      {label:'月間訪問件数', main:'452件', sub:'前月比 +18件（+4.2%）', tag:'目標比 +12%', tagType:'up'},
+      {label:'月次売上', main:'¥17,600,000', sub:'診療報酬＋加算', tag:'前年比 +8.3%', tagType:'up'},
+      {label:'紹介元', main:'31社', sub:'居宅介護・病院・地域包括', tag:'新規6社追加', tagType:'up'},
+      {label:'看護師稼働率', main:'94%', sub:'目標上限：90%', tag:'超過アラート', tagType:'down'},
+      {label:'採用コスト', main:'¥680,000/月', sub:'求人媒体3社掲載中', tag:'前月比 +¥80,000', tagType:'warn'},
+      {label:'利益率', main:'7.8%', sub:'固定費増加で圧迫中', tag:'前月比 −0.4pt', tagType:'warn'},
+    ],
+    task:'「看護師の稼働が上限を超えている。新規紹介を断るか、採用を急ぐか。今月の判断材料を整理してほしい。」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'稼働超過・採用コスト・財務影響・訪問ルート・組織設計の5軸で並列処理を開始。業務レポート（452件・稼働率94%・利益率7.8%）を全エージェントに配布。'},
+      {role:'稼働分析', name:'訪問ルート最適化AI', output:'訪問452件のうち68%が北区・中区に集中。移動時間平均42分/件は業界標準の1.6倍。エリア別再配置とルート最適化で移動時間を月計138時間削減できる試算。この削減分が実質的に看護師1名分の稼働に相当。'},
+      {role:'採用', name:'採用・定着AI', output:'現在の媒体3社は費用対効果が低い。地域の看護学校との連携・OB紹介制度の設計・Indeedの最適化で採用コスト¥680,000→¥280,000への削減が可能。3ヶ月での採用完了を目標に設計。'},
+      {role:'財務検証', name:'数字で検証AI', output:'新規紹介を断るコスト：月-¥240万（6件×¥40万）。採用加速コスト：一時的に+¥80万。ルート最適化による訪問増：+3件/日→月+¥72万。採用よりルート最適化の優先度が高い。'},
+      {role:'論点整理', name:'参謀AI', output:'今月の結論。①訪問ルート最適化を今週着手（コストゼロ・即効性最大）②新規紹介は受け入れつつPT採用を加速③外来開設は財務原則に抵触するため見送り。院長の判断は②の採用基準のみ。'},
+      {role:'組織設計', name:'タスクシフトAI', output:'看護師稼働94%の本質は「院長待ち業務」が週8時間発生していること。定期処方更新・服薬確認・記録レビューを看護師・医事課に移管できる。プロトコル化で院長の確認業務を週2時間以下に削減可能。'},
+    ],
+  },
+  it: {
+    label:'IT・SaaS・Web', icon:'💻', sub:'ソフトウェア・アプリ開発・Web制作',
+    ownerTitle:'代表', staffNum:12, revenueM:800,
+    phil:[
+      {icon:'🎯', label:'理念', text:'ユーザーの課題を最短で解決するプロダクトを作り続ける'},
+      {icon:'⚖️', label:'財務原則', text:'ARRの成長率よりチャーンレートを先に改善する'},
+      {icon:'👥', label:'組織原則', text:'意思決定のスピードを上げるために権限を現場に渡す'},
+      {icon:'🌏', label:'戦略軸', text:'狭い市場でNo.1になってから横展開する'},
+      {icon:'📋', label:'意思決定', text:'データで判断できることはデータで判断する'},
+    ],
+    rpt:[
+      {label:'MRR', main:'¥8,200,000', sub:'前月比 +¥340,000', tag:'成長率 +4.3%', tagType:'up'},
+      {label:'チャーンレート', main:'3.8%/月', sub:'目標：2%以下', tag:'アラート水準', tagType:'down'},
+      {label:'開発速度', main:'スプリント消化率61%', sub:'技術的負債が原因', tag:'3スプリント連続未達', tagType:'down'},
+      {label:'サポート対応', main:'平均28時間', sub:'目標：8時間以内', tag:'CSコスト増加中', tagType:'warn'},
+      {label:'新規獲得', main:'月23件', sub:'CAC ¥68,000/件', tag:'前月比 −3件', tagType:'warn'},
+      {label:'LTV', main:'¥420,000', sub:'LTV/CAC = 6.2倍', tag:'健全水準', tagType:'up'},
+    ],
+    task:'「チャーンが止まらない。サポート対応も遅い。開発も詰まっている。どこから手をつければいい？」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'チャーン分析・サポート自動化・開発効率化・財務シミュレーション・顧客成功設計の5軸で並列処理を開始。'},
+      {role:'CS', name:'チャーン分析AI', output:'チャーン3.8%のうち、導入後60日以内の離脱が67%を占める。オンボーディングの設計ミスが主因。最初の7日間のアクション完了率が離脱予測の最重要指標。ここを改善するだけでチャーン2%以下に改善できる試算。'},
+      {role:'サポート', name:'サポート自動化AI', output:'全チケットの72%が同じ8パターンの質問。FAQベース＋AIチャットで自動解決可能。残り28%を人間が対応する設計にすることで平均対応時間28h→5h以内に短縮。月間CS工数を60%削減。'},
+      {role:'開発', name:'開発効率化AI', output:'スプリント消化率61%の原因：仕様の曖昧さによる手戻りが40%、技術的負債対応が35%。要件定義AIを導入して仕様の穴を事前に洗い出すことでスプリント消化率85%以上が見込める。'},
+      {role:'財務検証', name:'数字で検証AI', output:'チャーン2%改善でMRR+¥980万/年（LTV増加換算）。サポート自動化でCS人件費-¥360万/年。開発速度改善で機能リリースサイクル短縮→新規獲得+15%。年間純便益¥1,700万以上。'},
+      {role:'参謀', name:'PMF強化AI', output:'今月の優先順位：①オンボーディング改善（チャーン止め）②サポートFAQ自動化（即効性大）③スプリント改善（中期）。LTV/CAC 6.2倍は健全なので獲得より定着を先に改善する判断が正しい。'},
+    ],
+  },
+  manufacturing: {
+    label:'製造業・メーカー', icon:'🏭', sub:'製造・加工・組立・部品メーカー',
+    ownerTitle:'社長', staffNum:45, revenueM:4200,
+    phil:[
+      {icon:'🎯', label:'理念', text:'品質で勝ち、納期で信頼を積み上げる'},
+      {icon:'⚖️', label:'財務原則', text:'原価率の1%改善を10年続けることが最大の競争優位になる'},
+      {icon:'👥', label:'組織原則', text:'現場の知恵を経営に活かす仕組みを作る'},
+      {icon:'🌏', label:'戦略軸', text:'特定の工程でNo.1の技術を持ち、その領域から横展開する'},
+      {icon:'📋', label:'意思決定', text:'現場を見てから判断する。データは補助に使う'},
+    ],
+    rpt:[
+      {label:'月次売上', main:'¥42,000,000', sub:'前月比 −¥800,000', tag:'受注減少傾向', tagType:'warn'},
+      {label:'不良品率', main:'1.8%', sub:'目標：0.5%以下', tag:'3倍超過中', tagType:'down'},
+      {label:'納期遵守率', main:'87%', sub:'目標：98%以上', tag:'クレーム5件/月', tagType:'down'},
+      {label:'設備稼働率', main:'68%', sub:'主要ライン2基停止中', tag:'修繕待ち', tagType:'warn'},
+      {label:'在庫回転率', main:'年3.2回', sub:'業界平均：6回', tag:'過剰在庫¥1.8億', tagType:'down'},
+      {label:'粗利率', main:'22.4%', sub:'目標：28%', tag:'原材料高騰影響', tagType:'warn'},
+    ],
+    task:'「不良品率と納期遵守率が目標を大きく下回っている。クレームが増え始めた。根本原因と対策を整理してほしい。」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'品質分析・工程改善・設備管理・在庫最適化・財務影響・顧客対応の6軸で並列処理を開始。'},
+      {role:'品質', name:'品質改善AI', output:'不良品率1.8%の発生工程を分析。第2工程（成形）での寸法不良が全体の54%を占める。温度管理の自動化と検査タイミングの変更で0.6%以下に改善できる試算。設備2基の停止が間接的に品質悪化を引き起こしている。'},
+      {role:'生産', name:'生産スケジューリングAI', output:'納期遵守率87%の原因は受注集中と工程間の情報連携の遅れ。AIによるリアルタイムスケジュール調整で受注受付から着工指示まで自動化すれば遵守率95%以上が見込める。在庫回転率の改善も同時に実現できる。'},
+      {role:'設備', name:'設備保全AI', output:'停止中2基の修繕スケジュールを最適化。予防保全データを分析すると、残り7基のうち3基が90日以内に同様のリスクがある。部品の先行発注と保全計画の自動作成で設備稼働率68%→85%への回復が可能。'},
+      {role:'財務検証', name:'数字で検証AI', output:'不良品コスト：月¥380万（廃棄＋手直し）。クレーム対応コスト：月¥120万。設備稼働率回復で売上回復：+¥600万/月。品質改善だけで年間純便益¥1,200万以上。投資回収3ヶ月以内。'},
+      {role:'参謀', name:'改善設計AI', output:'今月の優先順位：①設備2基の緊急修繕（納期・品質の両方に効く）②第2工程の温度管理自動化③顧客へのクレーム対応と改善スケジュールの共有。在庫削減は品質安定後に着手する順序が正しい。'},
+    ],
+  },
+  retail: {
+    label:'小売・EC・サービス業', icon:'🛍️', sub:'飲食・美容・EC・実店舗サービス',
+    ownerTitle:'代表', staffNum:18, revenueM:1200,
+    phil:[
+      {icon:'🎯', label:'理念', text:'お客様の期待を毎回1つ上回ることで、リピーターを作る'},
+      {icon:'⚖️', label:'財務原則', text:'新規獲得コストよりLTVの改善に投資する'},
+      {icon:'👥', label:'組織原則', text:'スタッフが自分で判断できるマニュアルと権限を与える'},
+      {icon:'🌏', label:'戦略軸', text:'地域密着×SNS発信で認知コストゼロの集客を作る'},
+      {icon:'📋', label:'意思決定', text:'感覚より数字。数字を週次で確認する習慣を持つ'},
+    ],
+    rpt:[
+      {label:'月次売上', main:'¥12,000,000', sub:'前月比 −¥400,000', tag:'客単価が下落中', tagType:'warn'},
+      {label:'リピート率', main:'38%', sub:'目標：55%以上', tag:'大幅未達', tagType:'down'},
+      {label:'SNSフォロワー', main:'2,840名', sub:'月間投稿：4回', tag:'更新頻度不足', tagType:'warn'},
+      {label:'客単価', main:'¥4,200', sub:'前年同月 ¥5,100', tag:'−¥900（−17%）', tagType:'down'},
+      {label:'スタッフ離職', main:'年間3名退職', sub:'採用・育成コスト増', tag:'オペレーション負荷大', tagType:'down'},
+      {label:'在庫回転', main:'月1.8回', sub:'デッドストック¥320万', tag:'廃棄リスクあり', tagType:'warn'},
+    ],
+    task:'「リピート率が全然上がらない。SNSも止まっている。客単価も下がっている。何から手をつければいい？」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'リピート設計・SNS自動化・客単価改善・在庫最適化・スタッフ定着の5軸で並列処理を開始。'},
+      {role:'CRM', name:'リピート設計AI', output:'リピート率38%の原因分析：初回来店後30日以内のフォローが0件。LINEステップ配信×パーソナライズクーポンの設計で60日以内に55%達成が見込める。顧客の来店履歴・購買データを使った自動セグメント配信も実装可能。'},
+      {role:'コンテンツ', name:'SNS自動化AI', output:'月4回投稿を週3回に増やすにはコンテンツ作成の自動化が必要。商品写真を渡すとキャプション・ハッシュタグを自動生成→代表が5分で確認→予約投稿というパイプラインを設計できる。フォロワー2,840名に週次で接触できるようになる。'},
+      {role:'収益', name:'客単価改善AI', output:'客単価¥4,200→¥5,500に戻すためのアプローチ：①クロスセル提案のAI設計（レジ前の動線）②上位20%の顧客向け特別プランの設計③デッドストック¥320万のバンドル販売。3施策合計で客単価+28%が見込める。'},
+      {role:'財務検証', name:'数字で検証AI', output:'リピート率55%達成で月次売上+¥180万（既存客の来店頻度増加換算）。客単価¥5,500達成で+¥390万/月。SNS強化で新規+15%として+¥180万/月。年間純便益¥9,000万規模。初期投資¥298,000の回収期間：約2週間。'},
+      {role:'参謀', name:'オペレーション設計AI', output:'今月の優先順位：①LINEステップ配信の設計（リピート率に直結）②SNS予約投稿の仕組み化③クロスセルトークスクリプトの作成。スタッフ定着は②③の標準化が整ってから取り組む順序が正しい。'},
+    ],
+  },
+  construction: {
+    label:'建設・不動産', icon:'🏗️', sub:'建設・リフォーム・不動産管理',
+    ownerTitle:'社長', staffNum:28, revenueM:3500,
+    phil:[
+      {icon:'🎯', label:'理念', text:'100年残る建物を、誠実な仕事で作り続ける'},
+      {icon:'⚖️', label:'財務原則', text:'受注より利益率。薄利の案件は断る勇気を持つ'},
+      {icon:'👥', label:'組織原則', text:'職人の技術を次世代に継承できる仕組みを作る'},
+      {icon:'🌏', label:'戦略軸', text:'リフォーム×管理×新築を一気通貫で受けられる体制を作る'},
+      {icon:'📋', label:'意思決定', text:'現場責任者に権限を渡し、社長は戦略と顧客対応に集中する'},
+    ],
+    rpt:[
+      {label:'月次売上', main:'¥35,000,000', sub:'受注残：¥1.8億', tag:'前年比 +12%', tagType:'up'},
+      {label:'粗利率', main:'18.2%', sub:'目標：25%以上', tag:'6.8pt未達', tagType:'down'},
+      {label:'工期遵守率', main:'72%', sub:'目標：90%以上', tag:'遅延クレーム増加', tagType:'down'},
+      {label:'見積作成時間', main:'平均14時間/件', sub:'月20件の見積対応', tag:'週7時間が見積作業', tagType:'warn'},
+      {label:'職人稼働率', main:'91%', sub:'繁忙期ピーク', tag:'採用追いつかず', tagType:'warn'},
+      {label:'アフター対応', main:'月8件発生', sub:'保証対応コスト増', tag:'前年比 2.4倍', tagType:'down'},
+    ],
+    task:'「見積作成に時間がかかりすぎる。工期も遅れている。粗利率も落ちている。どこから改善する？」',
+    agents:[
+      {role:'司令塔', name:'タスク振り分けAI', output:'見積自動化・工程管理・粗利改善・採用・アフター対応の5軸で並列処理を開始。'},
+      {role:'見積', name:'見積自動化AI', output:'見積作成14時間/件の内訳を分析。材料費計算が40%・図面読み込みが30%・書類整形が20%。材料費計算と書類整形をAIで自動化することで14時間→4時間/件に短縮。月20件×10時間削減＝200時間を現場対応に転換できる。'},
+      {role:'工程', name:'工程管理AI', output:'工期遵守率72%の原因：材料手配の遅れが45%・職人の空き調整が35%。発注から手配まで自動化し、職人シフトをAIでリアルタイム調整することで工期遵守率90%以上が見込める。遅延クレームも大幅削減。'},
+      {role:'収益', name:'粗利改善AI', output:'粗利率18.2%の案件を分析すると、戸建リフォームは23%・マンション改修は12%・新築は19%。マンション改修の案件比率を下げ、戸建リフォームに注力するだけで全体粗利率24%に改善できる試算。受注選別の基準設計も可能。'},
+      {role:'財務検証', name:'数字で検証AI', output:'見積自動化で月200時間解放→現場対応増→売上+¥280万/月。粗利率改善（18%→24%）で月+¥210万。工期遵守率改善でクレームコスト-¥80万/月。年間純便益¥6,800万規模。初期投資¥298,000の回収：約2週間。'},
+      {role:'参謀', name:'現場設計AI', output:'今月の優先順位：①見積自動化の設計（社長の時間創出が最優先）②工程管理システムの導入③受注選別基準の明文化。職人採用は工程管理が安定してからでないと配置できないため③の後で取り組む。'},
+    ],
+  },
+};
+
+let selected = 'consulting';
+let step = 0;
+
+function init(){
+  const grid = document.getElementById('indGrid');
+  Object.entries(PRESETS).forEach(([key, p])=>{
+    const d = document.createElement('div');
+    d.className = 'ind-card' + (key===selected?' selected':'');
+    d.innerHTML = `<div class="ind-icon">${p.icon}</div><div class="ind-name">${p.label}</div><div class="ind-sub">${p.sub}</div>`;
+    d.onclick = ()=>selectInd(key);
+    d.id = 'ind_'+key;
+    grid.appendChild(d);
+  });
+  loadPreset();
+}
+
+function selectInd(key){
+  document.querySelectorAll('.ind-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('ind_'+key).classList.add('selected');
+  selected = key;
+  loadPreset();
+}
+
+function loadPreset(){
+  const p = PRESETS[selected];
+  document.getElementById('staffNum').value = p.staffNum;
+  document.getElementById('revenueM').value = p.revenueM;
+  document.getElementById('ownerTitle').value = p.ownerTitle;
+
+  // phil
+  const pf = document.getElementById('philFields');
+  pf.innerHTML = '';
+  p.phil.forEach((item, i)=>{
+    pf.innerHTML += `<div class="field"><label>${item.icon} 原則 ${i+1}（${item.label}）</label><textarea id="phil_${i}">${item.text}</textarea></div>`;
+  });
+
+  // rpt
+  const rf = document.getElementById('rptFields');
+  rf.innerHTML = '';
+  p.rpt.forEach((r,i)=>{
+    rf.innerHTML += `<div class="rpt-field-group"><div class="block-label">ブロック ${i+1}</div>
+      <input type="text" id="rbl_${i}" placeholder="ラベル" value="${r.label}">
+      <input type="text" id="rbm_${i}" placeholder="メイン数値" value="${r.main}">
+      <input type="text" id="rbs_${i}" placeholder="サブテキスト" value="${r.sub}">
+      <div class="tag-row">
+        <input type="text" id="rbt_${i}" placeholder="タグ" value="${r.tag}">
+        <select id="rbtt_${i}"><option value="up"${r.tagType==='up'?' selected':''}>↑良好</option><option value="warn"${r.tagType==='warn'?' selected':''}>△注意</option><option value="down"${r.tagType==='down'?' selected':''}>↓警告</option></select>
+      </div></div>`;
+  });
+
+  // task
+  document.getElementById('taskText').value = p.task;
+
+  // agents
+  const af = document.getElementById('agentFields');
+  af.innerHTML = '';
+  p.agents.forEach((a,i)=>{
+    af.innerHTML += `<div class="agent-field"><div class="ag-head"><span class="ag-num">エージェント ${i+1}</span><input type="text" class="ag-name" id="aname_${i}" value="${a.name}"></div><textarea class="ag-out" id="aout_${i}" rows="3">${a.output}</textarea></div>`;
+  });
+}
+
+function goStep(n){
+  document.getElementById('p'+step).classList.remove('active');
+  document.getElementById('st'+step).classList.remove('active');
+  document.getElementById('st'+step).classList.add('done');
+  step = n;
+  document.getElementById('p'+step).classList.add('active');
+  document.getElementById('st'+step).classList.remove('done');
+  document.getElementById('st'+step).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function next(s){ goStep(s+1); }
+function back(s){
+  document.getElementById('p'+step).classList.remove('active');
+  document.getElementById('st'+step).classList.remove('active','done');
+  step = s-1;
+  document.getElementById('p'+step).classList.add('active');
+  document.getElementById('st'+step).classList.add('active');
+  document.getElementById('st'+step).classList.remove('done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function getVals(){
+  const p = PRESETS[selected];
+  const companyName = document.getElementById('companyName').value || p.label+'の会社';
+  const ownerTitle = document.getElementById('ownerTitle').value || p.ownerTitle;
+  const staffNum = document.getElementById('staffNum').value || p.staffNum;
+  const revenueM = document.getElementById('revenueM').value || p.revenueM;
+  const phil = p.phil.map((item,i)=>({icon:item.icon, label:item.label, text:document.getElementById('phil_'+i)?.value||item.text}));
+  const rpt = p.rpt.map((r,i)=>({label:document.getElementById('rbl_'+i)?.value||r.label, main:document.getElementById('rbm_'+i)?.value||r.main, sub:document.getElementById('rbs_'+i)?.value||r.sub, tag:document.getElementById('rbt_'+i)?.value||r.tag, tagType:document.getElementById('rbtt_'+i)?.value||r.tagType}));
+  const task = document.getElementById('taskText').value || p.task;
+  const agents = p.agents.map((a,i)=>({role:a.role, name:document.getElementById('aname_'+i)?.value||a.name, output:document.getElementById('aout_'+i)?.value||a.output}));
+  return {companyName, ownerTitle, staffNum, revenueM, phil, rpt, task, agents, industry:selected};
+}
+
+function generate(){
+  const v = getVals();
+  const html = buildHTML(v);
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  document.getElementById('dlBtn').onclick = ()=>{
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `demo_${v.companyName.replace(/\s/g,'_')}.html`;
+    a.click();
+  };
+  goStep(5);
+}
+
+function restart(){
+  location.reload();
+}
+
+function buildHTML(v){
+  const philJS = JSON.stringify(v.phil.map(p=>({icon:p.icon, text:`<strong>${p.label}</strong>　${p.text}`})));
+  const rptBlocks = v.rpt.map((r,i)=>`
+    <div class="rpt-block" id="rb${i}">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri${i}">○</span>${r.label}</div>
+      <div class="rpt-main">${r.main}</div>
+      <div class="rpt-sub">${r.sub}</div>
+      <span class="rpt-tag ${r.tagType}">${r.tag}</span>
+    </div>`).join('');
+  const agentCardsHTML = v.agents.map((a,i)=>{
+    const colors = [
+      'style="background:#f1f5f9;color:#475569"',
+      'style="background:#dbeafe;color:#1e40af"',
+      'style="background:#d1fae5;color:#065f46"',
+      'style="background:#fef9c3;color:#854d0e"',
+      'style="background:#fce7f3;color:#9d174d"',
+      'style="background:#ede9fe;color:#5b21b6"',
+    ];
+    return `
+  <div class="agent-card" id="ag${i}">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" ${colors[i]}>${a.role}</div>
+      <div class="agent-name">${a.name}</div>
+      <div class="agent-status" id="s${i}">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o${i}"></div></div></div>
+  </div>`;}).join('');
+
+  const agentsJS = JSON.stringify(v.agents.map((a,i)=>({
+    start: 2400 + i*20,
+    end: 4800 + i*600,
+    working: a.name+'が分析中…',
+    output: a.output
+  })));
+
+  const synthText = `【統合レポート — 全エージェント完了】
+${v.companyName} への自動化優先順位
+━━━━━━━━━━━━━━━━━━
+${v.agents.map((a,i)=>`▶ ${a.name}\n  ${a.output.slice(0,60)}…`).join('\n\n')}
+━━━━━━━━━━━━━━━━━━
+▶ 今月、着手すること
+  ① ${v.agents[4]?.output?.slice(0,40)||'優先タスクを確認してください'}…`;
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIエージェント — ${v.companyName}向けデモ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#1a1a1a;background:#fff;line-height:1.8;font-size:16px;}
+.page{max-width:680px;margin:0 auto;padding:48px 24px 100px;}
+.doc-eyebrow{font-size:12px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px;margin-bottom:12px;}
+.doc-lead{font-size:15px;color:#555;line-height:1.8;border-bottom:1px solid #eee;padding-bottom:28px;margin-bottom:40px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:10px;height:10px;border:1.5px solid #93c5fd;border-top-color:#1d4ed8;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:4px;}
+.spinner-amber{border-color:#fcd34d;border-top-color:#d97706;}
+.philosophy-box{border:1px solid #bfdbfe;border-radius:12px;overflow:hidden;margin-bottom:14px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+.philosophy-box.show{opacity:1;transform:none;}
+.phil-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#eff6ff;border-bottom:1px solid #bfdbfe;}
+.phil-badge{font-size:11px;font-weight:700;letter-spacing:.5px;color:#1d4ed8;}
+.phil-status{font-size:12px;color:#60a5fa;margin-left:auto;transition:color .3s;}
+.phil-status.done{color:#16a34a;font-weight:700;}
+.phil-body{padding:14px 16px;}
+.phil-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;opacity:0;transform:translateX(-6px);transition:opacity .35s,transform .35s;font-size:13px;color:#334155;line-height:1.7;}
+.phil-item.show{opacity:1;transform:none;}
+.phil-icon{font-size:12px;margin-top:3px;flex-shrink:0;}
+.report-box{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:14px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+.report-box.show{opacity:1;transform:none;}
+.report-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf9;border-bottom:1px solid #e5e7eb;}
+.report-badge{font-size:11px;font-weight:700;letter-spacing:.5px;color:#78716c;}
+.report-status{font-size:12px;color:#a8a29e;margin-left:auto;transition:color .3s;}
+.report-status.done{color:#16a34a;font-weight:700;}
+.report-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.report-body{grid-template-columns:1fr;}}
+.rpt-block{border:1px solid #f0f0ee;border-radius:8px;padding:10px 12px;position:relative;transition:border-color .3s,background .3s;}
+.rpt-block.scanning{border-color:#fbbf24;background:#fffbeb;}
+.rpt-block.scanned{border-color:#bbf7d0;background:#f0fdf4;}
+.rpt-block-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#aaa;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.rpt-main{font-size:17px;font-weight:700;color:#111;line-height:1.2;margin-bottom:3px;}
+.rpt-sub{font-size:11px;color:#666;line-height:1.5;}
+.rpt-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:3px;}
+.rpt-tag.up{background:#dcfce7;color:#15803d;}
+.rpt-tag.warn{background:#fef9c3;color:#854d0e;}
+.rpt-tag.down{background:#fee2e2;color:#991b1b;}
+.task-box{background:#f7f7f5;border-left:3px solid #111;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;opacity:0;transform:translateY(4px);transition:opacity .4s,transform .4s;}
+.task-box.show{opacity:1;transform:none;}
+.task-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
+.task-text{font-size:15px;color:#111;line-height:1.7;font-weight:500;}
+.log-area{margin-bottom:20px;min-height:60px;}
+.log-line{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s;}
+.log-line.show{opacity:1;transform:none;}
+.log-who{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;margin-top:2px;background:#f0f0ee;color:#666;}
+.log-text{font-size:13px;color:#333;line-height:1.65;}
+.agents-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.agent-card{border:1px solid #e5e5e5;border-radius:12px;overflow:hidden;transition:border-color .4s,box-shadow .4s;}
+.agent-card.active{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.08);}
+.agent-card.done{border-color:#22c55e;}
+.agent-head{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.agent-dot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .3s;flex-shrink:0;}
+.agent-card.active .agent-dot{background:#3b82f6;animation:pulse .9s infinite;}
+.agent-card.done .agent-dot{background:#22c55e;animation:none;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.agent-role{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;}
+.agent-name{font-size:13px;font-weight:700;color:#111;}
+.agent-status{font-size:12px;color:#aaa;margin-left:auto;}
+.agent-card.active .agent-status{color:#3b82f6;}
+.agent-card.done .agent-status{color:#22c55e;}
+.agent-output{max-height:0;overflow:hidden;transition:max-height .5s ease;}
+.agent-card.done .agent-output{max-height:200px;}
+.agent-output-inner{padding:0 14px 12px 14px;border-top:1px solid #f0f0f0;margin-top:0;}
+.agent-output-text{font-size:13px;color:#444;line-height:1.8;padding-left:12px;border-left:2px solid #22c55e;margin-top:10px;}
+.synthesis-box{background:#f7f7f5;border-radius:12px;padding:20px 22px;display:none;margin-bottom:20px;}
+.synthesis-box.show{display:block;}
+.synthesis-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#22c55e;margin-bottom:12px;}
+.synthesis-text{font-size:13px;color:#333;line-height:2;white-space:pre-wrap;}
+.restart-btn{width:100%;padding:12px;font-size:14px;font-weight:700;border-radius:100px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;display:none;transition:all .15s;}
+.restart-btn:hover{background:#f5f5f5;}
+.progress-bar-wrap{height:3px;background:#f0f0f0;border-radius:2px;margin-bottom:20px;overflow:hidden;display:none;}
+.progress-bar-wrap.show{display:block;}
+.progress-bar{height:100%;background:#3b82f6;border-radius:2px;width:0;transition:width .3s linear;}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="doc-eyebrow">AIエージェント 自律動作デモ</div>
+<h1>6体が自分で考えて、<br>同時に動く</h1>
+<p class="doc-lead">${v.ownerTitle}から1つのタスクが届いた瞬間、AIエージェントたちが自律的に役割分担して動き始めます。指示は1回だけ。</p>
+
+<div class="philosophy-box" id="philBox">
+  <div class="phil-head">
+    <span id="philSpinner" class="spinner"></span>
+    <div class="phil-badge" id="philBadge">${v.companyName}の理念・行動原則を読み込み中</div>
+    <div class="phil-status" id="philStatus">全エージェントに配布中…</div>
+  </div>
+  <div class="phil-body" id="philBody"></div>
+</div>
+
+<div class="report-box" id="reportBox">
+  <div class="report-head">
+    <span id="rptSpinner" class="spinner spinner-amber"></span>
+    <div class="report-badge" id="rptBadge">直近の業務レポートを読み込み中</div>
+    <div class="report-status" id="rptStatus">スキャン中…</div>
+  </div>
+  <div class="report-body">${rptBlocks}</div>
+</div>
+
+<div class="task-box" id="taskBox">
+  <div class="task-label">${v.ownerTitle}からのタスク（これだけ渡す）</div>
+  <div class="task-text">${v.task}</div>
+</div>
+
+<div class="progress-bar-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+<div class="log-area" id="logArea"></div>
+
+<div class="agents-grid">${agentCardsHTML}</div>
+
+<div class="synthesis-box" id="synthBox">
+  <div class="synthesis-label">統合レポート — 全エージェント完了</div>
+  <div class="synthesis-text" id="synthText"></div>
+</div>
+
+<button class="restart-btn" id="restartBtn" onclick="restart()">もう一度見る</button>
+</div>
+
+<script>
+const philItems=${philJS};
+const agents=${agentsJS};
+const logs=[
+  {delay:400,text:'タスクを受信。業務レポートの数値と理念を照合し、並列処理を開始。'},
+  {delay:1700,text:'6体のエージェントを起動。データを配布して同時分析を開始します。'},
+];
+const synthContent=${JSON.stringify(synthText)};
+let timers=[];
+function addLog(text){const area=document.getElementById('logArea');const div=document.createElement('div');div.className='log-line';div.innerHTML='<div class="log-who">Orchestrator</div><div class="log-text">'+text+'</div>';area.appendChild(div);requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show')));}
+function setActive(i){document.getElementById('ag'+i).classList.add('active');document.getElementById('s'+i).textContent=agents[i].working;}
+function setDone(i){const c=document.getElementById('ag'+i);c.classList.remove('active');c.classList.add('done');document.getElementById('s'+i).textContent='完了';document.getElementById('o'+i).textContent=agents[i].output;}
+function typeText(el,text,cb){let i=0;const iv=setInterval(()=>{if(i<text.length){el.textContent+=text[i++];}else{clearInterval(iv);if(cb)cb();}},13);timers.push(iv);}
+function updateProgress(){const total=12000;const bar=document.getElementById('progressBar');document.getElementById('progressWrap').classList.add('show');let start=null;function step(ts){if(!start)start=ts;const pct=Math.min((ts-start)/total*100,100);bar.style.width=pct+'%';if(pct<100)requestAnimationFrame(step);}requestAnimationFrame(step);}
+function runPhilosophy(cb){const box=document.getElementById('philBox');requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('show')));const body=document.getElementById('philBody');philItems.forEach((item,i)=>{const div=document.createElement('div');div.className='phil-item';div.innerHTML='<span class="phil-icon">'+item.icon+'</span><span>'+item.text+'</span>';body.appendChild(div);timers.push(setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show'))),500+i*400));});const DONE_AT=500+philItems.length*400+400;timers.push(setTimeout(()=>{document.getElementById('philSpinner').style.display='none';const badge=document.getElementById('philBadge');badge.textContent='✓ 理念・行動原則を読み込みました';badge.style.color='#15803d';const st=document.getElementById('philStatus');st.textContent='全エージェントに配布完了';st.classList.add('done');box.style.borderColor='#86efac';box.querySelector('.phil-head').style.background='#f0fdf4';box.querySelector('.phil-head').style.borderColor='#86efac';},DONE_AT));timers.push(setTimeout(cb,DONE_AT+600));}
+function runReport(cb){const box=document.getElementById('reportBox');requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('show')));for(let i=0;i<6;i++){timers.push(setTimeout((idx=>()=>{const rb=document.getElementById('rb'+idx);const ri=document.getElementById('ri'+idx);rb.classList.add('scanning');ri.textContent='◎';timers.push(setTimeout(()=>{rb.classList.remove('scanning');rb.classList.add('scanned');ri.textContent='✓';},500));})(i),400+i*380));}const DONE_AT=400+6*380+600;timers.push(setTimeout(()=>{document.getElementById('rptSpinner').style.display='none';const badge=document.getElementById('rptBadge');badge.textContent='✓ 業務レポートを読み込みました';badge.style.color='#15803d';const st=document.getElementById('rptStatus');st.textContent='6項目を分析完了';st.classList.add('done');box.style.borderColor='#86efac';box.querySelector('.report-head').style.background='#f0fdf4';box.querySelector('.report-head').style.borderColor='#86efac';},DONE_AT));timers.push(setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById('taskBox').classList.add('show'))),DONE_AT+500));timers.push(setTimeout(cb,DONE_AT+1100));}
+function startDemo(){updateProgress();logs.forEach(l=>timers.push(setTimeout(()=>addLog(l.text),l.delay)));agents.forEach((a,i)=>{timers.push(setTimeout(()=>setActive(i),a.start));timers.push(setTimeout(()=>setDone(i),a.end));});const lastEnd=Math.max(...agents.map(a=>a.end));timers.push(setTimeout(()=>{document.getElementById('synthBox').classList.add('show');typeText(document.getElementById('synthText'),synthContent,()=>{document.getElementById('restartBtn').style.display='block';});},lastEnd+600));}
+function restart(){timers.forEach(t=>{clearTimeout(t);clearInterval(t);});timers=[];document.getElementById('logArea').innerHTML='';for(let i=0;i<6;i++){const c=document.getElementById('ag'+i);c.classList.remove('active','done');document.getElementById('s'+i).textContent='待機中';document.getElementById('o'+i).textContent='';}document.getElementById('synthBox').classList.remove('show');document.getElementById('synthText').textContent='';document.getElementById('restartBtn').style.display='none';document.getElementById('progressBar').style.width='0';const pb=document.getElementById('philBox');pb.classList.remove('show');pb.style.borderColor='';pb.querySelector('.phil-head').style.background='';pb.querySelector('.phil-head').style.borderColor='';document.getElementById('philSpinner').style.display='';const pbadge=document.getElementById('philBadge');pbadge.textContent='${v.companyName}の理念・行動原則を読み込み中';pbadge.style.color='';document.getElementById('philStatus').textContent='全エージェントに配布中…';document.getElementById('philStatus').classList.remove('done');document.getElementById('philBody').innerHTML='';const rb=document.getElementById('reportBox');rb.classList.remove('show');rb.style.borderColor='';rb.querySelector('.report-head').style.background='';rb.querySelector('.report-head').style.borderColor='';document.getElementById('rptSpinner').style.display='';const rbadge=document.getElementById('rptBadge');rbadge.textContent='直近の業務レポートを読み込み中';rbadge.style.color='';document.getElementById('rptStatus').textContent='スキャン中…';document.getElementById('rptStatus').classList.remove('done');for(let i=0;i<6;i++){const block=document.getElementById('rb'+i);block.classList.remove('scanning','scanned');document.getElementById('ri'+i).textContent='○';}document.getElementById('taskBox').classList.remove('show');setTimeout(()=>runPhilosophy(()=>runReport(startDemo)),400);}
+runPhilosophy(()=>runReport(startDemo));
+<\/script>
+</body>
+</html>`;
+}
+
+init();
+</script>
+</body>
+</html>
