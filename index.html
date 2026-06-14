@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIエージェント — 自律動作ライブデモ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;color:#1a1a1a;background:#fff;line-height:1.8;font-size:16px;}
+.page{max-width:680px;margin:0 auto;padding:48px 24px 100px;}
+
+.doc-eyebrow{font-size:12px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px;margin-bottom:12px;}
+.doc-lead{font-size:15px;color:#555;line-height:1.8;border-bottom:1px solid #eee;padding-bottom:28px;margin-bottom:40px;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{display:inline-block;width:10px;height:10px;border:1.5px solid #93c5fd;border-top-color:#1d4ed8;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:4px;}
+.spinner-amber{border-color:#fcd34d;border-top-color:#d97706;}
+
+/* ── 理念フェーズ ─────────────────── */
+.philosophy-box{border:1px solid #bfdbfe;border-radius:12px;overflow:hidden;margin-bottom:14px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+.philosophy-box.show{opacity:1;transform:none;}
+.phil-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#eff6ff;border-bottom:1px solid #bfdbfe;}
+.phil-badge{font-size:11px;font-weight:700;letter-spacing:.5px;color:#1d4ed8;}
+.phil-status{font-size:12px;color:#60a5fa;margin-left:auto;transition:color .3s;}
+.phil-status.done{color:#16a34a;font-weight:700;}
+.phil-body{padding:14px 16px;}
+.phil-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;opacity:0;transform:translateX(-6px);transition:opacity .35s,transform .35s;font-size:13px;color:#334155;line-height:1.7;}
+.phil-item.show{opacity:1;transform:none;}
+.phil-icon{font-size:12px;margin-top:3px;flex-shrink:0;}
+
+/* ── 経営レポートフェーズ ─────────────────── */
+.report-box{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:14px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+.report-box.show{opacity:1;transform:none;}
+.report-head{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf9;border-bottom:1px solid #e5e7eb;}
+.report-badge{font-size:11px;font-weight:700;letter-spacing:.5px;color:#78716c;}
+.report-status{font-size:12px;color:#a8a29e;margin-left:auto;transition:color .3s;}
+.report-status.done{color:#16a34a;font-weight:700;}
+
+.report-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.report-body{grid-template-columns:1fr;}}
+
+.rpt-block{border:1px solid #f0f0ee;border-radius:8px;padding:10px 12px;position:relative;transition:border-color .3s,background .3s;}
+.rpt-block.scanning{border-color:#fbbf24;background:#fffbeb;}
+.rpt-block.scanned{border-color:#bbf7d0;background:#f0fdf4;}
+.rpt-block-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#aaa;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.rpt-scan-icon{font-size:11px;}
+.rpt-main{font-size:17px;font-weight:700;color:#111;line-height:1.2;margin-bottom:3px;}
+.rpt-sub{font-size:11px;color:#666;line-height:1.5;}
+.rpt-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:3px;}
+.rpt-tag.up{background:#dcfce7;color:#15803d;}
+.rpt-tag.warn{background:#fef9c3;color:#854d0e;}
+.rpt-tag.down{background:#fee2e2;color:#991b1b;}
+.rpt-list{font-size:11px;color:#555;line-height:1.8;margin-top:4px;}
+
+/* ── タスクボックス ─────────────────── */
+.task-box{background:#f7f7f5;border-left:3px solid #111;border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:24px;opacity:0;transform:translateY(4px);transition:opacity .4s,transform .4s;}
+.task-box.show{opacity:1;transform:none;}
+.task-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#aaa;margin-bottom:6px;}
+.task-text{font-size:15px;color:#111;line-height:1.7;font-weight:500;}
+
+.log-area{margin-bottom:20px;min-height:60px;}
+.log-line{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px;opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s;}
+.log-line.show{opacity:1;transform:none;}
+.log-who{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;margin-top:2px;background:#f0f0ee;color:#666;}
+.log-text{font-size:13px;color:#333;line-height:1.65;}
+
+.agents-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.agent-card{border:1px solid #e5e5e5;border-radius:12px;overflow:hidden;transition:border-color .4s,box-shadow .4s;}
+.agent-card.active{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.08);}
+.agent-card.done{border-color:#22c55e;}
+.agent-head{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.agent-dot{width:8px;height:8px;border-radius:50%;background:#ddd;transition:background .3s;flex-shrink:0;}
+.agent-card.active .agent-dot{background:#3b82f6;animation:pulse .9s infinite;}
+.agent-card.done .agent-dot{background:#22c55e;animation:none;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.agent-role{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;}
+.agent-name{font-size:13px;font-weight:700;color:#111;}
+.agent-status{font-size:12px;color:#aaa;margin-left:auto;}
+.agent-card.active .agent-status{color:#3b82f6;}
+.agent-card.done .agent-status{color:#22c55e;}
+.agent-output{max-height:0;overflow:hidden;transition:max-height .5s ease;}
+.agent-card.done .agent-output{max-height:200px;}
+.agent-output-inner{padding:0 14px 12px 14px;border-top:1px solid #f0f0f0;margin-top:0;}
+.agent-output-text{font-size:13px;color:#444;line-height:1.8;padding-left:12px;border-left:2px solid #22c55e;margin-top:10px;}
+
+.synthesis-box{background:#f7f7f5;border-radius:12px;padding:20px 22px;display:none;margin-bottom:20px;}
+.synthesis-box.show{display:block;}
+.synthesis-label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#22c55e;margin-bottom:12px;}
+.synthesis-text{font-size:13px;color:#333;line-height:2;white-space:pre-wrap;}
+
+.restart-btn{width:100%;padding:12px;font-size:14px;font-weight:700;border-radius:100px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;display:none;transition:all .15s;}
+.restart-btn:hover{background:#f5f5f5;}
+
+.progress-bar-wrap{height:3px;background:#f0f0f0;border-radius:2px;margin-bottom:20px;overflow:hidden;display:none;}
+.progress-bar-wrap.show{display:block;}
+.progress-bar{height:100%;background:#3b82f6;border-radius:2px;width:0;transition:width .3s linear;}
+
+/* ── ROIセクション ─────────────────── */
+.roi-section{margin-top:40px;border-top:1px solid #eee;padding-top:40px;}
+.roi-eyebrow{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:8px;}
+.roi-title{font-size:20px;font-weight:700;margin-bottom:6px;letter-spacing:-.3px;}
+.roi-lead{font-size:14px;color:#555;line-height:1.75;margin-bottom:28px;}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+@media(max-width:480px){.roi-grid{grid-template-columns:1fr;}}
+.roi-card{border:1px solid #e5e5e5;border-radius:10px;padding:14px 16px;}
+.roi-card-label{font-size:11px;color:#aaa;font-weight:500;margin-bottom:4px;}
+.roi-card-value{font-size:18px;font-weight:700;color:#111;line-height:1.2;margin-bottom:6px;}
+.roi-card-detail{font-size:12px;color:#666;line-height:1.65;}
+.roi-highlight{background:#111;border-radius:12px;padding:20px 22px;margin-bottom:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:center;}
+@media(max-width:480px){.roi-highlight{grid-template-columns:1fr;}}
+.roi-hl-label{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:4px;}
+.roi-hl-value{font-size:22px;font-weight:700;color:#fff;}
+.roi-summary-box{background:#f7f7f5;border-radius:10px;padding:16px 18px;}
+.roi-summary-text{font-size:13px;color:#444;line-height:1.85;}
+.roi-note{font-size:11px;color:#bbb;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-eyebrow">AIエージェント 自律動作デモ</div>
+<h1>6体が自分で考えて、<br>同時に動く</h1>
+<p class="doc-lead">院長から1つのタスクが届いた瞬間、AIエージェントたちが自律的に役割分担して動き始めます。指示は1回だけ。</p>
+
+<!-- 理念フェーズ -->
+<div class="philosophy-box" id="philBox">
+  <div class="phil-head">
+    <span id="philSpinner" class="spinner"></span>
+    <div class="phil-badge" id="philBadge">クリニックの理念・行動原則を読み込み中</div>
+    <div class="phil-status" id="philStatus">全エージェントに配布中…</div>
+  </div>
+  <div class="phil-body" id="philBody"></div>
+</div>
+
+<!-- 経営レポートフェーズ -->
+<div class="report-box" id="reportBox">
+  <div class="report-head">
+    <span id="rptSpinner" class="spinner spinner-amber"></span>
+    <div class="report-badge" id="rptBadge">月次経営レポート（2024年10月）を読み込み中</div>
+    <div class="report-status" id="rptStatus">スキャン中…</div>
+  </div>
+  <div class="report-body">
+    <div class="rpt-block" id="rb0">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri0">○</span>訪問実績</div>
+      <div class="rpt-main">452件</div>
+      <div class="rpt-sub">前月比 +2件</div>
+      <span class="rpt-tag warn">3ヶ月連続横ばい</span>
+    </div>
+    <div class="rpt-block" id="rb1">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri1">○</span>月次売上</div>
+      <div class="rpt-main">¥17,628,000</div>
+      <div class="rpt-sub">前月比 +0.4%</div>
+      <span class="rpt-tag warn">目標¥19Mに未達</span>
+    </div>
+    <div class="rpt-block" id="rb2">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri2">○</span>紹介元ケアマネ</div>
+      <div class="rpt-main">31社</div>
+      <div class="rpt-sub">上位10社で68%集中</div>
+      <div class="rpt-list">未接触ケアマネ：推定52社</div>
+    </div>
+    <div class="rpt-block" id="rb3">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri3">○</span>看護師稼働</div>
+      <div class="rpt-main">94%</div>
+      <div class="rpt-sub">平均移動時間 42分/日</div>
+      <span class="rpt-tag down">業界平均より+14分</span>
+    </div>
+    <div class="rpt-block" id="rb4">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri4">○</span>採用コスト</div>
+      <div class="rpt-main">¥1,240,000</div>
+      <div class="rpt-sub">今期累計（3名採用）</div>
+      <span class="rpt-tag down">前年比 +38%</span>
+    </div>
+    <div class="rpt-block" id="rb5">
+      <div class="rpt-block-label"><span class="rpt-scan-icon" id="ri5">○</span>コスト構造</div>
+      <div class="rpt-main">利益率 7.8%</div>
+      <div class="rpt-sub">人件費 62% / 車両 9%</div>
+      <span class="rpt-tag warn">前年比 -0.6pt</span>
+    </div>
+  </div>
+</div>
+
+<!-- タスクボックス -->
+<div class="task-box" id="taskBox">
+  <div class="task-label">院長からのタスク（これだけ渡す）</div>
+  <div class="task-text">「スタッフ30名・訪問件数が月450件で頭打ち。来期は在宅をさらに伸ばすか、外来も持つか。看護師を採るにも採用費が重い。どう判断すればいい？」</div>
+</div>
+
+<div class="progress-bar-wrap" id="progressWrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="log-area" id="logArea"></div>
+
+<div class="agents-grid">
+
+  <div class="agent-card" id="ag0">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#f1f5f9;color:#475569">司令塔</div>
+      <div class="agent-name">タスク振り分けAI</div>
+      <div class="agent-status" id="s0">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o0"></div></div></div>
+  </div>
+
+  <div class="agent-card" id="ag1">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#dbeafe;color:#1e40af">事業判断</div>
+      <div class="agent-name">経営判断AI</div>
+      <div class="agent-status" id="s1">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o1"></div></div></div>
+  </div>
+
+  <div class="agent-card" id="ag2">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#d1fae5;color:#065f46">実行計画</div>
+      <div class="agent-name">業務設計AI</div>
+      <div class="agent-status" id="s2">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o2"></div></div></div>
+  </div>
+
+  <div class="agent-card" id="ag3">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#fef9c3;color:#854d0e">財務検証</div>
+      <div class="agent-name">数字で検証AI</div>
+      <div class="agent-status" id="s3">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o3"></div></div></div>
+  </div>
+
+  <div class="agent-card" id="ag4">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#fce7f3;color:#9d174d">論点整理</div>
+      <div class="agent-name">参謀AI</div>
+      <div class="agent-status" id="s4">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o4"></div></div></div>
+  </div>
+
+  <div class="agent-card" id="ag5">
+    <div class="agent-head">
+      <div class="agent-dot"></div>
+      <div class="agent-role" style="background:#ede9fe;color:#5b21b6">市場調査</div>
+      <div class="agent-name">戦略分析AI</div>
+      <div class="agent-status" id="s5">待機中</div>
+    </div>
+    <div class="agent-output"><div class="agent-output-inner"><div class="agent-output-text" id="o5"></div></div></div>
+  </div>
+
+</div>
+
+<div class="synthesis-box" id="synthBox">
+  <div class="synthesis-label">統合レポート — 全エージェント完了</div>
+  <div class="synthesis-text" id="synthText"></div>
+</div>
+
+<div id="ctaBox" style="display:none;margin-bottom:12px;">
+  <div style="background:#111;border-radius:12px 12px 0 0;padding:22px 24px 18px;">
+    <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">あなたの会社で動かすと？</div>
+    <div style="font-size:20px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:6px;">3つ入力するだけで<br>あなたの会社のROIが出ます</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);">業種・規模を入れると、このデモの数字があなたの会社に書き換わります。</div>
+  </div>
+  <div style="background:#1a1a1a;border-radius:0 0 12px 12px;padding:18px 24px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;" id="calcForm">
+      <div style="grid-column:1/-1;">
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">業種</div>
+        <select id="calcIndustry" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:14px;font-family:inherit;">
+          <option value="medical">在宅医療・クリニック</option>
+          <option value="consulting">コンサルティング・士業</option>
+          <option value="it">IT・SaaS・Web</option>
+          <option value="manufacturing">製造業・メーカー</option>
+          <option value="retail">小売・EC・サービス業</option>
+          <option value="construction">建設・不動産</option>
+          <option value="other">その他</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">スタッフ数（名）</div>
+        <input id="calcStaff" type="number" min="3" max="500" value="30" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:16px;font-family:inherit;">
+      </div>
+      <div>
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">月売上（万円）</div>
+        <input id="calcRevenue" type="number" min="100" max="100000" value="1760" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:16px;font-family:inherit;">
+      </div>
+    </div>
+    <button onclick="calcROI()" style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:100px;border:none;background:#fff;color:#111;cursor:pointer;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">あなたの会社で試算する →</button>
+  </div>
+</div>
+
+<div id="myRoiBox" style="display:none;border:1.5px solid #22c55e;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+  <div style="background:#f0fdf4;padding:14px 20px;border-bottom:1px solid #bbf7d0;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:16px;">✓</span>
+    <span style="font-size:13px;font-weight:700;color:#15803d;" id="myRoiTitle">あなたの会社（スタッフ30名・月売上¥1,760万）の試算</span>
+  </div>
+  <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" id="myRoiGrid">
+  </div>
+  <div style="padding:0 20px 16px;font-size:12px;color:#666;line-height:1.7;" id="myRoiSummary"></div>
+</div>
+<button class="restart-btn" id="restartBtn" onclick="restart()">もう一度見る</button>
+
+<div class="roi-section">
+  <div class="roi-eyebrow">費用対効果 試算</div>
+  <h2 class="roi-title">導入したら、数字はどう変わるか</h2>
+  <p class="roi-lead">スタッフ30名・月450件クリニックへの6AIエージェント導入を、財務・戦略・分析エージェントが試算。在宅医療は診療報酬が安定しており、件数増加が直接収益に連動するためROIの信頼性が高い。</p>
+
+  <div class="roi-highlight">
+    <div>
+      <div class="roi-hl-label">年間純便益</div>
+      <div class="roi-hl-value">¥3,500〜<br>5,100万</div>
+    </div>
+    <div>
+      <div class="roi-hl-label">投資回収期間</div>
+      <div class="roi-hl-value">約4ヶ月</div>
+    </div>
+    <div>
+      <div class="roi-hl-label">1年間ROI</div>
+      <div class="roi-hl-value">1,400〜<br>2,400%</div>
+    </div>
+  </div>
+
+  <div class="roi-grid">
+    <div class="roi-card">
+      <div class="roi-card-label">院長の週間時間削減</div>
+      <div class="roi-card-value">12〜15時間/週</div>
+      <div class="roi-card-detail">経営判断・書類確認・スタッフ調整など管理業務の約40%をAIが代替。意思決定支援・情報整理・優先順位付けを自動化。</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-card-label">スタッフ全体の時間削減</div>
+      <div class="roi-card-value">60〜80時間/週</div>
+      <div class="roi-card-detail">訪問ルート最適化で看護師1人あたり30〜45分/日削減。医療事務の書類業務も2〜3時間/日圧縮。FTE換算で1.5〜2名相当。</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-card-label">訪問件数の増加</div>
+      <div class="roi-card-value">+60〜90件/月</div>
+      <div class="roi-card-detail">ルート最適化と意思決定速度向上で452件の上限を突破。段階的に520〜540件/月へ拡大できる試算。</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-card-label">収益増加額（年間）</div>
+      <div class="roi-card-value">+2,800〜4,200万円</div>
+      <div class="roi-card-detail">訪問1件あたり平均単価¥3.9万（保険報酬ベース）で試算。月70件増×¥3.9万×12ヶ月に新規患者獲得効果を加算。</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-card-label">コスト削減額（年間）</div>
+      <div class="roi-card-value">+600〜900万円</div>
+      <div class="roi-card-detail">残業・非効率業務削減（月50〜70時間×時給¥2,500）＋外部委託費圧縮。採用・育成コストの回避分も含む保守的試算。</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-card-label">導入コスト</div>
+      <div class="roi-card-value">初期¥150〜250万</div>
+      <div class="roi-card-detail">6エージェントの設計・構築・定着支援込み。月額ランニング¥15〜25万（API利用料・保守・継続改善含む）。</div>
+    </div>
+  </div>
+
+  <div class="roi-summary-box">
+    <div class="roi-summary-text">年間の収益増加とコスト削減を合わせた純便益は保守試算で¥3,000〜4,800万円規模。初期投資¥200万前後を約4ヶ月で回収できる見込み。ROIが高い最大の理由は、在宅医療の<strong>固定費比率の高さ</strong>にある——スタッフや設備は既にある状態で件数が増えると、増収分がほぼそのまま利益に乗ってくる。AIは「人員を増やさずに件数を増やす」ための唯一の手段。</div>
+    <div class="roi-note">※ 試算はスタッフ30名・月452件クリニックを前提。訪問1件単価¥3.9万（保険報酬ベース）。実際の効果はクリニックの状況により変動します。</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const philItems = [
+  { icon: '🏥', text: '<strong>理念</strong>　患者と家族が望む場所で、望む生き方ができるよう支える' },
+  { icon: '⚖️', text: '<strong>財務原則</strong>　無理な借入はしない。財務の自律を守ることが、クリニックの持続につながる' },
+  { icon: '👥', text: '<strong>組織原則</strong>　スタッフへの説明は「理由を先に話す」。納得なき変化は長続きしない' },
+  { icon: '🌏', text: '<strong>戦略軸</strong>　外来より在宅。地域密着を軸とし、紹介網・多職種連携を最優先で強化する' },
+  { icon: '📋', text: '<strong>意思決定</strong>　患者の声を数字より先に聞く。ただし数字が裏付けに使えるときは使う' },
+];
+
+const logs=[
+  {delay:400,  text:'タスクを受信。月次レポートデータ・理念を参照し、経営判断 × 組織設計の複合案件と分類。'},
+  {delay:1700, text:'経営判断・業務設計・財務検証・戦略分析・参謀の5AIを起動。10月レポートの数値を渡して並列処理を開始。'},
+];
+
+const agents=[
+  {start:2400, end:4800,  working:'タスクを分類・振り分け中…',
+   output:'在宅拡張 vs 外来参入の戦略判断・採用コスト最適化・財務シミュレーション・市場ポジション・今週のアクション整理の5軸で並列処理を開始。10月レポート（訪問452件・利益率7.8%・移動時間42分）を全エージェントに配布。'},
+  {start:2430, end:6600,  working:'患者・紹介元データを分析中…',
+   output:'10月レポートの紹介元31社・上位10社68%集中を確認。3ヶ月連続横ばいの主因は「キャパ不足」ではなく「未接触ケアマネ52社へのアプローチ不足」。外来開設より紹介網の拡張が先。患者LTVは在宅平均28ヶ月・外来の3.4倍。'},
+  {start:2410, end:7400,  working:'人員・シフト・訪問ルートを設計中…',
+   output:'10月レポートで看護師移動時間42分/日（業界平均28分）を確認。差分14分 × 看護師15名 = 月210時間の損失。ルート最適化だけで月+30件が実現可能。新規採用は訪問看護師より訪問リハ（PT/OT）の方が診療単価向上に直結。採用コスト¥1,240,000（前年比+38%）も採用抑制の根拠。'},
+  {start:2440, end:8200,  working:'3パターンの財務モデルを試算中…',
+   output:'10月実績（売上¥17.6M・利益率7.8%）をベースに試算。① 現状維持：年商¥2.1億・利益率推移横ばい。② 在宅拡張（ルート最適化＋PT採用）：初期投資¥3.2M・14ヶ月でROI回収・年商¥2.8億へ。③ 外来開設：初期投資¥18M・回収42ヶ月・財務原則に抵触。②一択。'},
+  {start:2420, end:9000,  working:'論点と意思決定順序を整理中…',
+   output:'院長が今週決めるべき3点。①訪問ルート最適化の開始宣言（スタッフへ「理由を先に話す」形式で周知）②PT採用要件・給与レンジの確定③未接触ケアマネ上位20社へのアプローチ担当者の指名。10月の採用費急増（+38%）を踏まえ、人員増加は②の判断後まで凍結。'},
+  {start:2450, end:9800,  working:'競合・地域需要・診療報酬を調査中…',
+   output:'当該エリア要介護認定者数：2030年まで年率9.2%増。競合2院が外来シフト中で在宅の受け皿が不足。2024年診療報酬改定で在宅時医学総合管理料が引き上げ済み。訪問リハ強化は報酬単価・患者満足度・紹介獲得の三重メリット。10月レポートの稼働率94%は件数拡大余地がある証拠でもある。'},
+];
+
+const synthContent=`【経営方針 統合レポート】
+2024年10月 月次レポートをベースにした来期判断
+※ 月次経営データ・理念・行動原則を反映
+
+━━━━━━━━━━━━━━━━━━
+結論：外来開設は見送り。在宅の「質的拡張」に集中する。
+（根拠：財務原則「無理な借入はしない」／戦略軸「地域密着・在宅優先」）
+━━━━━━━━━━━━━━━━━━
+
+▶ 頭打ちの本当の原因（経営判断AI）
+  10月：訪問452件・3ヶ月連続横ばい。
+  上位10社で68%集中 → 残り32%（推定52社）は未接触。
+  紹介網の開拓だけで月+80〜100件の余地がある。
+
+▶ 採用より先にやること（業務設計AI）
+  看護師移動時間42分/日は業界平均の1.5倍。
+  15名 × 14分/日削減 = 月+210時間 ≒ 月+30件が採用ゼロで実現。
+  採用コスト前年比+38%の状況で、まず生産性改善が先。
+
+▶ 財務3パターン比較（数字で検証AI）
+  在宅拡張：初期¥3.2M → 14ヶ月回収・年商¥2.8億
+  外来開設：初期¥18M → 42ヶ月・財務原則に抵触 ✗
+  → 投資対効果は在宅拡張が5.6倍優位
+
+▶ 市場タイミング（戦略分析AI）
+  競合2院が外来シフト → 地域の在宅需要に空白が生まれている
+  2024年診療報酬改定で在宅管理料が引き上げ済み
+  要介護認定者数は2030年まで年率9.2%増加予測
+
+━━━━━━━━━━━━━━━━━━
+▶ 今週、院長が決めること（参謀AI）
+  ① 訪問ルート最適化の開始をスタッフに宣言する
+     ※ 説明順序：「なぜか」→「何をするか」
+  ② PT採用の要件・給与レンジを確定する
+  ③ 未接触ケアマネ20社へのアプローチ担当を指名する
+━━━━━━━━━━━━━━━━━━`;
+
+let timers=[];
+
+function addLog(text){
+  const area=document.getElementById('logArea');
+  const div=document.createElement('div');
+  div.className='log-line';
+  div.innerHTML=`<div class="log-who">Orchestrator</div><div class="log-text">${text}</div>`;
+  area.appendChild(div);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show')));
+}
+
+function setActive(i){
+  document.getElementById('ag'+i).classList.add('active');
+  document.getElementById('s'+i).textContent=agents[i].working;
+}
+
+function setDone(i){
+  const c=document.getElementById('ag'+i);
+  c.classList.remove('active');c.classList.add('done');
+  document.getElementById('s'+i).textContent='完了';
+  document.getElementById('o'+i).textContent=agents[i].output;
+}
+
+function typeText(el,text,cb){
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i<text.length){el.textContent+=text[i++];}
+    else{clearInterval(iv);if(cb)cb();}
+  },13);
+  timers.push(iv);
+}
+
+function updateProgress(){
+  const total=12000;
+  const bar=document.getElementById('progressBar');
+  document.getElementById('progressWrap').classList.add('show');
+  let start=null;
+  function step(ts){
+    if(!start)start=ts;
+    const pct=Math.min((ts-start)/total*100,100);
+    bar.style.width=pct+'%';
+    if(pct<100)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function runPhilosophy(cb){
+  const box=document.getElementById('philBox');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('show')));
+  const body=document.getElementById('philBody');
+  philItems.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='phil-item';
+    div.innerHTML=`<span class="phil-icon">${item.icon}</span><span>${item.text}</span>`;
+    body.appendChild(div);
+    timers.push(setTimeout(()=>requestAnimationFrame(()=>requestAnimationFrame(()=>div.classList.add('show'))),500+i*400));
+  });
+  const DONE_AT=500+philItems.length*400+400;
+  timers.push(setTimeout(()=>{
+    document.getElementById('philSpinner').style.display='none';
+    const badge=document.getElementById('philBadge');
+    badge.textContent='✓ 理念・行動原則を読み込みました';badge.style.color='#15803d';
+    const st=document.getElementById('philStatus');
+    st.textContent='全エージェントに配布完了';st.classList.add('done');
+    box.style.borderColor='#86efac';
+    box.querySelector('.phil-head').style.background='#f0fdf4';
+    box.querySelector('.phil-head').style.borderColor='#86efac';
+  },DONE_AT));
+  timers.push(setTimeout(cb,DONE_AT+600));
+}
+
+function runReport(cb){
+  const box=document.getElementById('reportBox');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>box.classList.add('show')));
+  // Scan each block with a slight delay
+  for(let i=0;i<6;i++){
+    timers.push(setTimeout((idx=>{
+      return ()=>{
+        const rb=document.getElementById('rb'+idx);
+        const ri=document.getElementById('ri'+idx);
+        rb.classList.add('scanning');
+        ri.textContent='◎';
+        timers.push(setTimeout(()=>{
+          rb.classList.remove('scanning');rb.classList.add('scanned');ri.textContent='✓';
+        },500));
+      };
+    })(i), 400+i*380));
+  }
+  const DONE_AT=400+6*380+600;
+  timers.push(setTimeout(()=>{
+    document.getElementById('rptSpinner').style.display='none';
+    const badge=document.getElementById('rptBadge');
+    badge.textContent='✓ 月次経営レポート（2024年10月）を読み込みました';badge.style.color='#15803d';
+    const st=document.getElementById('rptStatus');
+    st.textContent='6項目を分析完了';st.classList.add('done');
+    box.style.borderColor='#86efac';
+    box.querySelector('.report-head').style.background='#f0fdf4';
+    box.querySelector('.report-head').style.borderColor='#86efac';
+  },DONE_AT));
+  timers.push(setTimeout(()=>{
+    const tb=document.getElementById('taskBox');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>tb.classList.add('show')));
+  },DONE_AT+500));
+  timers.push(setTimeout(cb,DONE_AT+1100));
+}
+
+function startDemo(){
+  updateProgress();
+  logs.forEach(l=>timers.push(setTimeout(()=>addLog(l.text),l.delay)));
+  agents.forEach((a,i)=>{
+    timers.push(setTimeout(()=>setActive(i),a.start));
+    timers.push(setTimeout(()=>setDone(i),a.end));
+  });
+  const lastEnd=Math.max(...agents.map(a=>a.end));
+  timers.push(setTimeout(()=>{
+    const box=document.getElementById('synthBox');box.classList.add('show');
+    typeText(document.getElementById('synthText'),synthContent,()=>{
+      document.getElementById('ctaBox').style.display='block';
+      document.getElementById('restartBtn').style.display='block';
+    });
+  },lastEnd+600));
+}
+
+function restart(){
+  timers.forEach(t=>{clearTimeout(t);clearInterval(t);});timers=[];
+  document.getElementById('logArea').innerHTML='';
+  for(let i=0;i<6;i++){
+    const c=document.getElementById('ag'+i);c.classList.remove('active','done');
+    document.getElementById('s'+i).textContent='待機中';document.getElementById('o'+i).textContent='';
+  }
+  document.getElementById('synthBox').classList.remove('show');
+  document.getElementById('synthText').textContent='';
+  document.getElementById('restartBtn').style.display='none';
+  document.getElementById('ctaBox').style.display='none';
+  document.getElementById('progressBar').style.width='0';
+
+  // reset philosophy
+  const pb=document.getElementById('philBox');
+  pb.classList.remove('show');pb.style.borderColor='';
+  const ph=pb.querySelector('.phil-head');ph.style.background='';ph.style.borderColor='';
+  document.getElementById('philSpinner').style.display='';
+  const pbadge=document.getElementById('philBadge');pbadge.textContent='クリニックの理念・行動原則を読み込み中';pbadge.style.color='';
+  const pst=document.getElementById('philStatus');pst.textContent='全エージェントに配布中…';pst.classList.remove('done');
+  document.getElementById('philBody').innerHTML='';
+
+  // reset report
+  const rb=document.getElementById('reportBox');
+  rb.classList.remove('show');rb.style.borderColor='';
+  const rh=rb.querySelector('.report-head');rh.style.background='';rh.style.borderColor='';
+  document.getElementById('rptSpinner').style.display='';
+  const rbadge=document.getElementById('rptBadge');rbadge.textContent='月次経営レポート（2024年10月）を読み込み中';rbadge.style.color='';
+  const rst=document.getElementById('rptStatus');rst.textContent='スキャン中…';rst.classList.remove('done');
+  for(let i=0;i<6;i++){
+    const block=document.getElementById('rb'+i);block.classList.remove('scanning','scanned');
+    document.getElementById('ri'+i).textContent='○';
+  }
+
+  document.getElementById('taskBox').classList.remove('show');
+  setTimeout(()=>runPhilosophy(()=>runReport(startDemo)),400);
+}
+
+runPhilosophy(()=>runReport(startDemo));
+
+function calcROI(){
+  const industry = document.getElementById('calcIndustry').value;
+  const staff = parseInt(document.getElementById('calcStaff').value) || 30;
+  const revM = parseInt(document.getElementById('calcRevenue').value) || 1760;
+  const revAnnual = revM * 12; // 万円/年
+
+  // multipliers by industry
+  const mx = {medical:1.0, consulting:1.15, it:1.2, manufacturing:0.88, retail:0.92, construction:0.85, other:1.0};
+  const m = mx[industry] || 1.0;
+
+  // calculations
+  const ceoHours = Math.round(12 * m);                          // 院長/社長の時間削減 h/週
+  const staffHours = Math.round(staff * 1.8 * m);               // スタッフ全体 h/週
+  const revenueUpPct = Math.round(12 * m * 10) / 10;           // 収益増加率 %
+  const revenueUp = Math.round(revAnnual * (revenueUpPct/100)); // 収益増加 万円/年
+  const costDown = Math.round(staff * 8 * m);                   // コスト削減 万円/年
+  const annualGain = revenueUp + costDown;
+  const setupCost = Math.round((150 + staff * 1.5) * m);        // 初期費用 万円
+  const payback = Math.max(2, Math.round(setupCost / (annualGain / 12)));
+  const roi = Math.round(annualGain / setupCost * 100);
+
+  const indLabels = {medical:'在宅医療',consulting:'コンサルティング',it:'IT・SaaS',manufacturing:'製造業',retail:'小売・サービス',construction:'建設・不動産',other:'その他'};
+
+  // update title
+  document.getElementById('myRoiTitle').textContent =
+    `${indLabels[industry]}・スタッフ${staff}名・月売上¥${revM.toLocaleString()}万の試算`;
+
+  // build grid cells
+  const cells = [
+    {label:'年間純便益', value:`¥${annualGain.toLocaleString()}万`, sub:'収益増+コスト削減'},
+    {label:'投資回収', value:`約${payback}ヶ月`, sub:`初期費用¥${setupCost}万`},
+    {label:'1年間ROI', value:`${roi.toLocaleString()}%`, sub:'保守的試算'},
+    {label:'社長の時間削減', value:`${ceoHours}h/週`, sub:'管理・判断業務'},
+    {label:'スタッフ時間削減', value:`${staffHours}h/週`, sub:`FTE換算約${(staffHours/40).toFixed(1)}名分`},
+    {label:'収益増加率', value:`+${revenueUpPct}%`, sub:`年+¥${revenueUp.toLocaleString()}万`},
+  ];
+  const grid = document.getElementById('myRoiGrid');
+  grid.style.gridTemplateColumns = window.innerWidth < 440 ? '1fr 1fr' : '1fr 1fr 1fr';
+  grid.innerHTML = cells.map(c=>`
+    <div style="text-align:center;padding:10px 6px;background:#f9fafb;border-radius:8px;">
+      <div style="font-size:10px;color:#666;margin-bottom:4px;font-weight:600;">${c.label}</div>
+      <div style="font-size:18px;font-weight:700;color:#111;line-height:1.2;">${c.value}</div>
+      <div style="font-size:10px;color:#aaa;margin-top:3px;">${c.sub}</div>
+    </div>`).join('');
+
+  document.getElementById('myRoiSummary').innerHTML =
+    `初期投資¥${setupCost}万を<strong style="color:#15803d">${payback}ヶ月で回収</strong>、年間¥${annualGain.toLocaleString()}万の純便益。スタッフを増やさず、社長の判断速度を上げ、収益を${revenueUpPct}%伸ばすための投資です。<br><span style="color:#bbb;font-size:11px;">※ 業種・規模・現状の業務効率により変動します。</span>`;
+
+  document.getElementById('myRoiBox').style.display = 'block';
+  document.getElementById('myRoiBox').scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+</body>
+</html>
