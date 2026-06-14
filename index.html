@@ -123,6 +123,44 @@ h1{font-size:28px;font-weight:700;line-height:1.3;letter-spacing:-.5px;margin-bo
 <h1>6体が自分で考えて、<br>同時に動く</h1>
 <p class="doc-lead">院長から1つのタスクが届いた瞬間、AIエージェントたちが自律的に役割分担して動き始めます。指示は1回だけ。</p>
 
+<div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:32px;">
+  <div style="background:#111;border-radius:12px 12px 0 0;padding:20px 24px 16px;">
+    <div style="font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">あなたの会社で動かすと？</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;line-height:1.35;margin-bottom:6px;">3つ入力するだけで<br>あなたの会社のROIが出ます</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.5);">業種・規模を入れると数字があなたの会社に書き換わります。</div>
+  </div>
+  <div style="background:#1a1a1a;padding:16px 24px 20px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="grid-column:1/-1;">
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">業種</div>
+        <select id="calcIndustry2" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:14px;font-family:inherit;">
+          <option value="medical">在宅医療・クリニック</option>
+          <option value="consulting">コンサルティング・士業</option>
+          <option value="it">IT・SaaS・Web</option>
+          <option value="manufacturing">製造業・メーカー</option>
+          <option value="retail">小売・EC・サービス業</option>
+          <option value="construction">建設・不動産</option>
+          <option value="other">その他</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">スタッフ数（名）</div>
+        <input id="calcStaff2" type="number" min="3" max="500" value="30" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:16px;font-family:inherit;">
+      </div>
+      <div>
+        <div style="font-size:11px;color:#888;margin-bottom:5px;font-weight:700;">月売上（万円）</div>
+        <input id="calcRevenue2" type="number" min="100" max="100000" value="1760" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#fff;font-size:16px;font-family:inherit;">
+      </div>
+    </div>
+    <button onclick="calcROI2()" style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:100px;border:none;background:#fff;color:#111;cursor:pointer;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">あなたの会社で試算する →</button>
+  </div>
+  <div id="myRoiBox2" style="display:none;padding:16px 20px;border-top:1px solid #e5e7eb;">
+    <div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:10px;" id="myRoiTitle2"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="myRoiGrid2"></div>
+    <div style="font-size:12px;color:#555;line-height:1.75;" id="myRoiSummary2"></div>
+  </div>
+</div>
+
 <!-- 理念フェーズ -->
 <div class="philosophy-box" id="philBox">
   <div class="phil-head">
@@ -595,56 +633,49 @@ function restart(){
 
 runPhilosophy(()=>runReport(startDemo));
 
-function calcROI(){
-  const industry = document.getElementById('calcIndustry').value;
-  const staff = parseInt(document.getElementById('calcStaff').value) || 30;
-  const revM = parseInt(document.getElementById('calcRevenue').value) || 1760;
-  const revAnnual = revM * 12; // 万円/年
+function calcROI2(){
+  const industry=document.getElementById('calcIndustry2').value;
+  const staff=parseInt(document.getElementById('calcStaff2').value)||30;
+  const revM=parseInt(document.getElementById('calcRevenue2').value)||1760;
+  calcROICore(industry,staff,revM,'myRoiBox2','myRoiTitle2','myRoiGrid2','myRoiSummary2');
+  document.getElementById('myRoiBox2').style.display='block';
+}
 
-  // multipliers by industry
-  const mx = {medical:1.0, consulting:1.15, it:1.2, manufacturing:0.88, retail:0.92, construction:0.85, other:1.0};
-  const m = mx[industry] || 1.0;
-
-  // calculations
-  const ceoHours = Math.round(12 * m);                          // 院長/社長の時間削減 h/週
-  const staffHours = Math.round(staff * 1.8 * m);               // スタッフ全体 h/週
-  const revenueUpPct = Math.round(12 * m * 10) / 10;           // 収益増加率 %
-  const revenueUp = Math.round(revAnnual * (revenueUpPct/100)); // 収益増加 万円/年
-  const costDown = Math.round(staff * 8 * m);                   // コスト削減 万円/年
-  const annualGain = revenueUp + costDown;
-  const setupCost = Math.round((150 + staff * 1.5) * m);        // 初期費用 万円
-  const payback = Math.max(2, Math.round(setupCost / (annualGain / 12)));
-  const roi = Math.round(annualGain / setupCost * 100);
-
-  const indLabels = {medical:'在宅医療',consulting:'コンサルティング',it:'IT・SaaS',manufacturing:'製造業',retail:'小売・サービス',construction:'建設・不動産',other:'その他'};
-
-  // update title
-  document.getElementById('myRoiTitle').textContent =
-    `${indLabels[industry]}・スタッフ${staff}名・月売上¥${revM.toLocaleString()}万の試算`;
-
-  // build grid cells
-  const cells = [
-    {label:'年間純便益', value:`¥${annualGain.toLocaleString()}万`, sub:'収益増+コスト削減'},
-    {label:'投資回収', value:`約${payback}ヶ月`, sub:`初期費用¥${setupCost}万`},
-    {label:'1年間ROI', value:`${roi.toLocaleString()}%`, sub:'保守的試算'},
-    {label:'社長の時間削減', value:`${ceoHours}h/週`, sub:'管理・判断業務'},
-    {label:'スタッフ時間削減', value:`${staffHours}h/週`, sub:`FTE換算約${(staffHours/40).toFixed(1)}名分`},
-    {label:'収益増加率', value:`+${revenueUpPct}%`, sub:`年+¥${revenueUp.toLocaleString()}万`},
+function calcROICore(industry,staff,revM,boxId,titleId,gridId,summaryId){
+  const revAnnual=revM*12;
+  const mx={medical:1.0,consulting:1.15,it:1.2,manufacturing:0.88,retail:0.92,construction:0.85,other:1.0};
+  const m=mx[industry]||1.0;
+  const ceoHours=Math.round(12*m);
+  const staffHours=Math.round(staff*1.8*m);
+  const revenueUpPct=Math.round(12*m*10)/10;
+  const revenueUp=Math.round(revAnnual*(revenueUpPct/100));
+  const costDown=Math.round(staff*8*m);
+  const annualGain=revenueUp+costDown;
+  const setupCost=Math.round((150+staff*1.5)*m);
+  const payback=Math.max(2,Math.round(setupCost/(annualGain/12)));
+  const roi=Math.round(annualGain/setupCost*100);
+  const indLabels={medical:'在宅医療',consulting:'コンサルティング',it:'IT・SaaS',manufacturing:'製造業',retail:'小売・サービス',construction:'建設・不動産',other:'その他'};
+  document.getElementById(titleId).textContent=`✓ ${indLabels[industry]}・スタッフ${staff}名・月売上¥${revM.toLocaleString()}万の試算`;
+  const cells=[
+    {label:'年間純便益',value:`¥${annualGain.toLocaleString()}万`,sub:'収益増+コスト削減'},
+    {label:'投資回収',value:`約${payback}ヶ月`,sub:`初期費用¥${setupCost}万`},
+    {label:'1年間ROI',value:`${roi.toLocaleString()}%`,sub:'保守的試算'},
+    {label:'社長の時間削減',value:`${ceoHours}h/週`,sub:'管理・判断業務'},
+    {label:'スタッフ時間削減',value:`${staffHours}h/週`,sub:`FTE換算約${(staffHours/40).toFixed(1)}名分`},
+    {label:'収益増加率',value:`+${revenueUpPct}%`,sub:`年+¥${revenueUp.toLocaleString()}万`},
   ];
-  const grid = document.getElementById('myRoiGrid');
-  grid.style.gridTemplateColumns = window.innerWidth < 440 ? '1fr 1fr' : '1fr 1fr 1fr';
-  grid.innerHTML = cells.map(c=>`
-    <div style="text-align:center;padding:10px 6px;background:#f9fafb;border-radius:8px;">
-      <div style="font-size:10px;color:#666;margin-bottom:4px;font-weight:600;">${c.label}</div>
-      <div style="font-size:18px;font-weight:700;color:#111;line-height:1.2;">${c.value}</div>
-      <div style="font-size:10px;color:#aaa;margin-top:3px;">${c.sub}</div>
-    </div>`).join('');
+  const grid=document.getElementById(gridId);
+  grid.innerHTML=cells.map(c=>`<div style="text-align:center;padding:10px 6px;background:#f9fafb;border-radius:8px;"><div style="font-size:10px;color:#666;margin-bottom:4px;font-weight:600;">${c.label}</div><div style="font-size:18px;font-weight:700;color:#111;line-height:1.2;">${c.value}</div><div style="font-size:10px;color:#aaa;margin-top:3px;">${c.sub}</div></div>`).join('');
+  document.getElementById(summaryId).innerHTML=`初期投資¥${setupCost}万を<strong style="color:#15803d">${payback}ヶ月で回収</strong>、年間¥${annualGain.toLocaleString()}万の純便益。スタッフを増やさず、社長の判断速度を上げ、収益を${revenueUpPct}%伸ばすための投資です。<br><span style="color:#bbb;font-size:11px;">※ 業種・規模・現状の業務効率により変動します。</span>`;
+}
 
-  document.getElementById('myRoiSummary').innerHTML =
-    `初期投資¥${setupCost}万を<strong style="color:#15803d">${payback}ヶ月で回収</strong>、年間¥${annualGain.toLocaleString()}万の純便益。スタッフを増やさず、社長の判断速度を上げ、収益を${revenueUpPct}%伸ばすための投資です。<br><span style="color:#bbb;font-size:11px;">※ 業種・規模・現状の業務効率により変動します。</span>`;
-
-  document.getElementById('myRoiBox').style.display = 'block';
-  document.getElementById('myRoiBox').scrollIntoView({behavior:'smooth', block:'start'});
+function calcROI(){
+  const industry=document.getElementById('calcIndustry').value;
+  const staff=parseInt(document.getElementById('calcStaff').value)||30;
+  const revM=parseInt(document.getElementById('calcRevenue').value)||1760;
+  calcROICore(industry,staff,revM,'myRoiBox','myRoiTitle','myRoiGrid','myRoiSummary');
+  document.getElementById('myRoiBox').style.display='block';
+  document.getElementById('myRoiBox').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 </body>
