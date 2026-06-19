@@ -8,12 +8,9 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#fff;color:#1a1a1a;line-height:1.8;font-size:15px;}
 .page{max-width:700px;margin:0 auto;padding:48px 20px 100px;}
-
 .eyebrow{font-size:11px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
 h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .lead{font-size:14px;color:#555;border-bottom:1px solid #eee;padding-bottom:24px;margin-bottom:32px;}
-
-/* 領域リスト */
 .domain-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
 .dl-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;border:2px solid #e5e5e5;border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;width:100%;}
 .dl-btn:hover{border-color:#93c5fd;background:#f8faff;}
@@ -24,8 +21,6 @@ h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .dl-sub{font-size:11px;color:#999;margin-top:2px;}
 .dl-time{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#fef3c7;color:#92400e;flex-shrink:0;white-space:nowrap;}
 .dl-btn.active .dl-time{background:#dbeafe;color:#1d4ed8;}
-
-/* デモウィンドウ */
 .demo-win{border:1.5px solid #e0e0e0;border-radius:12px;overflow:hidden;display:none;}
 .demo-win.show{display:block;}
 .demo-bar{background:#1e3a8a;padding:14px 18px;color:#fff;}
@@ -33,11 +28,9 @@ h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .db-title{font-size:15px;font-weight:700;}
 .db-docs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
 .db-doc{font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.15);}
-
 .demo-body{padding:16px 18px;background:#fafaf9;}
 .task-label{font-size:10px;font-weight:700;letter-spacing:.5px;color:#aaa;margin-bottom:5px;}
 .task-text{background:#fff;border:1.5px solid #e5e5e5;border-radius:8px;padding:10px 14px;font-size:13px;color:#444;line-height:1.65;margin-bottom:16px;}
-
 .agents-col{display:flex;flex-direction:column;gap:8px;}
 .ag{border:1.5px solid #e5e5e5;border-radius:9px;overflow:hidden;background:#fff;transition:border-color .3s,box-shadow .3s;}
 .ag.running{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.1);}
@@ -58,340 +51,257 @@ h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .ag-doc{margin-top:8px;background:#f8faff;border:1px solid #bfdbfe;border-radius:7px;padding:9px 12px;}
 .ag-doc-label{font-size:10px;font-weight:700;color:#1d4ed8;margin-bottom:5px;letter-spacing:.3px;}
 .ag-doc-text{font-size:12px;color:#334155;line-height:1.8;white-space:pre-wrap;font-family:menlo,monospace;}
-
-/* 完了ボックス */
 .result-box{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;margin-top:14px;display:none;}
 .result-box.show{display:block;}
-.rb-label{font-size:11px;font-weight:700;color:#15803d;margin-bottom:8px;letter-spacing:.3px;}
+.rb-label{font-size:11px;font-weight:700;color:#15803d;margin-bottom:6px;letter-spacing:.3px;}
 .rb-note{font-size:12px;color:#166534;line-height:1.7;margin-bottom:10px;}
 .rb-files{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
 .rb-file{font-size:11px;padding:3px 10px;border-radius:20px;background:#dcfce7;color:#15803d;font-weight:600;}
-
-/* 書類生成ボタン */
-.gen-btns{display:flex;flex-direction:column;gap:8px;}
-.gen-btn{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:13px;font-weight:700;color:#333;font-family:inherit;transition:all .15s;text-align:left;width:100%;}
-.gen-btn:hover{border-color:#1d4ed8;background:#eff6ff;color:#1d4ed8;}
-.gen-btn.loading{opacity:.6;cursor:wait;}
-.gen-btn .btn-icon{font-size:16px;flex-shrink:0;}
-.gen-btn .btn-label{flex:1;}
-.gen-btn .btn-fmt{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#f0f0ee;color:#888;flex-shrink:0;}
-.gen-btn.done-btn{border-color:#22c55e;background:#f0fdf4;color:#15803d;}
-.gen-btn.done-btn .btn-fmt{background:#dcfce7;color:#15803d;}
-.gen-btn.done-btn a{color:#15803d;text-decoration:underline;font-size:12px;}
-
+.out-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 16px;border-radius:9px;border:none;background:#111;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
+.out-btn:hover{opacity:.85;}
+/* ドキュメントプレビュー */
+.doc-preview{margin-top:16px;border:1.5px solid #e5e5e5;border-radius:10px;overflow:hidden;display:none;}
+.doc-preview.show{display:block;}
+.doc-toolbar{background:#f5f5f3;border-bottom:1px solid #e5e5e5;padding:10px 14px;display:flex;align-items:center;gap:8px;}
+.doc-filename{font-size:12px;font-weight:700;color:#333;flex:1;}
+.doc-badge{font-size:11px;padding:2px 8px;border-radius:20px;background:#fff;border:1px solid #ddd;color:#666;font-weight:600;}
+.doc-page{background:#fff;margin:16px;border-radius:4px;box-shadow:0 1px 6px rgba(0,0,0,.1);padding:28px 30px;position:relative;}
+.page-num{position:absolute;bottom:10px;right:16px;font-size:10px;color:#ccc;}
+.doc-title{font-size:17px;font-weight:700;text-align:center;border-bottom:2px solid #1e3a8a;padding-bottom:10px;margin-bottom:14px;}
+.doc-meta{font-size:11px;color:#888;text-align:right;margin-bottom:16px;}
+.doc-h2{font-size:12px;font-weight:700;background:#1e3a8a;color:#fff;padding:5px 10px;border-radius:4px;margin:14px 0 8px;}
+.doc-h3{font-size:12px;font-weight:700;color:#1e3a8a;border-left:3px solid #1e3a8a;padding-left:8px;margin:10px 0 5px;}
+.doc-p{font-size:12px;color:#333;line-height:1.85;margin-bottom:7px;}
+.doc-check span{display:block;font-size:12px;color:#333;line-height:1.85;padding:1px 0;}
+.doc-warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px;font-size:11px;color:#9a3412;margin:8px 0;line-height:1.7;}
+.doc-hl{background:#fef9c3;border-left:3px solid #fbbf24;padding:8px 10px;font-size:11px;color:#78350f;margin:8px 0;line-height:1.7;}
+.doc-tbl{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0;}
+.doc-tbl th{background:#1e3a8a;color:#fff;padding:6px 8px;text-align:left;font-weight:700;}
+.doc-tbl td{padding:6px 8px;border-bottom:1px solid #eee;color:#333;line-height:1.6;vertical-align:top;}
+.doc-tbl tr:nth-child(even) td{background:#f9f9f7;}
+.doc-mail{background:#f9f9f7;border:1px solid #e5e5e5;border-radius:7px;padding:12px 14px;font-size:12px;color:#333;line-height:1.85;}
 .rerun-btn{margin-top:12px;width:100%;padding:9px;background:#fff;border:1.5px solid #ddd;border-radius:100px;font-size:13px;font-weight:700;color:#777;cursor:pointer;font-family:inherit;display:none;}
 .rerun-btn:hover{background:#f5f5f5;}
-
-hr{border:none;border-top:1px solid #eee;margin:40px 0;}
+hr{border:none;border-top:1px solid #eee;margin:48px 0;}
 .footer{font-size:12px;color:#ccc;text-align:center;}
 </style>
 </head>
 <body>
 <div class="page">
-
 <div class="eyebrow">AIエージェント × 訪問介護コンサル</div>
 <h1>AI化できる業務は、<br>書類作成だけではありません</h1>
-<p class="lead">制度確認・文書作成・申請準備・説明資料化まで、5つの領域でAIエージェントが動く様子と、実際に出力される書類を確認できます。</p>
-
+<p class="lead">制度確認・文書作成・申請準備・説明資料化まで、5つの領域でAIエージェントが並列で動きます。「実際に出力する」を押すと、そのままページ内に書類が展開されます。</p>
 <div class="domain-list" id="domList"></div>
 <div class="demo-win" id="demoWin"></div>
-
 <hr>
 <div class="footer">シゴトAI — AIエージェント伴奏プログラム</div>
 </div>
-
 <script>
 const D=[
-  {
-    icon:'📄',title:'法務・労務文書',time:'6時間 → 35分',
-    docs:['就業規則','雇用契約書','職務規程','各種規程案'],
-    task:'「新しく採用するヘルパー3名の雇用契約書と、訪問介護事業所の就業規則の最新版を作りたい」',
-    agents:[
-      {role:'Legal',rc:'#ede9fe',rt:'#5b21b6',name:'法務エージェント',
-       work:'介護労働法・労基法・訪問介護特例を確認中',
-       doc:'就業規則 叩き台',
-       out:`【就業規則 骨格（登録ヘルパー）】
-
-第1条（適用範囲）本規則は訪問介護事業所〇〇に勤務する登録ヘルパーに適用する。
-第3条（労働時間）訪問介護サービスの特性上、移動時間の取り扱いは〇〇とする。
-第7条（賃金）訪問件数・滞在時間に基づく出来高制とし、最低賃金を下回らないよう保証する。
-
-⚠️ 登録型ヘルパーの「待機時間」は労基法上の労働時間に含む可能性あり→確認推奨`},
-      {role:'HR',rc:'#dbeafe',rt:'#1e40af',name:'雇用契約エージェント',
-       work:'雇用形態・勤務条件・給与体系を変換中',
-       doc:'契約書チェックリスト',
-       out:`【雇用契約書 記載必須7項目チェック】
-
-✅ ① 労働契約の期間
-✅ ② 訪問先・業務内容（サービス種別）
-✅ ③ 始業・終業の時刻 ／ 休憩時間
-✅ ④ 賃金（計算方法・支払日）
-✅ ⑤ 退職に関する事項
-✅ ⑥ 健康保険等の加入状況
-⚠️ ⑦ 感染症発生時の就業制限 → 追記を推奨`},
-      {role:'QA',rc:'#fce7f3',rt:'#9d174d',name:'審査エージェント',
-       work:'法的リスク・記載漏れを精査中',
-       doc:'法的リスクレポート',
-       out:`【リスク指摘 3件】
-
-① 「登録ヘルパー＝請負」は誤り
-　→ 指揮命令下にある場合は労働者（偽装請負リスク）
-
-② 有給休暇の付与条件が未記載
-　→ 週30時間以上のヘルパーには正規同様に付与義務
-
-③ 「損害を給与から天引き」条項は違法
-　→ 削除必須`},
-    ],
-    result:{time:'35分',saved:'約5.5時間削減',
-      files:['就業規則（Word）','雇用契約書3名分','チェックリスト','リスクレポート'],
-      note:'「法律確認」「書式作成」「リスク審査」を同時実行。弁護士確認前の叩き台が即完成。'},
-    gendoc:{label:'就業規則の叩き台を今すぐ作る',fmt:'Google ドキュメント',
-      prompt:'訪問介護事業所の就業規則（登録ヘルパー向け）の叩き台をGoogleドキュメントで今すぐ作成してください。法的チェックポイントのコメント付きで。'}
+  {icon:'📄',title:'法務・労務文書',time:'6時間 → 35分',
+   docs:['就業規則','雇用契約書','職務規程','各種規程案'],
+   task:'「新しく採用するヘルパー3名の雇用契約書と、訪問介護事業所の就業規則の最新版を作りたい」',
+   agents:[
+     {role:'Legal',rc:'#ede9fe',rt:'#5b21b6',name:'法務エージェント',work:'介護労働法・労基法・訪問介護特例を確認中',doc:'就業規則 叩き台',
+      out:'【就業規則 骨格（登録ヘルパー）】\n\n第1条（適用範囲）本規則は訪問介護事業所〇〇に勤務する登録ヘルパーに適用する。\n第3条（労働時間）移動時間の取り扱いは別途規程による。\n第7条（賃金）出来高制とし、最低賃金を下回らないよう保証する。\n\n⚠️ 登録型ヘルパーの「待機時間」は労基法上の労働時間に含む可能性あり→確認推奨'},
+     {role:'HR',rc:'#dbeafe',rt:'#1e40af',name:'雇用契約エージェント',work:'雇用形態・給与体系を変換中',doc:'契約書チェックリスト',
+      out:'【雇用契約書 記載必須7項目チェック】\n\n✅ ① 労働契約の期間\n✅ ② 訪問先・業務内容（サービス種別）\n✅ ③ 始業・終業の時刻 ／ 休憩時間\n✅ ④ 賃金（計算方法・支払日）\n✅ ⑤ 退職に関する事項\n✅ ⑥ 健康保険等の加入状況\n⚠️ ⑦ 感染症発生時の就業制限 → 追記を推奨'},
+     {role:'QA',rc:'#fce7f3',rt:'#9d174d',name:'審査エージェント',work:'法的リスク・記載漏れを精査中',doc:'法的リスクレポート',
+      out:'【リスク指摘 3件】\n\n① 「登録ヘルパー＝請負」は誤り\n　→ 指揮命令下にある場合は労働者（偽装請負リスク）\n② 有給休暇の付与条件が未記載\n　→ 週30時間以上は正規同様に付与義務\n③ 「損害を給与から天引き」条項は違法 → 削除必須'},
+   ],
+   result:{time:'35分',saved:'約5.5時間削減',files:['就業規則','雇用契約書（3名分）','チェックリスト','リスクレポート'],note:'「法律確認」「書式作成」「リスク審査」を同時実行。弁護士確認前の叩き台が即完成。'},
+   docTitle:'訪問介護事業所 就業規則 ＋ 雇用契約書チェックリスト',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">訪問介護事業所 就業規則（登録ヘルパー用）叩き台</div>
+<div class="doc-meta">作成日：2024年XX月XX日　版：v1.0（叩き台）</div>
+<div class="doc-h2">第1章　総則</div>
+<div class="doc-h3">第1条（目的・適用範囲）</div>
+<div class="doc-p">本規則は、〇〇訪問介護事業所に勤務する登録ヘルパーの労働条件、服務規律その他就業に関する事項を定めることを目的とする。</div>
+<div class="doc-h2">第2章　雇用形態</div>
+<div class="doc-h3">第3条（雇用形態）</div>
+<div class="doc-p">登録ヘルパーは、利用者のサービス提供依頼に応じて勤務する非常勤登録型の雇用形態とする。</div>
+<div class="doc-h2">第3章　労働時間・賃金</div>
+<div class="doc-h3">第7条（賃金の計算）</div>
+<div class="doc-p">賃金は訪問件数・滞在時間に基づく出来高制とし、いかなる場合も最低賃金（適用地域の時間額）を下回らないよう保証する。</div>
+<div class="doc-h2">第4章　有給休暇</div>
+<div class="doc-h3">第18条（年次有給休暇）</div>
+<div class="doc-p">雇入れの日から6ヶ月継続勤務し、全労働日の8割以上出勤した者には年次有給休暇を付与する。週30時間以上勤務のヘルパーは正規職員と同様の日数を付与する。</div>
+<div class="doc-warn">⚠️ 法的注意：登録型ヘルパーの「待機時間」は、事業所の指示のもとにある場合、労働時間に該当する可能性があります。社会保険労務士への確認を推奨します。</div>
+<div class="doc-h2">雇用契約書 チェックリスト</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>記載内容</th><th>確認</th></tr></thead>
+<tbody>
+<tr><td>① 労働契約の期間</td><td>期間の定め有無・更新基準</td><td>✅</td></tr>
+<tr><td>② 業務内容</td><td>訪問介護サービス（身体介護・生活援助）</td><td>✅</td></tr>
+<tr><td>③ 始業・終業・休憩</td><td>サービス提供時間に準ずる</td><td>✅</td></tr>
+<tr><td>④ 賃金</td><td>計算方法・締日・支払日</td><td>✅</td></tr>
+<tr><td>⑤ 退職に関する事項</td><td>自己都合・解雇の条件</td><td>✅</td></tr>
+<tr><td>⑥ 社会保険</td><td>加入状況（週30h以上は加入義務）</td><td>✅</td></tr>
+<tr><td>⑦ 感染症発生時</td><td>就業制限の条件と手続き</td><td>⚠️ 要追記</td></tr>
+</tbody></table>
+<div class="doc-h2">法的リスクレポート</div>
+<div class="doc-p">① 偽装請負リスク：「請負」と記載しても実態が指揮命令下なら労働者に該当。<br>② 有給休暇：週30時間以上のヘルパーには正規同様の付与義務あり。<br>③ 損害賠償の天引き：労基法第24条（賃金の全額払い）に違反。即時削除が必要。</div>
+<div class="page-num">1 / 1</div></div>`
   },
-  {
-    icon:'🏠',title:'介護事業所書類',time:'8時間 → 45分',
-    docs:['運営規程','重要事項説明書','契約書','マニュアル'],
-    task:'「指定更新に向けて、運営規程と重要事項説明書を2024年報酬改定に合わせて更新したい」',
-    agents:[
-      {role:'Research',rc:'#fef9c3',rt:'#854d0e',name:'制度調査エージェント',
-       work:'2024年介護報酬改定・変更点を確認中',
-       doc:'改定ポイント整理',
-       out:`【2024年報酬改定 訪問介護への影響】
-
-❶ 基本報酬：身体介護・生活援助ともに引き下げ（▲約2〜3%）
-❷ 処遇改善加算：新加算区分の統合→書類様式の変更が必要
-❸ 特定事業所加算：研修時間の記録方法が変更
-❹ 重要事項説明書：サービス内容・料金表の改訂が義務
-
-⚠️ 更新期限：改定適用から3ヶ月以内に届出が必要`},
-      {role:'Doc',rc:'#dcfce7',rt:'#15803d',name:'書類作成エージェント',
-       work:'改定内容に合わせて書類を更新中',
-       doc:'改訂版（差分マーク付き）',
-       out:`【重要事項説明書 更新箇所（差分）】
-
-変更前：「身体介護1時間未満 ¥3,950（2021年単価）」
-変更後：「身体介護1時間未満 ¥3,830（2024年単価）」
-
-変更前：「処遇改善加算（Ⅰ）…14.9%」
-変更後：「処遇改善加算（新区分）…13.6%」
-
-追加必須：「感染症・災害時の対応方針」の記載（義務化）`},
-      {role:'Manual',rc:'#e0e7ff',rt:'#3730a3',name:'マニュアルエージェント',
-       work:'スタッフ向けマニュアルを更新中',
-       doc:'スタッフ用マニュアル',
-       out:`【マニュアル 更新3箇所】
-
-① 感染症対応フロー（新規追加）
-　利用者が発熱→サービス継続/中止の判断フローチャート
-
-② 身体介護の記録様式（改訂）
-　新加算取得に必要な記録項目を追加
-
-③ 緊急時対応（A4・1枚版）
-　ヘルパーが現場でスマホで確認できる簡易版`},
-    ],
-    result:{time:'45分',saved:'約7時間削減',
-      files:['運営規程（改訂版）','重要事項説明書（差分付）','スタッフマニュアル','改定ポイント一覧'],
-      note:'制度調査→書類更新→マニュアル反映を並列実行。「どこを直せばいいか」の確認から始められる。'},
-    gendoc:{label:'重要事項説明書（2024年改定対応）を今すぐ作る',fmt:'Google ドキュメント',
-      prompt:'訪問介護事業所の重要事項説明書（2024年介護報酬改定対応版）をGoogleドキュメントで今すぐ作成してください。変更箇所にコメントを入れてください。'}
+  {icon:'🏠',title:'介護事業所書類',time:'8時間 → 45分',
+   docs:['運営規程','重要事項説明書','契約書','マニュアル'],
+   task:'「指定更新に向けて、運営規程と重要事項説明書を2024年報酬改定に合わせて更新したい」',
+   agents:[
+     {role:'Research',rc:'#fef9c3',rt:'#854d0e',name:'制度調査エージェント',work:'2024年介護報酬改定・変更点を確認中',doc:'改定ポイント整理',
+      out:'【2024年報酬改定 訪問介護への影響】\n\n❶ 基本報酬：身体介護・生活援助ともに引き下げ（▲約2〜3%）\n❷ 処遇改善加算：新加算区分の統合→書類様式の変更が必要\n❸ 特定事業所加算：研修時間の記録方法が変更\n❹ 重要事項説明書：サービス内容・料金表の改訂が義務\n\n⚠️ 更新期限：改定適用から3ヶ月以内に届出が必要'},
+     {role:'Doc',rc:'#dcfce7',rt:'#15803d',name:'書類作成エージェント',work:'改定内容に合わせて書類を更新中',doc:'改訂版（差分マーク付き）',
+      out:'【重要事項説明書 更新箇所（差分）】\n\n変更前：「身体介護1時間未満 ¥3,950（2021年単価）」\n変更後：「身体介護1時間未満 ¥3,830（2024年単価）」\n\n変更前：「処遇改善加算（Ⅰ）…14.9%」\n変更後：「処遇改善加算（新区分）…13.6%」\n\n追加必須：「感染症・災害時の対応方針」の記載（義務化）'},
+     {role:'Manual',rc:'#e0e7ff',rt:'#3730a3',name:'マニュアルエージェント',work:'スタッフ向けマニュアルを更新中',doc:'スタッフ用マニュアル',
+      out:'【マニュアル 更新3箇所】\n\n① 感染症対応フロー（新規追加）\n　利用者が発熱→サービス継続/中止の判断フローチャート\n② 身体介護の記録様式（改訂）\n　新加算取得に必要な記録項目を追加\n③ 緊急時対応（A4・1枚版）\n　ヘルパーが現場でスマホで確認できる簡易版'},
+   ],
+   result:{time:'45分',saved:'約7時間削減',files:['運営規程（改訂版）','重要事項説明書（差分付）','スタッフマニュアル','改定ポイント一覧'],note:'制度調査→書類更新→マニュアル反映を並列実行。「どこを直せばいいか」がすぐわかる。'},
+   docTitle:'重要事項説明書（2024年介護報酬改定対応版）',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">重要事項説明書（2024年介護報酬改定対応版）</div>
+<div class="doc-meta">作成日：2024年XX月XX日　※赤字箇所が変更点</div>
+<div class="doc-h2">1. 事業所の概要</div>
+<div class="doc-p">事業所名：〇〇訪問介護事業所／所在地：〇〇市〇〇町〇〇番地／電話：0XX-XXX-XXXX</div>
+<div class="doc-h2">2. サービス内容と料金（2024年改定版）</div>
+<table class="doc-tbl">
+<thead><tr><th>サービス区分</th><th>2021年単価</th><th>2024年単価</th><th>変更</th></tr></thead>
+<tbody>
+<tr><td>身体介護 20分未満</td><td>¥1,670</td><td>¥1,620</td><td style="color:#dc2626;font-weight:700">▼改定</td></tr>
+<tr><td>身体介護 30分以上1時間未満</td><td>¥3,950</td><td>¥3,830</td><td style="color:#dc2626;font-weight:700">▼改定</td></tr>
+<tr><td>生活援助 20分以上45分未満</td><td>¥1,830</td><td>¥1,780</td><td style="color:#dc2626;font-weight:700">▼改定</td></tr>
+<tr><td>生活援助 45分以上</td><td>¥2,250</td><td>¥2,200</td><td style="color:#dc2626;font-weight:700">▼改定</td></tr>
+</tbody></table>
+<div class="doc-h2">3. 加算について（2024年改定）</div>
+<table class="doc-tbl">
+<thead><tr><th>加算区分</th><th>旧加算率</th><th>新加算率</th></tr></thead>
+<tbody>
+<tr><td>処遇改善加算（新区分I）</td><td>14.9%</td><td>13.6%</td></tr>
+<tr><td>特定事業所加算（I）</td><td>20%</td><td>20%（要件変更）</td></tr>
+</tbody></table>
+<div class="doc-warn">⚠️ 義務化（2024年改定）：感染症・災害発生時の対応方針の記載が必要になりました。</div>
+<div class="doc-h2">4. 感染症・災害時の対応方針（新規追加）</div>
+<div class="doc-p">① 利用者または同居家族に感染疑いがある場合：管理者に報告の上、主治医の指示を仰ぐ<br>② 事業所スタッフが感染した場合：代替ヘルパーの手配を最優先で行う<br>③ 災害発生時：BCPに基づき、安否確認を最優先とする</div>
+<div class="page-num">1 / 1</div></div>`
   },
-  {
-    icon:'📋',title:'指定申請・変更届',time:'10時間 → 1時間',
-    docs:['必要書類リスト','チェックリスト','提出前確認'],
-    task:'「来月、訪問介護の事業所開設に向けて指定申請を出す。東京都への申請で何が必要か全部洗い出してほしい」',
-    agents:[
-      {role:'Research',rc:'#fef9c3',rt:'#854d0e',name:'制度調査エージェント',
-       work:'東京都の指定申請要件・提出書類を確認中',
-       doc:'必要書類リスト（東京都版）',
-       out:`【東京都 訪問介護 指定申請 必要書類】
-
-【法人関係】
-□ 定款（登記事項証明書と一致すること）
-□ 登記事項証明書（3ヶ月以内）
-□ 役員名簿・履歴書
-
-【人員関係】
-□ 管理者の経歴書・資格証
-□ サービス提供責任者の資格証・勤務体制表
-□ 訪問介護員名簿（全員分の資格証コピー）
-
-【設備・運営関係】
-□ 事務所の平面図（設備要件の確認）
-□ 運営規程 / 重要事項説明書 / 各種同意書様式
-
-⚠️ 東京都固有：電子申請システムへの事前登録が必要`},
-      {role:'CL',rc:'#dcfce7',rt:'#15803d',name:'チェックリストエージェント',
-       work:'提出前チェックリストを作成中',
-       doc:'提出前チェックリスト',
-       out:`【提出前 最終チェックリスト】
-
-◼ 提出6週間前まで
-□ 法人登記の完了
-□ 物件の賃貸契約・使用承諾書の取得
-
-◼ 提出3週間前まで
-□ 運営規程・重要事項説明書が最新様式か
-□ 勤務体制表が人員基準を満たしているか
-□ 電子申請システムの事前登録を完了
-
-◼ 提出1週間前
-□ 全書類のページ数・印鑑漏れを確認
-□ 控えのコピーを取ったか`},
-      {role:'QA',rc:'#fce7f3',rt:'#9d174d',name:'審査エージェント',
-       work:'よくある却下理由・落とし穴を確認中',
-       doc:'落とし穴レポート',
-       out:`【指定申請 却下・差し戻し 多い落とし穴 TOP5】
-
-① サービス提供責任者の勤務時間が基準未達
-② 事務所の「専用スペース」証明が不十分
-　→ 間仕切り・鍵のかかるキャビネットの写真が必要
-③ 運営規程の「営業日・営業時間」が空欄のまま提出
-④ 役員全員の書類が区ごとに異なる場合がある
-⑤ 電子申請の添付ファイル容量オーバー（10MB制限）`},
-    ],
-    result:{time:'1時間',saved:'約9時間削減',
-      files:['必要書類リスト（東京都版）','提出前チェックリスト','落とし穴レポート','スケジュール表'],
-      note:'行政ごとの差異・最新様式・よくある却下理由を同時調査。「何から始めればいいか」が1時間で見える。'},
-    gendoc:{label:'指定申請チェックリストを今すぐ作る',fmt:'Google ドキュメント',
-      prompt:'訪問介護事業所の指定申請チェックリスト（東京都版）をGoogleドキュメントで今すぐ作成してください。提出スケジュール・よくある却下理由・落とし穴も含めてください。'}
+  {icon:'📋',title:'指定申請・変更届',time:'10時間 → 1時間',
+   docs:['必要書類リスト','チェックリスト','提出前確認'],
+   task:'「来月、訪問介護の事業所開設に向けて指定申請を出す。東京都への申請で何が必要か全部洗い出してほしい」',
+   agents:[
+     {role:'Research',rc:'#fef9c3',rt:'#854d0e',name:'制度調査エージェント',work:'東京都の指定申請要件・提出書類を確認中',doc:'必要書類リスト（東京都版）',
+      out:'【東京都 訪問介護 指定申請 必要書類】\n\n【法人関係】\n□ 定款（登記事項証明書と一致すること）\n□ 登記事項証明書（3ヶ月以内）\n□ 役員名簿・履歴書\n\n【人員関係】\n□ 管理者の経歴書・資格証\n□ サービス提供責任者の資格証・勤務体制表\n\n⚠️ 東京都固有：電子申請システムへの事前登録が必要'},
+     {role:'CL',rc:'#dcfce7',rt:'#15803d',name:'チェックリストエージェント',work:'提出前チェックリストを作成中',doc:'提出前チェックリスト',
+      out:'【提出前 最終チェックリスト】\n\n◼ 提出6週間前まで\n□ 法人登記の完了\n□ 物件の賃貸契約・使用承諾書の取得\n\n◼ 提出3週間前まで\n□ 運営規程・重要事項説明書が最新様式か\n□ 勤務体制表が人員基準を満たしているか\n\n◼ 提出1週間前\n□ 全書類のページ数・印鑑漏れを確認'},
+     {role:'QA',rc:'#fce7f3',rt:'#9d174d',name:'審査エージェント',work:'よくある却下理由・落とし穴を確認中',doc:'落とし穴レポート',
+      out:'【指定申請 却下・差し戻し 落とし穴 TOP5】\n\n① サービス提供責任者の勤務時間が基準未達\n② 事務所の「専用スペース」証明が不十分\n　→ 間仕切り・鍵のかかるキャビネットの写真が必要\n③ 運営規程の「営業日・営業時間」が空欄のまま提出\n④ 役員書類が区ごとに異なる場合がある\n⑤ 電子申請の添付ファイル容量オーバー（10MB制限）'},
+   ],
+   result:{time:'1時間',saved:'約9時間削減',files:['必要書類リスト（東京都版）','提出前チェックリスト','落とし穴レポート','スケジュール表'],note:'行政ごとの差異・よくある却下理由を同時調査。「何から始めればいいか」が1時間で見える。'},
+   docTitle:'訪問介護 指定申請 完全チェックリスト（東京都版）',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">訪問介護 指定申請 完全チェックリスト（東京都版）</div>
+<div class="doc-meta">作成日：2024年XX月XX日</div>
+<div class="doc-h2">必要書類リスト</div>
+<div class="doc-h3">【法人関係書類】</div>
+<div class="doc-check"><span>□ 定款（登記事項証明書と一致していること）</span><span>□ 法人登記事項証明書（発行3ヶ月以内）</span><span>□ 役員全員の名簿・履歴書</span><span>□ 印鑑証明書</span></div>
+<div class="doc-h3">【人員関係書類】</div>
+<div class="doc-check"><span>□ 管理者の経歴書・介護福祉士等の資格証（写）</span><span>□ サービス提供責任者の資格証・勤務体制表</span><span>□ 訪問介護員名簿（全員分の資格証コピー）</span><span>□ 組織図・勤務シフト表（週単位）</span></div>
+<div class="doc-h3">【設備・運営関係書類】</div>
+<div class="doc-check"><span>□ 事務所の平面図（専用スペースの確認）</span><span>□ 事務所の写真（間仕切り・鍵付きキャビネット）</span><span>□ 運営規程（最新様式）</span><span>□ 重要事項説明書・契約書・同意書の様式</span></div>
+<div class="doc-warn">⚠️ 東京都固有：電子申請システムへの事前登録が申請の2〜3週間前までに必要。</div>
+<div class="doc-h2">提出スケジュール</div>
+<table class="doc-tbl">
+<thead><tr><th>タイミング</th><th>やること</th></tr></thead>
+<tbody>
+<tr><td>6週間前まで</td><td>法人登記・物件契約・電子申請登録</td></tr>
+<tr><td>3週間前まで</td><td>全書類の作成・人員配置の確定</td></tr>
+<tr><td>1週間前</td><td>最終チェック・控えのコピー</td></tr>
+</tbody></table>
+<div class="doc-h2">よくある却下理由 TOP5</div>
+<div class="doc-p">① サービス提供責任者の常勤換算が週40時間未満<br>② 事務所の専用スペースの証明が写真のみで不十分<br>③ 運営規程の営業日・時間が空欄のまま<br>④ 電子申請ファイルが10MBを超えている<br>⑤ 役員の書類が区ごとに異なる様式が必要な場合がある</div>
+<div class="page-num">1 / 1</div></div>`
   },
-  {
-    icon:'📊',title:'クライアント提案',time:'5時間 → 30分',
-    docs:['改善提案書','説明資料','導入ステップ'],
-    task:'「訪問介護事業所のクライアントに人材定着率の改善策を提案したい。離職率が年30%で採用コストが年間240万かかっている」',
-    agents:[
-      {role:'Strategy',rc:'#e0e7ff',rt:'#3730a3',name:'戦略エージェント',
-       work:'離職原因・改善施策・ROIを構造化中',
-       doc:'現状分析レポート',
-       out:`【離職率30%の構造分析】
-
-介護業界平均：14.4%（厚労省2023年）
-→ このクライアント：業界平均の2倍以上
-
-推奨施策（コスト小×効果大の順）：
-① グループLINEでの相談体制構築（月0円）
-② 処遇改善加算の取得・周知（月+¥2〜4万/人）
-③ 同行訪問・OJT記録のAI化（教育コスト50%減）
-
-財務試算：
-離職率30%→15%で採用コスト年▲120万
-処遇改善加算取得でスタッフ給与+月2万（定着率↑）`},
-      {role:'Doc',rc:'#dcfce7',rt:'#15803d',name:'提案書エージェント',
-       work:'クライアント向け改善提案書を作成中',
-       doc:'改善提案書（Word）',
-       out:`【提案書 構成（A4・3枚）】
-
-表紙：「スタッフ定着率を2倍にする3ヶ月プラン」
-
-P1：現状整理
-　・離職率30%・採用コスト年240万の課題
-　・業界平均との比較グラフ
-
-P2：改善施策（3段階）
-　Phase1（1ヶ月）：相談体制の整備・加算申請
-　Phase2（2ヶ月）：OJT・教育コンテンツの整備
-　Phase3（3ヶ月）：定着率の計測・改善サイクル
-
-P3：期待効果
-　ROI：3ヶ月で投資回収`},
-      {role:'PPT',rc:'#fce7f3',rt:'#9d174d',name:'説明資料エージェント',
-       work:'社内説明用スライドを作成中',
-       doc:'社内説明スライド（PPT）',
-       out:`【スライド構成（施設長が理事会で使う想定）】
-
-Slide 1：「なぜ今、定着率改善が急務か」
-　→ 採用難・報酬改定・2025年問題の3点
-
-Slide 2：「コスト試算」（数字で見せる）
-　離職1名のコスト：採用費¥40万＋教育3ヶ月分
-　年30%×スタッフ20名＝6名離職→年間¥240万＋α
-
-Slide 3：「3ヶ月で変わること」
-　Before/Afterのスタッフ声（テンプレ）`},
-    ],
-    result:{time:'30分',saved:'約4.5時間削減',
-      files:['現状分析レポート','改善提案書（Word）','社内説明スライド（PPT）','ROI試算シート'],
-      note:'「分析→提案書→クライアントが社内で使う資料」まで一気に作成。提案の質とスピードが同時に上がる。'},
-    gendoc:{label:'クライアント向け改善提案書を今すぐ作る',fmt:'Google ドキュメント',
-      prompt:'訪問介護事業所向けの人材定着率改善提案書をGoogleドキュメントで今すぐ作成してください。離職率30%・採用コスト年240万という前提で、3ヶ月のフェーズ別改善プランとROI試算を含めてください。'}
+  {icon:'📊',title:'クライアント提案',time:'5時間 → 30分',
+   docs:['改善提案書','説明資料','導入ステップ'],
+   task:'「訪問介護事業所のクライアントに人材定着率の改善策を提案したい。離職率が年30%で採用コストが年間240万かかっている」',
+   agents:[
+     {role:'Strategy',rc:'#e0e7ff',rt:'#3730a3',name:'戦略エージェント',work:'離職原因・改善施策・ROIを構造化中',doc:'現状分析レポート',
+      out:'【離職率30%の構造分析】\n\n介護業界平均：14.4%（厚労省2023年）\n→ このクライアント：業界平均の2倍以上\n\n推奨施策（コスト小×効果大の順）：\n① グループLINEでの相談体制構築（月0円）\n② 処遇改善加算の取得・周知（月+¥2〜4万/人）\n③ 同行訪問・OJT記録のAI化（教育コスト50%減）'},
+     {role:'Doc',rc:'#dcfce7',rt:'#15803d',name:'提案書エージェント',work:'クライアント向け改善提案書を作成中',doc:'改善提案書',
+      out:'【提案書 構成（A4・3枚）】\n\nP1：現状整理\n　・離職率30%・採用コスト年240万の課題\nP2：改善施策（3段階）\n　Phase1（1ヶ月）：相談体制の整備・加算申請\n　Phase2（2ヶ月）：OJT・教育コンテンツの整備\n　Phase3（3ヶ月）：定着率の計測・改善サイクル\nP3：期待効果\n　ROI：3ヶ月で投資回収'},
+     {role:'PPT',rc:'#fce7f3',rt:'#9d174d',name:'説明資料エージェント',work:'社内説明用スライドを作成中',doc:'社内説明スライド',
+      out:'【スライド構成（施設長が理事会で使う想定）】\n\nSlide 1：「なぜ今、定着率改善が急務か」\n　→ 採用難・報酬改定・2025年問題の3点\nSlide 2：「コスト試算」（数字で見せる）\n　離職1名のコスト：採用費¥40万＋教育3ヶ月分\nSlide 3：「3ヶ月で変わること」\n　Before/Afterのスタッフ声（テンプレ）'},
+   ],
+   result:{time:'30分',saved:'約4.5時間削減',files:['現状分析レポート','改善提案書','社内説明スライド','ROI試算シート'],note:'「分析→提案書→クライアントが社内で使う資料」まで一気に作成。提案の質とスピードが同時に上がる。'},
+   docTitle:'スタッフ定着率を2倍にする 3ヶ月改善プラン',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">スタッフ定着率を2倍にする 3ヶ月改善プラン</div>
+<div class="doc-meta">〇〇訪問介護事業所 御中　提案者：〇〇コンサルティング　2024年XX月XX日</div>
+<div class="doc-h2">1. 現状の課題</div>
+<table class="doc-tbl">
+<thead><tr><th>指標</th><th>現状</th><th>業界平均</th><th>差異</th></tr></thead>
+<tbody>
+<tr><td>離職率（年間）</td><td style="color:#dc2626;font-weight:700">30%</td><td>14.4%</td><td style="color:#dc2626">+15.6pt</td></tr>
+<tr><td>採用コスト（年間）</td><td style="color:#dc2626;font-weight:700">¥2,400,000</td><td>¥1,200,000</td><td style="color:#dc2626">+¥120万</td></tr>
+<tr><td>1名離職の実コスト</td><td colspan="3">採用費¥40万 ＋ 教育期間3ヶ月の生産性損失 ≒ ¥70〜80万/名</td></tr>
+</tbody></table>
+<div class="doc-h2">2. 改善施策（3フェーズ）</div>
+<div class="doc-h3">Phase 1（1ヶ月目）：即効性の高い施策</div>
+<div class="doc-p">✅ グループLINEでの相談体制構築（費用：月0円）<br>✅ 処遇改善加算（新区分）の申請開始<br>✅ ヘルパーへの加算の周知・給与反映の説明会</div>
+<div class="doc-h3">Phase 2（2ヶ月目）：定着の仕組み化</div>
+<div class="doc-p">✅ 同行訪問・OJTの記録フォーマット整備（AI活用）<br>✅ 「困ったときの相談先」を明文化したハンドブック作成<br>✅ 月1回のヘルパー座談会の開始</div>
+<div class="doc-h3">Phase 3（3ヶ月目）：計測と改善サイクル</div>
+<div class="doc-p">✅ 定着率・稼働率・満足度の月次計測開始<br>✅ 離職予兆のある職員への早期面談</div>
+<div class="doc-h2">3. 期待効果とROI</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>改善前</th><th>3ヶ月後</th><th>年間効果</th></tr></thead>
+<tbody>
+<tr><td>離職率</td><td>30%</td><td>15%（目標）</td><td>採用コスト▲¥120万</td></tr>
+<tr><td>スタッフ給与</td><td>現状維持</td><td>+月¥2〜4万/人</td><td>定着率向上</td></tr>
+<tr><td>教育コスト</td><td>現状</td><td>▲50%（AI活用）</td><td>年▲¥60万</td></tr>
+</tbody></table>
+<div class="doc-hl">💡 投資対効果：初期コストほぼゼロで年間¥180万以上の削減効果。3ヶ月で改善サイクルが自走します。</div>
+<div class="page-num">1 / 1</div></div>`
   },
-  {
-    icon:'💻',title:'バックオフィス',time:'3時間/日 → 20分',
-    docs:['議事録','メール文','タスク整理','進捗管理'],
-    task:'「今日のクライアント訪問の音声メモから議事録を作り、次のアクションをタスク化して、担当者へのフォローメールも書いてほしい」',
-    agents:[
-      {role:'記録',rc:'#fef9c3',rt:'#854d0e',name:'議事録エージェント',
-       work:'会議メモを構造化した議事録に変換中',
-       doc:'議事録（確定版）',
-       out:`【議事録】〇〇訪問介護事業所 訪問コンサル記録
-
-日時：2024年XX月XX日 14:00〜15:30
-参加者：施設長 田中様 / コンサル 梶原
-
-【確認事項・アクション】
-① 処遇改善加算（新区分）申請期限：来月末
-　→ 担当：梶原 期限：2週間後
-
-② 採用計画：ヘルパー3名追加予定
-　→ 求人票の改訂が必要 担当：田中様 期限：1ヶ月後
-
-③ 重要事項説明書の更新：2024年改定未反映
-　→ 担当：梶原 次回訪問時に提出
-
-【次回日程】1ヶ月後 15:00〜`},
-      {role:'タスク',rc:'#dcfce7',rt:'#15803d',name:'タスク整理エージェント',
-       work:'アクションアイテムを優先度・期限別に整理中',
-       doc:'アクションリスト',
-       out:`【アクションリスト（優先度順）】
-
-🔴 緊急（2週間以内）
-□ 処遇改善加算（新区分）の申請書類を準備
-　担当：梶原
-
-🟡 重要（1ヶ月以内）
-□ 重要事項説明書の2024年改定版を作成・提出
-　担当：梶原（次回訪問時）
-□ 採用求人票の改訂（3名採用向け）
-　担当：田中施設長
-
-🟢 確認事項
-□ 次回訪問日程の調整（1ヶ月後）`},
-      {role:'メール',rc:'#e0e7ff',rt:'#3730a3',name:'メール作成エージェント',
-       work:'訪問後のフォローメールを作成中',
-       doc:'フォローメール（草稿）',
-       out:`件名：本日のご訪問のお礼とアクションご確認
-
-田中様
-
-本日はお時間をいただきありがとうございました。
-確認事項とアクションを整理しましたのでご共有します。
-
-【梶原担当分】
-・処遇改善加算申請書類：XX月XX日までに作成
-・重要事項説明書（2024年改定版）：次回訪問時にご提出
-
-【田中様ご担当分】
-・採用求人票の改訂：1ヶ月を目途にご対応いただけますと幸いです
-
-引き続きよろしくお願いいたします。`},
-    ],
-    result:{time:'20分',saved:'約2.7時間削減',
-      files:['議事録（PDF/Word）','アクションリスト','フォローメール','スケジュール更新'],
-      note:'訪問が終わった瞬間に議事録・タスク・メールが全部できている状態。移動中に確認してそのまま送るだけ。'},
-    gendoc:{label:'訪問後フォローセット（議事録＋メール＋タスクリスト）を今すぐ作る',fmt:'Google ドキュメント',
-      prompt:'訪問介護コンサルタントの訪問後フォローセットをGoogleドキュメントで今すぐ作成してください。議事録テンプレート・アクションリスト・フォローメール文の3点セットをひとつのドキュメントにまとめてください。'}
+  {icon:'💻',title:'バックオフィス',time:'3時間/日 → 20分',
+   docs:['議事録','メール文','タスク整理','進捗管理'],
+   task:'「今日のクライアント訪問の音声メモから議事録を作り、次のアクションをタスク化して、担当者へのフォローメールも書いてほしい」',
+   agents:[
+     {role:'記録',rc:'#fef9c3',rt:'#854d0e',name:'議事録エージェント',work:'会議メモを構造化した議事録に変換中',doc:'議事録（確定版）',
+      out:'【議事録】〇〇訪問介護事業所 訪問コンサル記録\n\n日時：2024年XX月XX日 14:00〜15:30\n参加者：施設長 田中様 / コンサル 梶原\n\n【確認事項・アクション】\n① 処遇改善加算申請期限：来月末 → 担当：梶原\n② 採用計画：ヘルパー3名追加 → 担当：田中様\n③ 重要事項説明書の更新 → 担当：梶原\n\n【次回日程】1ヶ月後 15:00〜'},
+     {role:'タスク',rc:'#dcfce7',rt:'#15803d',name:'タスク整理エージェント',work:'アクションアイテムを優先度別に整理中',doc:'アクションリスト',
+      out:'【アクションリスト（優先度順）】\n\n🔴 緊急（2週間以内）\n□ 処遇改善加算（新区分）の申請書類を準備\n　担当：梶原\n\n🟡 重要（1ヶ月以内）\n□ 重要事項説明書の2024年改定版を作成\n□ 採用求人票の改訂（3名採用向け）\n　担当：田中施設長'},
+     {role:'メール',rc:'#e0e7ff',rt:'#3730a3',name:'メール作成エージェント',work:'訪問後のフォローメールを作成中',doc:'フォローメール',
+      out:'件名：本日のご訪問のお礼とアクションご確認\n\n田中様\n\n本日はお時間をいただきありがとうございました。\n確認事項とアクションを整理しましたのでご共有します。\n\n【梶原担当分】\n・処遇改善加算申請書類：XX月XX日までに作成\n・重要事項説明書（改定版）：次回訪問時にご提出\n\n【田中様ご担当分】\n・採用求人票の改訂：1ヶ月を目途にご対応ください。\n\n引き続きよろしくお願いいたします。'},
+   ],
+   result:{time:'20分',saved:'約2.7時間削減',files:['議事録（PDF/Word）','アクションリスト','フォローメール','スケジュール更新'],note:'訪問が終わった瞬間に議事録・タスク・メールが全部できている状態。移動中に確認してそのまま送るだけ。'},
+   docTitle:'訪問コンサル 議事録・アクション・フォローメールセット',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">訪問コンサル 議事録・アクションセット</div>
+<div class="doc-meta">〇〇訪問介護事業所 訪問記録　2024年XX月XX日（自動生成）</div>
+<div class="doc-h2">議事録</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>内容</th><th>担当</th><th>期限</th></tr></thead>
+<tbody>
+<tr><td>処遇改善加算（新区分）申請</td><td>申請書類の準備・提出</td><td>梶原</td><td>2週間後</td></tr>
+<tr><td>重要事項説明書の更新</td><td>2024年改定版の作成・提出</td><td>梶原</td><td>次回訪問時</td></tr>
+<tr><td>採用求人票の改訂</td><td>ヘルパー3名採用向けに改訂</td><td>田中施設長</td><td>1ヶ月後</td></tr>
+</tbody></table>
+<div class="doc-h2">アクションリスト</div>
+<div class="doc-h3">🔴 緊急（2週間以内）</div>
+<div class="doc-check"><span>□ 処遇改善加算（新区分）の申請書類を準備 → 梶原</span></div>
+<div class="doc-h3">🟡 重要（1ヶ月以内）</div>
+<div class="doc-check"><span>□ 重要事項説明書の2024年改定版を作成・提出 → 梶原（次回訪問時）</span><span>□ 採用求人票の改訂（3名採用向け） → 田中施設長</span></div>
+<div class="doc-h2">フォローメール（送信用）</div>
+<div class="doc-mail"><strong>件名：本日のご訪問のお礼とアクションご確認</strong><br><br>田中様<br><br>本日はお時間をいただきありがとうございました。<br>確認事項とアクションを整理しましたのでご共有します。<br><br><strong>【梶原担当分】</strong><br>・処遇改善加算申請書類：XX月XX日までに作成<br>・重要事項説明書（2024年改定版）：次回訪問時にご提出<br><br><strong>【田中様ご担当分】</strong><br>・採用求人票の改訂：1ヶ月を目途にご対応いただけますと幸いです。<br><br>引き続きよろしくお願いいたします。</div>
+<div class="page-num">1 / 1</div></div>`
   },
 ];
 
-let cur=null, timers=[];
+let cur=null,timers=[];
 function clrT(){timers.forEach(t=>{clearTimeout(t);clearInterval(t);});timers=[];}
 
 function sel(i){
   clrT();
   document.querySelectorAll('.dl-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
-  cur=i; run(D[i]);
+  cur=i;run(D[i]);
 }
 
 function run(d){
@@ -412,14 +322,16 @@ function run(d){
         <div class="rb-label">✅ 完了 — ${d.result.time}で全書類が揃いました（${d.result.saved}）</div>
         <div class="rb-note">${d.result.note}</div>
         <div class="rb-files">${d.result.files.map(f=>`<span class="rb-file">📄 ${f}</span>`).join('')}</div>
-        <div style="font-size:11px;font-weight:700;color:#555;margin-bottom:8px;letter-spacing:.3px;">▼ 実際にGoogleドキュメントとして出力する</div>
-        <div class="gen-btns">
-          <button class="gen-btn" id="genBtn" onclick="genDoc(${D.indexOf(d)})">
-            <span class="btn-icon">📄</span>
-            <span class="btn-label">${d.gendoc.label}</span>
-            <span class="btn-fmt">${d.gendoc.fmt}</span>
-          </button>
+        <button class="out-btn" id="outBtn" onclick="showDoc(${D.indexOf(d)})">
+          <span>📄　実際に出力する — 書類をここに表示</span>
+        </button>
+      </div>
+      <div class="doc-preview" id="docPreview">
+        <div class="doc-toolbar">
+          <span class="doc-filename" id="docFn"></span>
+          <span class="doc-badge">AIエージェント 自動生成</span>
         </div>
+        <div id="docPages"></div>
       </div>
       <button class="rerun-btn" id="rerunBtn" onclick="sel(cur)">↩ もう一度見る</button>
     </div>`;
@@ -427,28 +339,15 @@ function run(d){
   const col=document.getElementById('agCol');
   d.agents.forEach((a,i)=>{
     const el=document.createElement('div');
-    el.className='ag'; el.id='ag'+i;
-    el.innerHTML=`
-      <div class="ag-head">
-        <div class="ag-dot"></div>
-        <span class="ag-role" style="background:${a.rc};color:${a.rt}">${a.role}</span>
-        <span class="ag-name">${a.name}</span>
-        <span class="ag-st" id="st${i}">待機中</span>
-      </div>
-      <div class="ag-out"><div class="ag-out-inner">
-        <div class="ag-doc">
-          <div class="ag-doc-label">📄 出力：${a.doc}</div>
-          <div class="ag-doc-text" id="ot${i}"></div>
-        </div>
-      </div></div>`;
+    el.className='ag';el.id='ag'+i;
+    el.innerHTML=`<div class="ag-head"><div class="ag-dot"></div><span class="ag-role" style="background:${a.rc};color:${a.rt}">${a.role}</span><span class="ag-name">${a.name}</span><span class="ag-st" id="st${i}">待機中</span></div><div class="ag-out"><div class="ag-out-inner"><div class="ag-doc"><div class="ag-doc-label">📄 出力：${a.doc}</div><div class="ag-doc-text" id="ot${i}"></div></div></div></div>`;
     col.appendChild(el);
-    const s=300+i*60, e=2000+i*800;
+    const s=300+i*60,e=2000+i*800;
     timers.push(setTimeout(()=>{el.classList.add('running');document.getElementById('st'+i).textContent=a.work;},s));
     timers.push(setTimeout(()=>{
       el.classList.remove('running');el.classList.add('done');
       document.getElementById('st'+i).textContent='完了';
-      const ot=document.getElementById('ot'+i);
-      let ci=0;
+      const ot=document.getElementById('ot'+i);let ci=0;
       const iv=setInterval(()=>{if(ci<a.out.length){ot.textContent+=a.out[ci++];}else clearInterval(iv);},9);
       timers.push(iv);
     },e));
@@ -457,29 +356,23 @@ function run(d){
   timers.push(setTimeout(()=>{
     document.getElementById('resBox').classList.add('show');
     document.getElementById('rerunBtn').style.display='block';
-    win.scrollIntoView({behavior:'smooth',block:'end'});
   },last));
 }
 
-function genDoc(idx){
+function showDoc(idx){
   const d=D[idx];
-  const btn=document.getElementById('genBtn');
-  btn.classList.add('loading');
-  btn.innerHTML=`<span class="btn-icon">⏳</span><span class="btn-label">Googleドキュメントを作成中…</span><span class="btn-fmt">${d.gendoc.fmt}</span>`;
-  // sendPromptが使える環境（Claudeウィジェット内）では実際に生成
-  if(typeof sendPrompt==='function'){
-    sendPrompt(d.gendoc.prompt);
-  } else {
-    // スタンドアロン（URL直接アクセス）ではデモ完了表示
-    setTimeout(()=>{
-      btn.classList.remove('loading');
-      btn.classList.add('done-btn');
-      btn.innerHTML=`<span class="btn-icon">✅</span><span class="btn-label">Claude上で「${d.gendoc.label}」と送信してください</span><span class="btn-fmt">${d.gendoc.fmt}</span>`;
-    },1500);
-  }
+  const btn=document.getElementById('outBtn');
+  btn.textContent='⏳  書類を展開中…';btn.style.opacity='.6';btn.disabled=true;
+  setTimeout(()=>{
+    document.getElementById('docFn').textContent='📄 '+d.docTitle;
+    document.getElementById('docPages').innerHTML=d.docHtml;
+    const prev=document.getElementById('docPreview');
+    prev.classList.add('show');
+    btn.style.display='none';
+    prev.scrollIntoView({behavior:'smooth',block:'start'});
+  },700);
 }
 
-// 領域ボタンを生成
 const dl=document.getElementById('domList');
 D.forEach((d,i)=>{
   const btn=document.createElement('button');
