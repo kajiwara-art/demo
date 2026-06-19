@@ -59,6 +59,29 @@ h1{font-size:26px;font-weight:700;line-height:1.3;margin-bottom:10px;}
 .rb-file{font-size:11px;padding:3px 10px;border-radius:20px;background:#dcfce7;color:#15803d;font-weight:600;}
 .out-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 16px;border-radius:9px;border:none;background:#111;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;}
 .out-btn:hover{opacity:.85;}
+/* MCP連携デモ */
+.mcp-section{margin-top:20px;border:1.5px solid #e5e5e5;border-radius:12px;overflow:hidden;display:none;}
+.mcp-section.show{display:block;}
+.mcp-header{background:#0f172a;padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.mcp-header-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse2 1.5s infinite;}
+@keyframes pulse2{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.mcp-header-title{font-size:13px;font-weight:700;color:#fff;}
+.mcp-header-sub{font-size:11px;color:rgba(255,255,255,.4);margin-left:auto;}
+.mcp-body{padding:16px 18px;background:#f8fafc;}
+.mcp-flow{display:flex;flex-direction:column;gap:0;}
+.mcp-step{display:flex;gap:12px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;}
+.mcp-step.show{opacity:1;transform:none;}
+.mcp-step-left{display:flex;flex-direction:column;align-items:center;width:32px;flex-shrink:0;}
+.mcp-step-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.mcp-step-line{width:2px;flex:1;min-height:12px;background:#e0e7ff;margin:3px 0;}
+.mcp-step-right{padding:2px 0 14px 0;flex:1;}
+.mcp-step-action{font-size:11px;font-weight:700;color:#64748b;letter-spacing:.3px;margin-bottom:3px;}
+.mcp-step-detail{font-size:12px;color:#334155;line-height:1.7;}
+.mcp-tool-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin:2px 3px 2px 0;}
+.mcp-result{background:#fff;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-top:4px;font-size:12px;color:#334155;line-height:1.75;white-space:pre-wrap;}
+.mcp-result-label{font-size:10px;font-weight:700;color:#64748b;margin-bottom:5px;letter-spacing:.3px;}
+.mcp-tools-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.mcp-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#64748b;}
 /* ドキュメントプレビュー */
 .doc-preview{margin-top:16px;border:1.5px solid #e5e5e5;border-radius:10px;overflow:hidden;display:none;}
 .doc-preview.show{display:block;}
@@ -273,6 +296,28 @@ const D=[
    ],
    result:{time:'20分',saved:'約2.7時間削減',files:['議事録（PDF/Word）','アクションリスト','フォローメール','スケジュール更新'],note:'訪問が終わった瞬間に議事録・タスク・メールが全部できている状態。移動中に確認してそのまま送るだけ。'},
    docTitle:'訪問コンサル 議事録・アクション・フォローメールセット',
+   mcpSteps:[
+     {delay:300, icon:'📅', bg:'#dbeafe', tool:'Google Calendar MCP', toolBg:'#dbeafe', toolC:'#1e40af',
+      action:'TOOL: calendar.list_events を実行',
+      detail:'田中施設長との次回訪問日程を確認中…',
+      result:'📅 空き確認完了\n田中様の空き：来月15日（火）14:00〜16:00\n梶原の空き：同日 OK\n→ 仮押さえを作成しました'},
+     {delay:1800, icon:'📅', bg:'#dbeafe', tool:'Google Calendar MCP', toolBg:'#dbeafe', toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'次回訪問の予定を両者のカレンダーに自動追加…',
+      result:'✅ 予定を作成しました\nタイトル：〇〇訪問介護 コンサル訪問\n日時：来月15日（火）14:00〜15:30\n場所：〇〇訪問介護事業所\n招待：田中様・梶原 に招待メールを送信'},
+     {delay:3400, icon:'📧', bg:'#dcfce7', tool:'Gmail MCP', toolBg:'#dcfce7', toolC:'#15803d',
+      action:'TOOL: gmail.draft_email を実行',
+      detail:'議事録・アクションリストを添付したフォローメールを下書き作成中…',
+      result:'📧 下書きを作成しました\nTo：田中様（施設長）\nCc：梶原\n件名：本日のご訪問のお礼とアクションご確認\n添付：議事録_2024XXXX.pdf\n\n※ 送信前に確認・編集できます'},
+     {delay:5000, icon:'📧', bg:'#dcfce7', tool:'Gmail MCP', toolBg:'#dcfce7', toolC:'#15803d',
+      action:'TOOL: gmail.send を実行',
+      detail:'確認後、ワンクリックで送信…',
+      result:'✅ 送信完了\n田中施設長へのフォローメールを送信しました\n送信時刻：15:34\n開封確認：設定済み'},
+     {delay:6400, icon:'📄', bg:'#f3e8ff', tool:'Google Drive MCP', toolBg:'#f3e8ff', toolC:'#7e22ce',
+      action:'TOOL: drive.create_file を実行',
+      detail:'議事録をGoogleドキュメントとしてDriveに保存中…',
+      result:'✅ 保存完了\nファイル名：議事録_〇〇訪問介護_2024XXXX\n保存先：コンサル記録フォルダ\n共有：田中様に閲覧権限を付与\n\n次回訪問時は「前回議事録を読み込む」だけで文脈を引き継げます'},
+   ],
    docHtml:`<div class="doc-page">
 <div class="doc-title">訪問コンサル 議事録・アクションセット</div>
 <div class="doc-meta">〇〇訪問介護事業所 訪問記録　2024年XX月XX日（自動生成）</div>
@@ -325,6 +370,7 @@ function run(d){
         <button class="out-btn" id="outBtn" onclick="showDoc(${D.indexOf(d)})">
           <span>📄　実際に出力する — 書類をここに表示</span>
         </button>
+        ${d.mcpSteps?`<button class="out-btn" id="mcpBtn" style="background:#0f172a;margin-top:8px;" onclick="showMcp(${D.indexOf(d)})"><span>🔗　MCP連携デモ — Googleカレンダー・Gmailと繋いで動かす</span></button>`:''}
       </div>
       <div class="doc-preview" id="docPreview">
         <div class="doc-toolbar">
@@ -332,6 +378,17 @@ function run(d){
           <span class="doc-badge">AIエージェント 自動生成</span>
         </div>
         <div id="docPages"></div>
+      </div>
+      <div class="mcp-section" id="mcpSection">
+        <div class="mcp-header">
+          <div class="mcp-header-dot"></div>
+          <div class="mcp-header-title">MCP連携 — エージェントが外部ツールに直接アクセス</div>
+          <div class="mcp-header-sub">リアルタイム接続中</div>
+        </div>
+        <div class="mcp-body">
+          <div class="mcp-tools-legend" id="mcpLegend"></div>
+          <div class="mcp-flow" id="mcpFlow"></div>
+        </div>
       </div>
       <button class="rerun-btn" id="rerunBtn" onclick="sel(cur)">↩ もう一度見る</button>
     </div>`;
@@ -357,6 +414,65 @@ function run(d){
     document.getElementById('resBox').classList.add('show');
     document.getElementById('rerunBtn').style.display='block';
   },last));
+}
+
+function showMcp(idx){
+  const d=D[idx];
+  const btn=document.getElementById('mcpBtn');
+  btn.textContent='⏳  接続中…';btn.style.opacity='.6';btn.disabled=true;
+
+  // ツール凡例
+  const legend=document.getElementById('mcpLegend');
+  legend.innerHTML=[
+    {icon:'📅',label:'Google Calendar MCP',bg:'#dbeafe',c:'#1e40af'},
+    {icon:'📧',label:'Gmail MCP',bg:'#dcfce7',c:'#15803d'},
+    {icon:'📄',label:'Google Drive MCP',bg:'#f3e8ff',c:'#7e22ce'},
+  ].map(t=>`<div class="mcp-legend-item"><span style="background:${t.bg};color:${t.c};font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;">${t.icon} ${t.label}</span></div>`).join('');
+
+  const flow=document.getElementById('mcpFlow');
+  flow.innerHTML='';
+  d.mcpSteps.forEach((s,i)=>{
+    const isLast=i===d.mcpSteps.length-1;
+    const el=document.createElement('div');
+    el.className='mcp-step';
+    el.innerHTML=`
+      <div class="mcp-step-left">
+        <div class="mcp-step-icon" style="background:${s.bg}">${s.icon}</div>
+        ${!isLast?'<div class="mcp-step-line"></div>':''}
+      </div>
+      <div class="mcp-step-right">
+        <div class="mcp-step-action">
+          <span class="mcp-tool-tag" style="background:${s.toolBg};color:${s.toolC}">${s.tool}</span>
+          ${s.action}
+        </div>
+        <div class="mcp-step-detail">${s.detail}</div>
+        <div class="mcp-result" id="mr${i}" style="display:none">
+          <div class="mcp-result-label">▶ 実行結果</div>
+          <div id="mrt${i}"></div>
+        </div>
+      </div>`;
+    flow.appendChild(el);
+
+    timers.push(setTimeout(()=>{
+      requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+    },s.delay));
+    timers.push(setTimeout(()=>{
+      const box=document.getElementById('mr'+i);
+      box.style.display='block';
+      const txt=document.getElementById('mrt'+i);
+      let ci=0;
+      const iv=setInterval(()=>{
+        if(ci<s.result.length){txt.textContent+=s.result[ci++];}
+        else clearInterval(iv);
+      },10);
+      timers.push(iv);
+    },s.delay+600));
+  });
+
+  const sec=document.getElementById('mcpSection');
+  sec.classList.add('show');
+  btn.style.display='none';
+  setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}),400);
 }
 
 function showDoc(idx){
