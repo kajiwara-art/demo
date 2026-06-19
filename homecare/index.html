@@ -134,6 +134,20 @@ const D=[
    ],
    result:{time:'35分',saved:'約5.5時間削減',files:['就業規則','雇用契約書（3名分）','チェックリスト','リスクレポート'],note:'「法律確認」「書式作成」「リスク審査」を同時実行。弁護士確認前の叩き台が即完成。'},
    docTitle:'訪問介護事業所 就業規則 ＋ 雇用契約書チェックリスト',
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'就業規則・雇用契約書をGoogleドキュメントとして保存中…',
+      result:'📄 Googleドキュメント作成完了\n「訪問介護事業所 就業規則 v1.0 叩き台」\n「雇用契約書テンプレート（3名分）」\n→ 人事フォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'顧問社労士へ確認依頼メールを送信中…',
+      result:'✉️ メール送信完了\n宛先：顧問社労士・田中先生\n件名：【確認依頼】就業規則叩き台のレビューをお願いします\n本文：ドキュメントのリンクを添付して送信済み'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'年次見直しリマインダーをカレンダーに登録中…',
+      result:'📅 カレンダー登録完了\n「就業規則 年次見直し」\n→ 来年の今日（2025年XX月XX日）にリマインダー設定\n担当者全員に招待を送信しました'},
+   ],
    docHtml:`<div class="doc-page">
 <div class="doc-title">訪問介護事業所 就業規則（登録ヘルパー用）叩き台</div>
 <div class="doc-meta">作成日：2024年XX月XX日　版：v1.0（叩き台）</div>
@@ -179,6 +193,20 @@ const D=[
    ],
    result:{time:'45分',saved:'約7時間削減',files:['運営規程（改訂版）','重要事項説明書（差分付）','スタッフマニュアル','改定ポイント一覧'],note:'制度調査→書類更新→マニュアル反映を並列実行。「どこを直せばいいか」がすぐわかる。'},
    docTitle:'重要事項説明書（2024年介護報酬改定対応版）',
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'改訂版書類をGoogleドライブに保存中…',
+      result:'📄 ドキュメント作成完了\n「重要事項説明書 2024年改定対応版（差分付）」\n「運営規程 改訂版」\n→ 法人共有フォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'全スタッフへ改訂通知メールを送信中…',
+      result:'✉️ 一斉メール送信完了\n宛先：スタッフ全員（18名）\n件名：【重要】2024年報酬改定に伴う書類更新のお知らせ\n→ 更新箇所ハイライト付きドキュメントのリンクを送付'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'指定更新の期限をカレンダーに登録中…',
+      result:'📅 カレンダー登録完了\n「指定更新 書類提出期限」\n→ 改定適用から3ヶ月後の日程で設定\n管理者・サービス提供責任者に通知しました'},
+   ],
    docHtml:`<div class="doc-page">
 <div class="doc-title">重要事項説明書（2024年介護報酬改定対応版）</div>
 <div class="doc-meta">作成日：2024年XX月XX日　※赤字箇所が変更点</div>
@@ -218,6 +246,20 @@ const D=[
    ],
    result:{time:'1時間',saved:'約9時間削減',files:['必要書類リスト（東京都版）','提出前チェックリスト','落とし穴レポート','スケジュール表'],note:'行政ごとの差異・よくある却下理由を同時調査。「何から始めればいいか」が1時間で見える。'},
    docTitle:'訪問介護 指定申請 完全チェックリスト（東京都版）',
+   mcpSteps:[
+     {delay:300,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行（3件）',
+      detail:'提出スケジュールの締切リマインダーを登録中…',
+      result:'📅 リマインダー3件 登録完了\n① 6週間前：法人登記・物件契約の完了確認\n② 3週間前：全書類の最終チェック\n③ 1週間前：控えコピー・電子申請確認\n→ 担当者へ招待送信済み'},
+     {delay:1000,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_folder を実行',
+      detail:'申請書類の管理フォルダを作成中…',
+      result:'📂 フォルダ構成 作成完了\n「指定申請_東京都_2024」\n　├ 法人関係書類\n　├ 人員関係書類\n　└ 設備・運営書類\n→ 書類チェックリストを各フォルダに配置しました'},
+     {delay:1700,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'行政書士へ申請サポート依頼メールを送信中…',
+      result:'✉️ メール送信完了\n宛先：顧問行政書士・山田先生\n件名：【依頼】東京都 訪問介護 指定申請サポートのご相談\n→ 必要書類リスト・スケジュール表を添付して送信'},
+   ],
    docHtml:`<div class="doc-page">
 <div class="doc-title">訪問介護 指定申請 完全チェックリスト（東京都版）</div>
 <div class="doc-meta">作成日：2024年XX月XX日</div>
@@ -254,6 +296,24 @@ const D=[
    ],
    result:{time:'30分',saved:'約4.5時間削減',files:['現状分析レポート','改善提案書','社内説明スライド','ROI試算シート'],note:'「分析→提案書→クライアントが社内で使う資料」まで一気に作成。提案の質とスピードが同時に上がる。'},
    docTitle:'スタッフ定着率を2倍にする 3ヶ月改善プラン',
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'改善提案書・ROI試算シートをGoogleドライブに保存中…',
+      result:'📄 ドキュメント作成完了\n「スタッフ定着率 3ヶ月改善プラン（提案書）」\n「ROI試算シート — 年間¥180万削減試算」\n→ クライアント共有フォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアント（施設長）へ提案書を送付中…',
+      result:'✉️ メール送信完了\n宛先：〇〇訪問介護事業所 田中施設長\n件名：【ご提案】スタッフ定着率改善 3ヶ月プランのご提案\n→ 提案書・ROI試算・スライドのリンクを送付'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'提案後フォローアップのミーティングを設定中…',
+      result:'📅 カレンダー登録完了\n「提案フォローアップ — 田中施設長」\n→ 提案書送付から1週間後（来週木曜 14:00）\nZoomリンクを自動生成して招待しました'},
+     {delay:2100,icon:'📊',bg:'#fef9c3',tool:'Google Sheets MCP',toolBg:'#fef9c3',toolC:'#854d0e',
+      action:'TOOL: sheets.create_spreadsheet を実行',
+      detail:'ROI追跡スプレッドシートを作成中…',
+      result:'📊 スプレッドシート作成完了\n「定着率改善 月次トラッキング」\n離職率・採用コスト・満足度スコアを自動集計\n→ 3ヶ月分のダッシュボードを設定しました'},
+   ],
    docHtml:`<div class="doc-page">
 <div class="doc-title">スタッフ定着率を2倍にする 3ヶ月改善プラン</div>
 <div class="doc-meta">〇〇訪問介護事業所 御中　提案者：〇〇コンサルティング　2024年XX月XX日</div>
