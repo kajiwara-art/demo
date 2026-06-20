@@ -591,26 +591,41 @@ body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f
     </div>
 
     <!-- ROI サマリー -->
-    <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:12px;padding:24px;color:#fff;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-bottom:20px">
-      <div style="text-align:center">
-        <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">シゴトAI 月額換算</div>
-        <div style="font-size:32px;font-weight:800">¥99,333</div>
-        <div style="font-size:11px;opacity:.7">（¥298,000 ÷ 3ヶ月）</div>
+    <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb);border-radius:12px;padding:24px;color:#fff;margin-bottom:16px">
+      <!-- プログラム内容 -->
+      <div style="background:rgba(255,255,255,.1);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:11px;opacity:.7;margin-bottom:4px">シゴトAI 3ヶ月プログラム（一括）</div>
+          <div style="font-size:30px;font-weight:800">¥298,000</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px">面談 4回</span>
+          <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px">LINEサポート 3ヶ月</span>
+          <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:3px 12px;font-size:11px">講義セミナー 永久</span>
+        </div>
       </div>
-      <div style="text-align:center">
-        <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">月間 削減効果</div>
-        <div style="font-size:32px;font-weight:800;color:#86efac">▲¥277,500</div>
-        <div style="font-size:11px;opacity:.7">残業・管理コスト削減</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">月間 NET効果</div>
-        <div style="font-size:32px;font-weight:800;color:#fde68a">+¥178,167</div>
-        <div style="font-size:11px;opacity:.7">初月からプラス</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">3ヶ月 累計効果</div>
-        <div style="font-size:32px;font-weight:800;color:#fde68a">+¥534,500</div>
-        <div style="font-size:11px;opacity:.7">投資の1.8倍回収</div>
+      <!-- 数値 -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px">
+        <div style="text-align:center">
+          <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">月間 削減効果</div>
+          <div style="font-size:32px;font-weight:800;color:#86efac">¥277,500</div>
+          <div style="font-size:11px;opacity:.7">残業・管理コスト削減</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">3ヶ月 累計 削減効果</div>
+          <div style="font-size:32px;font-weight:800;color:#86efac">¥832,500</div>
+          <div style="font-size:11px;opacity:.7">（¥277,500 × 3ヶ月）</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">3ヶ月 NET効果</div>
+          <div style="font-size:32px;font-weight:800;color:#fde68a">+¥534,500</div>
+          <div style="font-size:11px;opacity:.7">削減 − 投資（¥298,000）</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:11px;opacity:.7;margin-bottom:6px;letter-spacing:.06em">投資回収期間</div>
+          <div style="font-size:32px;font-weight:800;color:#fde68a">約5週間</div>
+          <div style="font-size:11px;opacity:.7">¥298,000 ÷ ¥277,500/月</div>
+        </div>
       </div>
     </div>
 
