@@ -501,7 +501,7 @@ D.forEach((d,i)=>{
     <div class="result-box">
       <h3>✅ 完了 — ${d.result.time} で処理完了</h3>
       <div class="result-grid">
-        <div class="result-stat"><div class="val">${d.result.time.split('→')[1].trim()}</div><div class="lbl">処理時間</div></div>
+        <div class="result-stat"><div class="val">${(d.result.time.split('→')[1]||'').trim()}</div><div class="lbl">処理時間</div></div>
         <div class="result-stat"><div class="val">${d.result.saved}</div><div class="lbl">時間削減</div></div>
         <div class="result-stat"><div class="val">${d.result.files.length}件</div><div class="lbl">出力ファイル</div></div>
       </div>
