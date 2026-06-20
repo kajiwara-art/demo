@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D CAD × AIエージェント — シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+.hero{background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 100%);padding:48px 24px 36px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:4px 14px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:16px;letter-spacing:.5px;border:1px solid rgba(255,255,255,.3)}
+.hero h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#fff;line-height:1.3}
+.hero h1 span{color:#c4b5fd}
+.hero p{color:rgba(255,255,255,.8);margin-top:12px;font-size:.95rem;max-width:600px;margin-inline:auto}
+.hero-note{display:inline-block;margin-top:16px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:8px 16px;font-size:.8rem;color:#e9d5ff}
+.tabs{display:flex;overflow-x:auto;gap:0;background:#fff;border-bottom:2px solid #e2e8f0;padding:0 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab{padding:14px 16px;font-size:.8rem;font-weight:700;color:#94a3b8;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+.tab.active{color:#7c3aed;border-bottom-color:#7c3aed}
+.tab:hover:not(.active){color:#475569}
+.panel{display:none;padding:24px 20px;max-width:860px;margin:0 auto}
+.panel.active{display:block}
+.task-box{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:.88rem;color:#374151;border-left:4px solid #7c3aed}
+.task-box strong{color:#1e293b;display:block;margin-bottom:4px;font-size:.92rem}
+.agents{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.agent-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;opacity:0;transform:translateY(8px);transition:all .4s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-card.show{opacity:1;transform:translateY(0)}
+.agent-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.role-badge{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:800;letter-spacing:.3px}
+.agent-name{font-weight:700;font-size:.88rem;color:#1e293b}
+.agent-work{font-size:.78rem;color:#64748b;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.spinner{width:12px;height:12px;border:2px solid #e2e8f0;border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.agent-out{background:#f8fafc;border-radius:6px;padding:10px 12px;font-size:.75rem;color:#374151;white-space:pre-wrap;font-family:monospace;min-height:40px;border:1px solid #e2e8f0;line-height:1.6}
+.result-box{background:linear-gradient(135deg,#faf5ff,#eff6ff);border:1px solid #c4b5fd;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:none}
+.result-box h3{color:#7c3aed;font-size:.95rem;font-weight:800;margin-bottom:12px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.result-stat{text-align:center;background:#fff;border-radius:8px;padding:10px 6px;border:1px solid #e2e8f0}
+.result-stat .val{font-size:1.4rem;font-weight:900;color:#7c3aed}
+.result-stat .lbl{font-size:.7rem;color:#64748b;margin-top:2px}
+.result-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.file-chip{background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:.75rem;color:#475569}
+.result-note{margin-top:12px;font-size:.8rem;color:#7c3aed;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:8px 12px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.out-btn{padding:12px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:8px;transition:all .2s}
+.out-btn:hover{opacity:.85;transform:translateY(-1px)}
+.out-btn.primary{background:#7c3aed;color:#fff}
+.out-btn.run{background:#4f46e5;color:#fff}
+.out-btn.mcp{background:#fff;color:#374151;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.out-btn span{display:block}
+.code-preview{background:#1e1b4b;border-radius:10px;padding:16px;margin-bottom:16px;font-family:monospace;font-size:.75rem;color:#a5b4fc;white-space:pre;overflow-x:auto;border:1px solid #312e81;line-height:1.7}
+.code-preview .kw{color:#f0abfc}
+.code-preview .fn{color:#93c5fd}
+.code-preview .num{color:#6ee7b7}
+.code-preview .cm{color:#475569}
+/* document overlay */
+.doc-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:100;overflow-y:auto;padding:20px}
+.doc-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.doc-wrap{background:#fff;border-radius:8px;max-width:720px;width:100%;padding:48px;position:relative;margin:auto}
+.doc-close{position:absolute;top:12px;right:16px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
+.doc-page{color:#1e293b;font-family:'Hiragino Sans',sans-serif}
+.doc-title{font-size:1.2rem;font-weight:900;text-align:center;border-bottom:2px solid #7c3aed;padding-bottom:10px;margin-bottom:14px;color:#1e293b}
+.doc-meta{font-size:.75rem;color:#6b7280;text-align:right;margin-bottom:16px}
+.doc-h2{font-size:.95rem;font-weight:800;background:#f5f3ff;padding:6px 10px;border-left:4px solid #7c3aed;margin:16px 0 8px;color:#1e293b}
+.doc-h3{font-size:.85rem;font-weight:700;color:#7c3aed;margin:10px 0 4px}
+.doc-p{font-size:.82rem;line-height:1.7;color:#374151;margin-bottom:8px}
+.doc-code{background:#1e1b4b;border-radius:8px;padding:12px;font-size:.72rem;color:#a5b4fc;font-family:monospace;white-space:pre;overflow-x:auto;margin:10px 0;line-height:1.6}
+.doc-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:.78rem}
+.doc-tbl th{background:#7c3aed;color:#fff;padding:6px 10px;text-align:left}
+.doc-tbl td{padding:6px 10px;border-bottom:1px solid #e5e7eb;color:#374151}
+.doc-tbl tr:nth-child(even) td{background:#f8fafc}
+.doc-warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px 12px;font-size:.78rem;color:#9a3412;margin:10px 0}
+.doc-hl{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:8px 12px;font-size:.82rem;color:#7c3aed;margin:10px 0}
+.page-num{text-align:right;font-size:.75rem;color:#9ca3af;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:8px}
+/* MCP */
+.mcp-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:20px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.mcp-section.open{display:block}
+.mcp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mcp-title{font-weight:800;color:#1e293b;font-size:.95rem}
+.mcp-tools-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.mcp-tool-tag{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700}
+.mcp-step{opacity:0;transform:translateY(6px);transition:all .35s;margin-bottom:12px}
+.mcp-step.show{opacity:1;transform:translateY(0)}
+.mcp-step-line{display:flex;align-items:flex-start;gap:10px}
+.mcp-step-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.mcp-step-body{flex:1}
+.mcp-action{font-size:.75rem;color:#94a3b8;font-family:monospace;margin-bottom:4px}
+.mcp-detail{font-size:.78rem;color:#64748b;margin-bottom:4px}
+.mcp-result{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:8px 10px;font-size:.75rem;color:#7c3aed;font-family:monospace;white-space:pre-wrap;min-height:20px}
+/* tools intro */
+.tools-bar{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tool-chip{display:flex;align-items:center;gap:6px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:6px 12px;font-size:.78rem;color:#475569;font-weight:600}
+/* flow */
+.flow-box{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin:0 20px 24px;max-width:820px;margin-inline:auto}
+.flow-box h3{font-size:.9rem;font-weight:800;color:#7c3aed;margin-bottom:14px;text-align:center}
+.flow-steps{display:flex;align-items:center;flex-wrap:wrap;gap:8px;justify-content:center}
+.flow-step{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:8px 14px;font-size:.78rem;color:#4c1d95;font-weight:700;text-align:center}
+.flow-arrow{color:#c4b5fd;font-size:1.1rem;font-weight:700}
+.footer{text-align:center;padding:32px 20px;color:#94a3b8;font-size:.78rem;border-top:1px solid #e2e8f0}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🤖 AIエージェント × 3D CAD デモ</div>
+  <h1>CADを知らなくても<br><span>3Dモデルが作れる時代</span></h1>
+  <p>テキストで説明するだけ。AIが無料ツール（Blender・FreeCAD）で動くコードを自動生成。専門知識ゼロでも3D化できます。</p>
+  <div class="hero-note">使用ツール：Blender（無料）/ FreeCAD（無料）/ Meshy AI / Google Drive MCP</div>
+</div>
+
+<div class="tools-bar">
+  <div class="tool-chip">🟧 Blender <span style="color:#94a3b8;font-weight:400">無料・Pythonスクリプト対応</span></div>
+  <div class="tool-chip">🔵 FreeCAD <span style="color:#94a3b8;font-weight:400">無料・CAD専用</span></div>
+  <div class="tool-chip">✨ Meshy AI <span style="color:#94a3b8;font-weight:400">画像→3D自動変換</span></div>
+  <div class="tool-chip">🤖 Claude <span style="color:#94a3b8;font-weight:400">コード生成・修正</span></div>
+</div>
+
+<div style="padding:20px 20px 0;max-width:860px;margin:0 auto">
+<div class="flow-box">
+  <h3>📐 基本の流れ — CAD経験ゼロでも3Dモデルができるまで</h3>
+  <div class="flow-steps">
+    <div class="flow-step">①<br>作りたいものを<br>Claudeに説明</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">②<br>AIが3D生成<br>スクリプトを作成</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">③<br>Blenderに<br>貼り付けるだけ</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">④<br>3Dモデル<br>完成</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">⑤<br>共有・修正<br>も自動</div>
+  </div>
+</div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div id="panels"></div>
+
+<div class="doc-overlay" id="docOverlay">
+  <div class="doc-wrap">
+    <button class="doc-close" onclick="document.getElementById('docOverlay').classList.remove('open')">✕ 閉じる</button>
+    <div class="doc-page" id="docContent"></div>
+  </div>
+</div>
+
+<div class="footer">シゴトAI — AIエージェント伴奏プログラム ¥298,000 / 3ヶ月</div>
+
+<script>
+const D=[
+  {icon:'💬',title:'テキスト→3D設計',time:'半日 → 15分',
+   docs:['Blenderスクリプト','3Dモデル(.blend)','パラメータシート'],
+   task:'「幅200mm・奥行き150mm・高さ100mmの直方体の箱を作りたい。蓋は取り外し可能で、底面に5mmの足が4隅についている形にしてほしい」',
+   agents:[
+     {role:'設計',rc:'#ede9fe',rt:'#5b21b6',name:'設計解析エージェント',work:'要件を3D設計パラメータに変換中',doc:'パラメータシート',
+      out:'【3D設計パラメータ 整理完了】\n\n■ 本体\n　幅：200mm / 奥行：150mm / 高さ：95mm\n　板厚：3mm（デフォルト）\n　底面：実寸 200×150mm\n\n■ 蓋\n　幅：200mm / 奥行：150mm / 高さ：8mm\n　内側に2mmのツメ構造（取り外し可能）\n\n■ 脚\n　形状：円柱　直径：10mm / 高さ：5mm\n　配置：底面4隅（各隅から10mm内側）\n\n✅ Blender Python で生成可能な構造です'},
+     {role:'生成',rc:'#dbeafe',rt:'#1e40af',name:'スクリプト生成エージェント',work:'Blender Pythonコードを生成中',doc:'Blenderスクリプト',
+      out:'import bpy\n\n# 全オブジェクト削除\nbpy.ops.object.select_all(action="SELECT")\nbpy.ops.object.delete()\n\n# 本体を作成\nbpy.ops.mesh.primitive_cube_add(size=1)\nbox = bpy.context.active_object\nbox.scale = (0.200, 0.150, 0.095)\nbox.name = "Box_Body"\n\n# 脚を4隅に配置\nleg_positions = [\n  (0.09, 0.065), (-0.09, 0.065),\n  (0.09,-0.065), (-0.09,-0.065)\n]\nfor i, (x, y) in enumerate(leg_positions):\n  bpy.ops.mesh.primitive_cylinder_add(\n    radius=0.005, depth=0.005,\n    location=(x, y, -0.05))\n  leg = bpy.context.active_object\n  leg.name = f"Leg_{i+1}"'},
+     {role:'確認',rc:'#dcfce7',rt:'#15803d',name:'品質確認エージェント',work:'スクリプトの構造・単位・整合性を検証中',doc:'品質レポート',
+      out:'【スクリプト検証 完了】\n\n✅ 単位系：mm → m変換 正常\n✅ 本体寸法：200×150×95mm 確認\n✅ 蓋の嵌合クリアランス：0.5mm設定済み\n✅ 脚の配置：4隅 均等配置 確認\n✅ Blender 3.x / 4.x 両対応\n\n⚠️ 推奨：板厚を2mm→3mmに変更推奨\n　（実際に印刷する場合の強度確保のため）\n\n→ 修正版スクリプトを生成済み'},
+   ],
+   result:{time:'15分',saved:'約半日削減',files:['Blenderスクリプト(.py)','パラメータシート','品質レポート','3Dモデル(.blend)'],note:'寸法を日本語で伝えるだけ。Blenderにスクリプトを貼ると3Dモデルが自動生成される。CAD知識ゼロで即完成。'},
+   docTitle:'3D設計スクリプト ＆ パラメータシート',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">3D設計スクリプト ＆ パラメータシート</div>
+<div class="doc-meta">生成日：2024年12月XX日　ツール：Blender 3.x/4.x対応</div>
+<div class="doc-h2">1. 設計パラメータ</div>
+<table class="doc-tbl">
+<thead><tr><th>パーツ</th><th>項目</th><th>寸法</th></tr></thead>
+<tbody>
+<tr><td rowspan="3">本体</td><td>幅</td><td>200mm</td></tr>
+<tr><td>奥行き</td><td>150mm</td></tr>
+<tr><td>高さ（脚除く）</td><td>95mm</td></tr>
+<tr><td rowspan="2">蓋</td><td>高さ</td><td>8mm</td></tr>
+<tr><td>ツメクリアランス</td><td>0.5mm（取り外し可能）</td></tr>
+<tr><td rowspan="3">脚（×4）</td><td>直径</td><td>10mm</td></tr>
+<tr><td>高さ</td><td>5mm</td></tr>
+<tr><td>配置</td><td>底面4隅・各隅10mm内側</td></tr>
+</tbody></table>
+<div class="doc-h2">2. Blender Pythonスクリプト</div>
+<div class="doc-code">import bpy
+
+# 全オブジェクト初期化
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete()
+
+# 本体ボックス生成
+bpy.ops.mesh.primitive_cube_add(size=1)
+box = bpy.context.active_object
+box.scale = (0.200, 0.150, 0.095)
+box.name = "Box_Body"
+
+# 脚を4隅に自動配置
+for i, (x, y) in enumerate([
+    (0.09, 0.065), (-0.09, 0.065),
+    (0.09,-0.065), (-0.09,-0.065)]):
+  bpy.ops.mesh.primitive_cylinder_add(
+    radius=0.005, depth=0.005,
+    location=(x, y, -0.05))
+  bpy.context.active_object.name = f"Leg_{i+1}"
+
+print("3Dモデル生成完了！")</div>
+<div class="doc-h2">3. 使い方（3ステップ）</div>
+<div class="doc-p">① Blenderを開く → 「スクリプティング」タブをクリック<br>② 上のコードをコピー → テキストエディタに貼り付け<br>③「▶ スクリプトを実行」ボタンをクリック → 3Dモデル完成</div>
+<div class="doc-hl">💡 このスクリプトはパラメータを変えるだけで何度でも再利用できます。Claudeに「高さを120mmに変更して」と伝えれば即座に修正版が届きます。</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#ede9fe',tool:'Google Drive MCP',toolBg:'#ede9fe',toolC:'#5b21b6',
+      action:'TOOL: drive.create_file を実行',
+      detail:'Blenderスクリプトをドライブに保存中…',
+      result:'📄 ファイル保存完了\n「box_model_v1.py」（Blenderスクリプト）\n「design_params.xlsx」（パラメータシート）\n→ 3Dモデルフォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'設計担当者・上司にスクリプトを共有中…',
+      result:'✉️ メール送信完了\n宛先：設計チーム・田中部長\n件名：【3Dモデル】収納ボックス スクリプト共有\n→ スクリプト・パラメータシートを添付して送信'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'3Dモデル確認ミーティングをスケジュール中…',
+      result:'📅 MTG登録完了\n「3Dモデル確認会 — 収納ボックス」\n→ 来週水曜日 13:00〜14:00\n参加者全員にZoom招待を送信しました'},
+   ]
+  },
+  {icon:'🖼️',title:'スケッチ→3D変換',time:'2日 → 30分',
+   docs:['寸法抽出レポート','3Dスクリプト','修正指示書'],
+   task:'「ノートに書いた手書きのスケッチ（正面・側面・上面の三面図）の写真を撮って渡した。これを3Dモデルにしてほしい」',
+   agents:[
+     {role:'OCR',rc:'#fef9c3',rt:'#854d0e',name:'画像解析エージェント',work:'手書きスケッチから寸法・形状を読み取り中',doc:'寸法抽出レポート',
+      out:'【手書きスケッチ 解析結果】\n\n■ 正面図から読み取り\n　幅：約320mm / 高さ：約180mm\n　中央に円形穴：直径φ60mm\n\n■ 側面図から読み取り\n　奥行き：約240mm\n　右側に段差：高さ20mm / 奥行き30mm\n\n■ 上面図から読み取り\n　左右対称構造を確認\n　4隅にR5mmの面取り\n\n⚠️ 不明箇所：底面の板厚が読み取れず\n→ デフォルト5mmで生成（後で変更可能）'},
+     {role:'3D',rc:'#dbeafe',rt:'#1e40af',name:'モデリングエージェント',work:'読み取った寸法からBlenderスクリプトを生成中',doc:'3Dスクリプト（スケッチ版）',
+      out:'import bpy, bmesh\n\n# ベース形状（320×240×180mm）\nbpy.ops.mesh.primitive_cube_add(size=1)\nobj = bpy.context.active_object\nobj.scale = (0.32, 0.24, 0.18)\n\n# 前面の円形穴をBoolean演算で追加\nbpy.ops.mesh.primitive_cylinder_add(\n  radius=0.030, depth=0.10,\n  location=(0, -0.13, 0),\n  rotation=(1.5708, 0, 0))\ncutter = bpy.context.active_object\n\n# Boolean Modifier で穴あけ\nmod = obj.modifiers.new("Hole","BOOLEAN")\nmod.object = cutter\nmod.operation = "DIFFERENCE"\n\nprint("スケッチ→3D変換完了")'},
+     {role:'確認',rc:'#dcfce7',rt:'#15803d',name:'整合性チェックエージェント',work:'手書き寸法と3Dモデルの整合性を確認中',doc:'修正指示書',
+      out:'【整合性チェック 結果】\n\n✅ 外形寸法：正面・側面・上面で一致\n✅ 円形穴：φ60mm → 正確に配置済み\n✅ 段差：右側20×30mmの段差を再現\n✅ 面取り：4隅R5mmを反映\n\n📝 確認推奨事項：\n① 底面板厚（5mm）で強度は問題ないか？\n② 円形穴の位置（中央）でよいか？\n③ 段差の向きは正面から見て右側か？\n\n→ Claudeに「〇〇を変更して」と伝えるだけで修正版を即生成'},
+   ],
+   result:{time:'30分',saved:'約2日削減',files:['寸法抽出レポート','Blenderスクリプト','整合性チェックレポート','修正指示書'],note:'手書きスケッチの写真を渡すだけ。AIが三面図を読み取り・解析・3Dスクリプトまで自動生成。'},
+   docTitle:'スケッチ→3D変換 解析レポート',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">手書きスケッチ → 3D変換 解析レポート</div>
+<div class="doc-meta">解析日：2024年12月XX日　解析精度：高（三面図あり）</div>
+<div class="doc-h2">1. スケッチから読み取った寸法</div>
+<table class="doc-tbl">
+<thead><tr><th>図面</th><th>項目</th><th>読み取り値</th><th>信頼度</th></tr></thead>
+<tbody>
+<tr><td>正面図</td><td>幅</td><td>320mm</td><td style="color:#16a34a">● 高</td></tr>
+<tr><td>正面図</td><td>高さ</td><td>180mm</td><td style="color:#16a34a">● 高</td></tr>
+<tr><td>正面図</td><td>円形穴 直径</td><td>φ60mm</td><td style="color:#16a34a">● 高</td></tr>
+<tr><td>側面図</td><td>奥行き</td><td>240mm</td><td style="color:#16a34a">● 高</td></tr>
+<tr><td>側面図</td><td>段差 高さ</td><td>20mm</td><td style="color:#d97706">▲ 中</td></tr>
+<tr><td>上面図</td><td>面取り半径</td><td>R5mm</td><td style="color:#d97706">▲ 中</td></tr>
+<tr><td>全図</td><td>板厚</td><td>5mm（推定）</td><td style="color:#dc2626">◎ 要確認</td></tr>
+</tbody></table>
+<div class="doc-warn">⚠️ 板厚はスケッチから読み取れませんでした。デフォルト5mmで生成しています。実際の用途に合わせて変更してください。</div>
+<div class="doc-h2">2. 生成スクリプト概要</div>
+<div class="doc-p">ベース形状（直方体）→ Boolean演算で円形穴 → 段差の追加 → 面取り処理の順で構築。Blenderにスクリプトを貼り付けるだけで3Dモデルが完成します。</div>
+<div class="doc-hl">💡 修正が必要な場合は「円形穴をφ80mmに変更して」など日本語で伝えるだけで、修正版スクリプトが即座に届きます。</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#ede9fe',tool:'Google Drive MCP',toolBg:'#ede9fe',toolC:'#5b21b6',
+      action:'TOOL: drive.upload_file を実行',
+      detail:'スケッチ画像と生成スクリプトをドライブに保存中…',
+      result:'📁 保存完了\n「sketch_original.jpg」（元の手書きスケッチ）\n「sketch_to_3d_v1.py」（生成スクリプト）\n「analysis_report.pdf」（解析レポート）\n→ バージョン管理フォルダに整理しました'},
+     {delay:1000,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'設計確認を依頼するメールを送信中…',
+      result:'✉️ メール送信完了\n宛先：上司・山田課長\n件名：【確認依頼】手書きスケッチから3Dモデルを作成しました\n→ 解析レポート・3Dスクリプト・確認ポイント3点を送付'},
+     {delay:1700,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'3Dモデルレビュー会のスケジュールを作成中…',
+      result:'📅 MTG登録完了\n「3Dモデルレビュー（スケッチ→3D）」\n→ 明日 15:00〜15:30（30分）\nZoom招待を送信・スクリプトをアジェンダに記載'},
+   ]
+  },
+  {icon:'📐',title:'2D図面の3D変換',time:'3日 → 1時間',
+   docs:['DXF解析レポート','3D押し出しスクリプト','変換結果'],
+   task:'「AutoCADで作った2Dの平面図（DXFファイル）がある。これを3Dの建物モデルに変換したい。壁・柱・開口部を自動で立ち上げてほしい」',
+   agents:[
+     {role:'解析',rc:'#fef9c3',rt:'#854d0e',name:'DXF解析エージェント',work:'DXFファイルから座標・レイヤー情報を抽出中',doc:'DXF解析レポート',
+      out:'【DXF解析結果】\n\n■ 検出要素\n　壁レイヤー（WALL）：23本の線分\n　柱レイヤー（COLUMN）：8個の矩形\n　開口部（OPENING）：窓×6、ドア×4\n　基準点：(0, 0)を原点として確認\n\n■ 建物サイズ\n　全幅：12,000mm / 全奥行：8,500mm\n　部屋数：4室（解析から推定）\n\n■ 変換方針\n　壁：高さ2,700mmでEXTRUDE\n　柱：400×400mm / 高さ2,700mm\n　開口部：Boolean演算で壁に穴あけ'},
+     {role:'変換',rc:'#dbeafe',rt:'#1e40af',name:'3D変換エージェント',work:'平面図の各要素をFreeCAD Pythonスクリプトに変換中',doc:'3D変換スクリプト',
+      out:'import FreeCAD, Part\n\ndoc = FreeCAD.newDocument("Building")\n\n# 壁を押し出し（例：壁1）\nwall_profile = Part.makePolygon([\n  FreeCAD.Vector(0, 0, 0),\n  FreeCAD.Vector(12000, 0, 0),\n  FreeCAD.Vector(12000, 200, 0),\n  FreeCAD.Vector(0, 200, 0),\n  FreeCAD.Vector(0, 0, 0)\n])\nwall_face = Part.Face(Part.Wire(wall_profile))\nwall_solid = wall_face.extrude(\n  FreeCAD.Vector(0, 0, 2700))\n\n# 23本の壁を自動ループで生成\n# （省略：全壁・柱・開口部の完全コードは\n#  添付スクリプトファイルを参照）\nprint("2D→3D変換完了")'},
+     {role:'検証',rc:'#dcfce7',rt:'#15803d',name:'建築検証エージェント',work:'壁の閉合性・柱位置・開口部サイズを建築基準で確認中',doc:'建築チェックレポート',
+      out:'【建築整合性チェック 結果】\n\n✅ 壁の閉合性：全室で閉じた空間を確認\n✅ 柱位置：4隅＋中間柱8本を確認\n✅ ドア開口：有効幅800mm以上（建築基準法準拠）\n✅ 窓面積：各室の採光面積比 7%以上確認\n\n⚠️ 注意点：\n① 北側の壁に200mmの不整合（座標ずれ）を検出\n　→ 修正スクリプトを自動生成済み\n② 階段室が平面図に含まれていない\n　→ 追加が必要な場合は「階段を追加して」と指示'},
+   ],
+   result:{time:'1時間',saved:'約3日削減',files:['DXF解析レポート','FreeCADスクリプト（壁・柱・開口部）','建築チェックレポート','3Dモデルファイル'],note:'DXFを渡すだけで壁・柱・窓・ドアが自動3D化。建築基準の整合性チェックまで同時実行。'},
+   docTitle:'2D平面図 → 3D建物モデル 変換レポート',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">2D平面図 → 3D建物モデル 変換レポート</div>
+<div class="doc-meta">変換日：2024年12月XX日　元ファイル：building_plan.dxf</div>
+<div class="doc-h2">1. DXF解析結果</div>
+<table class="doc-tbl">
+<thead><tr><th>要素</th><th>検出数</th><th>変換方法</th><th>高さ</th></tr></thead>
+<tbody>
+<tr><td>壁（WALL）</td><td>23本</td><td>押し出し（EXTRUDE）</td><td>2,700mm</td></tr>
+<tr><td>柱（COLUMN）</td><td>8個</td><td>押し出し（EXTRUDE）</td><td>2,700mm</td></tr>
+<tr><td>窓（WINDOW）</td><td>6箇所</td><td>Boolean演算で開口</td><td>H:1,200mm</td></tr>
+<tr><td>ドア（DOOR）</td><td>4箇所</td><td>Boolean演算で開口</td><td>H:2,100mm</td></tr>
+</tbody></table>
+<div class="doc-h2">2. 建築整合性チェック</div>
+<table class="doc-tbl">
+<thead><tr><th>チェック項目</th><th>結果</th><th>基準値</th></tr></thead>
+<tbody>
+<tr><td>ドア有効幅</td><td style="color:#16a34a">✅ 800mm以上</td><td>建築基準法：750mm以上</td></tr>
+<tr><td>採光面積比</td><td style="color:#16a34a">✅ 7%以上（全室）</td><td>建築基準法：7%以上</td></tr>
+<tr><td>壁の閉合性</td><td style="color:#dc2626">⚠️ 北側に不整合</td><td>要修正（修正版あり）</td></tr>
+</tbody></table>
+<div class="doc-hl">💡 「壁の高さを3000mmに変更して」「2階を追加して」など日本語で指示するだけで、3D化された建物モデルをそのまま修正できます。</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#ede9fe',tool:'Google Drive MCP',toolBg:'#ede9fe',toolC:'#5b21b6',
+      action:'TOOL: drive.create_folder を実行',
+      detail:'プロジェクト管理フォルダを作成中…',
+      result:'📂 フォルダ作成完了\n「3D変換PJ_〇〇ビル」\n　├ 元図面（DXF）\n　├ 変換スクリプト\n　└ 3Dモデル（FreeCAD）\n→ チームメンバーに共有権限を付与'},
+     {delay:1000,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'設計チームに3D変換完了を通知中…',
+      result:'✉️ メール送信完了\n宛先：設計チーム全員（5名）\n件名：【完了】〇〇ビル 2D→3D変換が完了しました\n→ 3Dモデル・チェックレポート・注意点1件を共有'},
+     {delay:1700,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'3Dモデルレビュー会議の日程を登録中…',
+      result:'📅 会議登録完了\n「【3D】〇〇ビル 変換結果レビュー」\n→ 来週月曜日 10:00〜11:00\n設計チーム5名＋施工担当に招待送信'},
+   ]
+  },
+  {icon:'🔧',title:'3Dモデル修正・改善',time:'数時間 → 10分',
+   docs:['問題点レポート','修正スクリプト','Before/After比較'],
+   task:'「Blenderで作った3Dモデルを見たら、角が鋭すぎる、全体的に重すぎる（ポリゴン数が多い）、寸法が5mm違う部分がある、という3つの問題がある。まとめて直してほしい」',
+   agents:[
+     {role:'診断',rc:'#fce7f3',rt:'#9d174d',name:'モデル診断エージェント',work:'3Dモデルの問題点を特定・分類中',doc:'問題点診断レポート',
+      out:'【3Dモデル 診断結果】\n\n🔴 問題①：角の鋭さ（ベベル未設定）\n　→ 全エッジにBevel Modifier（幅2mm/分割2）を追加\n　　実用品・3Dプリント向けに修正\n\n🟡 問題②：ポリゴン数過多\n　現在：248,320 faces（重い）\n　→ Decimate Modifier（比率0.3）で削減\n　目標：約75,000 faces（70%削減）\n\n🟡 問題③：寸法誤差（5mm）\n　X軸方向に+5mmのずれを検出\n　→ scale_x を 0.995 に補正'},
+     {role:'修正',rc:'#dbeafe',rt:'#1e40af',name:'修正スクリプトエージェント',work:'3つの問題を修正するBlenderスクリプトを生成中',doc:'修正スクリプト',
+      out:'import bpy\n\nobj = bpy.context.active_object\n\n# ① 角のベベル修正\nbevel = obj.modifiers.new("Bevel","BEVEL")\nbevel.width = 0.002  # 2mm\nbevel.segments = 2\n\n# ② ポリゴン数削減\ndecimate = obj.modifiers.new(\n  "Decimate","DECIMATE")\ndecimate.ratio = 0.3\n\n# ③ 寸法誤差補正（X軸 -5mm）\nobj.scale.x *= 0.995\n\n# 全モディファイアを適用\nbpy.ops.object.convert(target="MESH")\n\nprint(f"修正完了: faces={len(obj.data.polygons)}")'},
+     {role:'比較',rc:'#dcfce7',rt:'#15803d',name:'Before/After検証エージェント',work:'修正前後の品質・寸法・軽量化を比較・測定中',doc:'Before/After比較レポート',
+      out:'【修正前後 比較結果】\n\n■ ポリゴン数\n　Before：248,320 faces\n　After：74,120 faces（▲70.2%削減）✅\n\n■ ファイルサイズ\n　Before：48.3MB\n　After：14.7MB（▲69.6%削減）✅\n\n■ 寸法精度\n　Before：X軸 +5.0mmのズレ\n　After：X軸 +0.1mm以内（許容誤差内）✅\n\n■ 角の状態\n　Before：シャープエッジ（鋭角）\n　After：R2mmのフィレット処理済み✅\n\n→ 3Dプリント・レンダリングどちらも問題なし'},
+   ],
+   result:{time:'10分',saved:'数時間削減',files:['診断レポート','修正スクリプト(.py)','Before/After比較レポート','修正済みモデル(.blend)'],note:'「重い・鋭い・ズレてる」を日本語で伝えるだけ。AIが問題を特定・修正スクリプトを生成。何度でも無料で修正できる。'},
+   docTitle:'3Dモデル 修正レポート（Before/After）',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">3Dモデル 修正レポート</div>
+<div class="doc-meta">修正日：2024年12月XX日　対象：box_model_v1.blend</div>
+<div class="doc-h2">1. 修正前後の比較</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>修正前</th><th>修正後</th><th>改善率</th></tr></thead>
+<tbody>
+<tr><td>ポリゴン数</td><td style="color:#dc2626">248,320</td><td style="color:#16a34a">74,120</td><td style="color:#16a34a">▲70%削減</td></tr>
+<tr><td>ファイルサイズ</td><td style="color:#dc2626">48.3MB</td><td style="color:#16a34a">14.7MB</td><td style="color:#16a34a">▲70%削減</td></tr>
+<tr><td>寸法誤差（X軸）</td><td style="color:#dc2626">+5.0mm</td><td style="color:#16a34a">+0.1mm</td><td style="color:#16a34a">98%改善</td></tr>
+<tr><td>角の処理</td><td style="color:#dc2626">シャープ</td><td style="color:#16a34a">R2mmフィレット</td><td style="color:#16a34a">✅</td></tr>
+</tbody></table>
+<div class="doc-hl">💡 Claudeへの指示：「重い・角が鋭い・5mmズレてる」の3点を日本語で伝えるだけで、このような修正スクリプトが自動生成されます。</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#ede9fe',tool:'Google Drive MCP',toolBg:'#ede9fe',toolC:'#5b21b6',
+      action:'TOOL: drive.create_file を実行',
+      detail:'修正前・修正後モデルをバージョン管理保存中…',
+      result:'📄 バージョン保存完了\n「box_model_v1.blend」（修正前）\n「box_model_v2_fixed.blend」（修正後）\n「fix_report.pdf」（比較レポート）\n→ バージョン履歴で戻せます'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'修正完了を関係者に通知中…',
+      result:'✉️ メール送信完了\n宛先：上司・設計担当\n件名：【修正完了】3Dモデル v2 — 3点の問題を修正しました\n→ Before/After比較レポートを添付して共有'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'最終確認レビューのスケジュールを登録中…',
+      result:'📅 MTG登録完了\n「3Dモデル 最終確認レビュー」\n→ 今週金曜日 16:00〜16:30\n修正版モデルのリンクをアジェンダに記載済み'},
+   ]
+  },
+  {icon:'📊',title:'プレゼン・共有資料化',time:'1日 → 20分',
+   docs:['3Dモデル説明資料','工程表','クライアント提案書'],
+   task:'「完成した3Dモデルをクライアントや上司に見せる資料を作りたい。3Dモデルの各アングルのキャプチャ・寸法・使い方の説明・工程表をまとめた提案書にしてほしい」',
+   agents:[
+     {role:'構成',rc:'#e0e7ff',rt:'#3730a3',name:'資料構成エージェント',work:'3Dモデルの説明資料の構成・要素を整理中',doc:'資料構成案',
+      out:'【説明資料 構成案】\n\n表紙：プロジェクト名・担当・日付\n\nP1：3Dモデル概要\n　・正面・側面・上面のスクリーンショット\n　・全体寸法（W×D×H）\n\nP2：各パーツ詳細\n　・部位名称と寸法を図入りで説明\n　・材質・表面処理の仕様\n\nP3：製作工程表\n　・設計→試作→確認→量産の4フェーズ\n　・各フェーズの期間・担当者\n\nP4：コスト試算\n　・3Dプリント費用 / 試作費用の概算'},
+     {role:'文書',rc:'#dcfce7',rt:'#15803d',name:'提案書作成エージェント',work:'クライアント向け提案書を作成中',doc:'クライアント提案書',
+      out:'【提案書 完成】\n\n■ タイトル：〇〇製品 3Dモデル設計提案書\n\n■ エグゼクティブサマリー\n　AIを活用した3D設計により、従来1週間かかっていた\n　試作モデル作成を1日に短縮しました。\n\n■ 設計仕様\n　外形寸法：W200×D150×H100mm\n　材質：ABSプラスチック（試作用）\n　表面処理：梨地仕上げ\n\n■ 工程表（3週間）\n　Week1：設計確定・修正\n　Week2：試作品製造\n　Week3：評価・量産準備\n\n■ コスト概算：¥48,000〜¥65,000（試作1個）'},
+     {role:'動画',rc:'#fce7f3',rt:'#9d174d',name:'プレゼン最適化エージェント',work:'プレゼン用スクリーンショット構成・アングルを最適化中',doc:'プレゼン構成指示書',
+      out:'【3Dモデル プレゼン用アングル指示】\n\n① 正面図（フロントビュー）\n　→ スペック表示・全体寸法を添付\n\n② アイソメトリック（斜め45°）\n　→ 立体感を最もよく伝えるアングル\n\n③ 断面図（中央でカット）\n　→ 内部構造・板厚・穴の深さを表示\n\n④ 分解図\n　→ 本体・蓋・脚を分離して配置\n\nBlender操作：\n　各アングルで [F12] でレンダリング\n　解像度：1920×1080px（推奨）'},
+   ],
+   result:{time:'20分',saved:'約1日削減',files:['クライアント提案書（PDF）','工程表','アングル撮影指示書','コスト概算書'],note:'3Dモデルができたら「提案書を作って」の一言で、説明資料・工程表・コスト試算まで自動生成。クライアントにすぐ見せられる。'},
+   docTitle:'3Dモデル クライアント提案書',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">〇〇製品 3Dモデル設計 提案書</div>
+<div class="doc-meta">作成日：2024年12月XX日　担当：〇〇部 山田太郎</div>
+<div class="doc-h2">1. エグゼクティブサマリー</div>
+<div class="doc-p">AIエージェントを活用した3D設計により、従来1週間かかっていた試作モデルの設計・確認工程を<strong>1日以内</strong>に短縮しました。設計変更も「修正してほしい点」を日本語で伝えるだけで即座に対応可能です。</div>
+<div class="doc-h2">2. 設計仕様</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>仕様</th></tr></thead>
+<tbody>
+<tr><td>外形寸法</td><td>W200mm × D150mm × H100mm</td></tr>
+<tr><td>材質（試作）</td><td>ABSプラスチック（3Dプリント）</td></tr>
+<tr><td>表面処理</td><td>梨地仕上げ（量産時）</td></tr>
+<tr><td>重量（概算）</td><td>約185g</td></tr>
+</tbody></table>
+<div class="doc-h2">3. 製作工程表（3週間）</div>
+<table class="doc-tbl">
+<thead><tr><th>フェーズ</th><th>期間</th><th>内容</th><th>担当</th></tr></thead>
+<tbody>
+<tr><td>設計確定</td><td>Week 1</td><td>3Dモデル最終確認・修正</td><td>設計部</td></tr>
+<tr><td>試作製造</td><td>Week 2</td><td>3Dプリント・試作品製作</td><td>外注</td></tr>
+<tr><td>評価・確認</td><td>Week 3</td><td>寸法確認・機能評価</td><td>品質管理</td></tr>
+</tbody></table>
+<div class="doc-h2">4. コスト概算</div>
+<div class="doc-hl">💡 試作1個：¥48,000〜¥65,000 / 量産（100個〜）：¥3,200〜/個（概算）</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#ede9fe',tool:'Google Drive MCP',toolBg:'#ede9fe',toolC:'#5b21b6',
+      action:'TOOL: drive.create_document を実行',
+      detail:'クライアント提案書をGoogleドキュメントで作成中…',
+      result:'📄 ドキュメント作成完了\n「〇〇製品 3Dモデル設計提案書」\n「工程表_3週間スケジュール」\n→ クライアント共有リンクを発行しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアントに提案書を送付中…',
+      result:'✉️ メール送信完了\n宛先：〇〇株式会社 鈴木部長\n件名：【ご提案】3Dモデル設計のご提案書を送付いたします\n→ 提案書・工程表・3Dモデルの閲覧リンクを送付'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'クライアントとのプレゼン日程を設定中…',
+      result:'📅 MTG登録完了\n「【提案】〇〇製品 3Dモデルプレゼン」\n→ 来週火曜日 14:00〜15:00\nZoom招待・提案書リンクをセットで送信済み'},
+   ]
+  },
+];
+
+let timers=[];
+function sel(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+function showDoc(idx){
+  document.getElementById('docContent').innerHTML=D[idx].docHtml;
+  document.getElementById('docOverlay').classList.add('open');
+}
+function run(d){
+  const idx=D.indexOf(d);
+  const panel=document.querySelectorAll('.panel')[idx];
+  panel.querySelector('.result-box').style.display='none';
+  const mcpSec=panel.querySelector('.mcp-section');
+  if(mcpSec)mcpSec.classList.remove('open');
+  timers.forEach(clearTimeout);timers=[];
+  const cards=panel.querySelectorAll('.agent-card');
+  cards.forEach(c=>c.classList.remove('show'));
+  panel.querySelectorAll('.agent-out').forEach(o=>{o.textContent='';});
+  cards.forEach((card,i)=>{
+    timers.push(setTimeout(()=>{
+      card.classList.add('show');
+      const out=card.querySelector('.agent-out');
+      const text=d.agents[i].out;
+      let ci=0;
+      const iv=setInterval(()=>{
+        if(ci<text.length){out.textContent+=text[ci++];}else clearInterval(iv);
+      },10);
+    },i*800));
+  });
+  timers.push(setTimeout(()=>{
+    const rb=panel.querySelector('.result-box');
+    rb.style.display='block';
+    rb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },d.agents.length*800+400));
+}
+function showMcp(idx){
+  const d=D[idx];
+  const panel=document.querySelectorAll('.panel')[idx];
+  const sec=panel.querySelector('.mcp-section');
+  sec.classList.add('open');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  const steps=sec.querySelectorAll('.mcp-step');
+  steps.forEach(s=>{s.classList.remove('show');s.querySelector('.mcp-result').textContent='';});
+  timers.forEach(clearTimeout);timers=[];
+  d.mcpSteps.forEach((ms,i)=>{
+    timers.push(setTimeout(()=>{
+      steps[i].classList.add('show');
+      const res=steps[i].querySelector('.mcp-result');
+      let ci=0;
+      const iv=setInterval(()=>{
+        if(ci<ms.result.length){res.textContent+=ms.result[ci++];}else clearInterval(iv);
+      },14);
+    },ms.delay));
+  });
+}
+
+const tabsEl=document.getElementById('tabs');
+const panelsEl=document.getElementById('panels');
+D.forEach((d,i)=>{
+  const tab=document.createElement('div');
+  tab.className='tab'+(i===0?' active':'');
+  tab.innerHTML=d.icon+' '+d.title;
+  tab.onclick=()=>sel(i);
+  tabsEl.appendChild(tab);
+
+  const panel=document.createElement('div');
+  panel.className='panel'+(i===0?' active':'');
+  const mcpLegend=d.mcpSteps.map(ms=>`<span class="mcp-tool-tag" style="background:${ms.toolBg};color:${ms.toolC}">${ms.tool}</span>`).join('');
+  const mcpStepsHtml=d.mcpSteps.map(ms=>`
+    <div class="mcp-step">
+      <div class="mcp-step-line">
+        <div class="mcp-step-icon" style="background:${ms.bg}">${ms.icon}</div>
+        <div class="mcp-step-body">
+          <div class="mcp-action">${ms.action}</div>
+          <div class="mcp-detail">${ms.detail}</div>
+          <div class="mcp-result"></div>
+        </div>
+      </div>
+    </div>`).join('');
+  const timeAfter=(d.result.time.split('→')[1]||'').trim();
+  panel.innerHTML=`
+    <div class="task-box"><strong>💬 依頼内容</strong>${d.task}</div>
+    <div class="agents">${d.agents.map(a=>`
+      <div class="agent-card">
+        <div class="agent-header">
+          <span class="role-badge" style="background:${a.rc};color:${a.rt}">${a.role}</span>
+          <span class="agent-name">${a.name}</span>
+        </div>
+        <div class="agent-work"><div class="spinner"></div>${a.work}</div>
+        <div class="agent-out"></div>
+      </div>`).join('')}</div>
+    <div class="result-box">
+      <h3>✅ 完了 — ${d.result.time} で処理完了</h3>
+      <div class="result-grid">
+        <div class="result-stat"><div class="val">${timeAfter}</div><div class="lbl">処理時間</div></div>
+        <div class="result-stat"><div class="val">${d.result.saved}</div><div class="lbl">削減効果</div></div>
+        <div class="result-stat"><div class="val">${d.result.files.length}件</div><div class="lbl">出力ファイル</div></div>
+      </div>
+      <div class="result-files">${d.result.files.map(f=>`<span class="file-chip">📄 ${f}</span>`).join('')}</div>
+      <div class="result-note">💡 ${d.result.note}</div>
+    </div>
+    <div class="btn-row">
+      <button class="out-btn run" onclick="run(D[${i}])"><span>▶ エージェントを動かす</span></button>
+      <button class="out-btn primary" onclick="showDoc(${i})"><span>📄 実際に出力する</span></button>
+      <button class="out-btn mcp" onclick="showMcp(${i})"><span>🔗 MCP連携デモ — Google連携で動かす</span></button>
+    </div>
+    <div class="mcp-section">
+      <div class="mcp-header"><span style="font-size:1.4rem">🔗</span>
+        <span class="mcp-title">MCP連携デモ — 3DモデルをGoogleと連携して管理・共有</span>
+      </div>
+      <div class="mcp-tools-legend">${mcpLegend}</div>
+      ${mcpStepsHtml}
+    </div>`;
+  panelsEl.appendChild(panel);
+});
+</script>
+</body>
+</html>
