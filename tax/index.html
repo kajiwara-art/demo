@@ -6,58 +6,59 @@
 <title>税理士事務所 × AIエージェント — シゴトAI</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
-.hero{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid #1e293b}
-.hero-badge{display:inline-block;background:#1d4ed8;color:#bfdbfe;padding:4px 14px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:16px;letter-spacing:.5px}
-.hero h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#f8fafc;line-height:1.3}
-.hero h1 span{color:#38bdf8}
-.hero p{color:#94a3b8;margin-top:12px;font-size:.95rem;max-width:580px;margin-inline:auto}
-.tabs{display:flex;overflow-x:auto;gap:0;background:#0f172a;border-bottom:2px solid #1e293b;padding:0 12px}
-.tab{padding:14px 18px;font-size:.82rem;font-weight:700;color:#64748b;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
-.tab.active{color:#38bdf8;border-bottom-color:#38bdf8}
-.tab:hover:not(.active){color:#94a3b8}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+.hero{background:linear-gradient(135deg,#1d4ed8 0%,#0284c7 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid #bfdbfe}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:4px 14px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:16px;letter-spacing:.5px;border:1px solid rgba(255,255,255,.3)}
+.hero h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#fff;line-height:1.3}
+.hero h1 span{color:#bfdbfe}
+.hero p{color:rgba(255,255,255,.8);margin-top:12px;font-size:.95rem;max-width:580px;margin-inline:auto}
+.tabs{display:flex;overflow-x:auto;gap:0;background:#fff;border-bottom:2px solid #e2e8f0;padding:0 12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tab{padding:14px 18px;font-size:.82rem;font-weight:700;color:#94a3b8;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+.tab.active{color:#1d4ed8;border-bottom-color:#1d4ed8}
+.tab:hover:not(.active){color:#475569}
 .panel{display:none;padding:24px 20px;max-width:860px;margin:0 auto}
 .panel.active{display:block}
-.task-box{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:.88rem;color:#94a3b8;border-left:4px solid #38bdf8}
-.task-box strong{color:#e2e8f0;display:block;margin-bottom:4px;font-size:.92rem}
+.task-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:.88rem;color:#374151;border-left:4px solid #1d4ed8}
+.task-box strong{color:#1e293b;display:block;margin-bottom:4px;font-size:.92rem}
 .agents{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
-.agent-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px 16px;opacity:0;transform:translateY(8px);transition:all .4s}
+.agent-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;opacity:0;transform:translateY(8px);transition:all .4s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .agent-card.show{opacity:1;transform:translateY(0)}
 .agent-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .role-badge{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:800;letter-spacing:.3px}
-.agent-name{font-weight:700;font-size:.88rem;color:#f1f5f9}
+.agent-name{font-weight:700;font-size:.88rem;color:#1e293b}
 .agent-work{font-size:.78rem;color:#64748b;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.spinner{width:12px;height:12px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+.spinner{width:12px;height:12px;border:2px solid #e2e8f0;border-top-color:#1d4ed8;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.agent-out{background:#0f172a;border-radius:6px;padding:10px 12px;font-size:.75rem;color:#94a3b8;white-space:pre-wrap;font-family:monospace;min-height:40px;border:1px solid #1e293b}
-.result-box{background:linear-gradient(135deg,#052e16,#0f172a);border:1px solid #16a34a;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:none}
-.result-box h3{color:#4ade80;font-size:.95rem;font-weight:800;margin-bottom:12px}
+.agent-out{background:#f8fafc;border-radius:6px;padding:10px 12px;font-size:.75rem;color:#374151;white-space:pre-wrap;font-family:monospace;min-height:40px;border:1px solid #e2e8f0}
+.result-box{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #86efac;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:none}
+.result-box h3{color:#15803d;font-size:.95rem;font-weight:800;margin-bottom:12px}
 .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.result-stat{text-align:center;background:#0f172a;border-radius:8px;padding:10px 6px}
-.result-stat .val{font-size:1.4rem;font-weight:900;color:#4ade80}
+.result-stat{text-align:center;background:#fff;border-radius:8px;padding:10px 6px;border:1px solid #e2e8f0}
+.result-stat .val{font-size:1.4rem;font-weight:900;color:#1d4ed8}
 .result-stat .lbl{font-size:.7rem;color:#64748b;margin-top:2px}
 .result-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.file-chip{background:#1e293b;border:1px solid #334155;border-radius:6px;padding:4px 10px;font-size:.75rem;color:#94a3b8}
-.result-note{margin-top:12px;font-size:.8rem;color:#4ade80;background:#052e16;border-radius:6px;padding:8px 12px}
+.file-chip{background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:4px 10px;font-size:.75rem;color:#475569}
+.result-note{margin-top:12px;font-size:.8rem;color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 12px}
 .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .out-btn{padding:12px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:8px;transition:all .2s}
 .out-btn:hover{opacity:.85;transform:translateY(-1px)}
 .out-btn.primary{background:#1d4ed8;color:#fff}
-.out-btn.run{background:#0e7490;color:#fff}
+.out-btn.run{background:#0284c7;color:#fff}
+.out-btn.mcp{background:#fff;color:#374151;border:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .out-btn span{display:block}
 /* document preview */
-.doc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;overflow-y:auto;padding:20px}
+.doc-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:100;overflow-y:auto;padding:20px}
 .doc-overlay.open{display:flex;align-items:flex-start;justify-content:center}
 .doc-wrap{background:#fff;border-radius:8px;max-width:720px;width:100%;padding:48px;position:relative;margin:auto}
-.doc-close{position:absolute;top:12px;right:16px;background:#1e293b;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
+.doc-close{position:absolute;top:12px;right:16px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
 .doc-page{color:#1e293b;font-family:'Hiragino Mincho Pro','Times New Roman',serif}
 .doc-title{font-size:1.2rem;font-weight:900;text-align:center;border-bottom:2px solid #1e293b;padding-bottom:10px;margin-bottom:14px}
 .doc-meta{font-size:.75rem;color:#6b7280;text-align:right;margin-bottom:16px}
-.doc-h2{font-size:.95rem;font-weight:800;background:#f1f5f9;padding:6px 10px;border-left:4px solid #1d4ed8;margin:16px 0 8px;color:#1e293b}
+.doc-h2{font-size:.95rem;font-weight:800;background:#eff6ff;padding:6px 10px;border-left:4px solid #1d4ed8;margin:16px 0 8px;color:#1e293b}
 .doc-h3{font-size:.85rem;font-weight:700;color:#1d4ed8;margin:10px 0 4px}
 .doc-p{font-size:.82rem;line-height:1.7;color:#374151;margin-bottom:8px}
 .doc-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:.78rem}
-.doc-tbl th{background:#1e3a5f;color:#fff;padding:6px 10px;text-align:left}
+.doc-tbl th{background:#1d4ed8;color:#fff;padding:6px 10px;text-align:left}
 .doc-tbl td{padding:6px 10px;border-bottom:1px solid #e5e7eb;color:#374151}
 .doc-tbl tr:nth-child(even) td{background:#f8fafc}
 .doc-warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px 12px;font-size:.78rem;color:#9a3412;margin:10px 0}
@@ -65,10 +66,10 @@ body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#0f172a;color
 .doc-check{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:.8rem;color:#374151}
 .page-num{text-align:right;font-size:.75rem;color:#9ca3af;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:8px}
 /* MCP */
-.mcp-section{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:18px;margin-bottom:20px;display:none}
+.mcp-section{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin-bottom:20px;display:none;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .mcp-section.open{display:block}
 .mcp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.mcp-title{font-weight:800;color:#f1f5f9;font-size:.95rem}
+.mcp-title{font-weight:800;color:#1e293b;font-size:.95rem}
 .mcp-tools-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .mcp-tool-tag{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700}
 .mcp-step{opacity:0;transform:translateY(6px);transition:all .35s;margin-bottom:12px}
@@ -76,17 +77,17 @@ body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#0f172a;color
 .mcp-step-line{display:flex;align-items:flex-start;gap:10px}
 .mcp-step-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
 .mcp-step-body{flex:1}
-.mcp-action{font-size:.75rem;color:#64748b;font-family:monospace;margin-bottom:4px}
-.mcp-detail{font-size:.78rem;color:#94a3b8;margin-bottom:4px}
-.mcp-result{background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:8px 10px;font-size:.75rem;color:#4ade80;font-family:monospace;white-space:pre-wrap;min-height:20px}
+.mcp-action{font-size:.75rem;color:#94a3b8;font-family:monospace;margin-bottom:4px}
+.mcp-detail{font-size:.78rem;color:#64748b;margin-bottom:4px}
+.mcp-result{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 10px;font-size:.75rem;color:#15803d;font-family:monospace;white-space:pre-wrap;min-height:20px}
 /* security section */
-.sec-box{background:linear-gradient(135deg,#1c1917,#1e293b);border:1px solid #d97706;border-radius:12px;padding:24px;margin:32px 0}
-.sec-box h2{color:#fbbf24;font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-box{background:#fff;border:1px solid #bfdbfe;border-radius:12px;padding:24px;margin:32px 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.sec-box h2{color:#1d4ed8;font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.sec-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:16px}
-.sec-card h3{font-size:.88rem;font-weight:700;color:#fde68a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sec-card p{font-size:.8rem;color:#94a3b8;line-height:1.6}
-.footer{text-align:center;padding:32px 20px;color:#475569;font-size:.78rem;border-top:1px solid #1e293b}
+.sec-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px}
+.sec-card h3{font-size:.88rem;font-weight:700;color:#1d4ed8;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec-card p{font-size:.8rem;color:#475569;line-height:1.6}
+.footer{text-align:center;padding:32px 20px;color:#94a3b8;font-size:.78rem;border-top:1px solid #e2e8f0}
 </style>
 </head>
 <body>
@@ -511,7 +512,7 @@ D.forEach((d,i)=>{
     <div class="btn-row">
       <button class="out-btn run" onclick="run(D[${i}])"><span>▶ エージェントを動かす</span></button>
       <button class="out-btn primary" onclick="showDoc(${i})"><span>📄 実際に出力する</span></button>
-      <button class="out-btn" style="background:#0f172a;border:1px solid #334155;color:#94a3b8;margin-top:0" onclick="showMcp(${i})"><span>🔗 MCP連携デモ — Google連携で動かす</span></button>
+      <button class="out-btn mcp" onclick="showMcp(${i})"><span>🔗 MCP連携デモ — Google連携で動かす</span></button>
     </div>
     <div class="mcp-section">
       <div class="mcp-header">
