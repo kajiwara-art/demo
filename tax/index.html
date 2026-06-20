@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>税理士事務所 × AIエージェント — シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.hero{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 100%);padding:48px 24px 36px;text-align:center;border-bottom:1px solid #1e293b}
+.hero-badge{display:inline-block;background:#1d4ed8;color:#bfdbfe;padding:4px 14px;border-radius:99px;font-size:.78rem;font-weight:700;margin-bottom:16px;letter-spacing:.5px}
+.hero h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;color:#f8fafc;line-height:1.3}
+.hero h1 span{color:#38bdf8}
+.hero p{color:#94a3b8;margin-top:12px;font-size:.95rem;max-width:580px;margin-inline:auto}
+.tabs{display:flex;overflow-x:auto;gap:0;background:#0f172a;border-bottom:2px solid #1e293b;padding:0 12px}
+.tab{padding:14px 18px;font-size:.82rem;font-weight:700;color:#64748b;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:6px}
+.tab.active{color:#38bdf8;border-bottom-color:#38bdf8}
+.tab:hover:not(.active){color:#94a3b8}
+.panel{display:none;padding:24px 20px;max-width:860px;margin:0 auto}
+.panel.active{display:block}
+.task-box{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:.88rem;color:#94a3b8;border-left:4px solid #38bdf8}
+.task-box strong{color:#e2e8f0;display:block;margin-bottom:4px;font-size:.92rem}
+.agents{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.agent-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px 16px;opacity:0;transform:translateY(8px);transition:all .4s}
+.agent-card.show{opacity:1;transform:translateY(0)}
+.agent-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.role-badge{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:800;letter-spacing:.3px}
+.agent-name{font-weight:700;font-size:.88rem;color:#f1f5f9}
+.agent-work{font-size:.78rem;color:#64748b;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.spinner{width:12px;height:12px;border:2px solid #334155;border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.agent-out{background:#0f172a;border-radius:6px;padding:10px 12px;font-size:.75rem;color:#94a3b8;white-space:pre-wrap;font-family:monospace;min-height:40px;border:1px solid #1e293b}
+.result-box{background:linear-gradient(135deg,#052e16,#0f172a);border:1px solid #16a34a;border-radius:12px;padding:18px 20px;margin-bottom:20px;display:none}
+.result-box h3{color:#4ade80;font-size:.95rem;font-weight:800;margin-bottom:12px}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.result-stat{text-align:center;background:#0f172a;border-radius:8px;padding:10px 6px}
+.result-stat .val{font-size:1.4rem;font-weight:900;color:#4ade80}
+.result-stat .lbl{font-size:.7rem;color:#64748b;margin-top:2px}
+.result-files{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.file-chip{background:#1e293b;border:1px solid #334155;border-radius:6px;padding:4px 10px;font-size:.75rem;color:#94a3b8}
+.result-note{margin-top:12px;font-size:.8rem;color:#4ade80;background:#052e16;border-radius:6px;padding:8px 12px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.out-btn{padding:12px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:.85rem;display:flex;align-items:center;gap:8px;transition:all .2s}
+.out-btn:hover{opacity:.85;transform:translateY(-1px)}
+.out-btn.primary{background:#1d4ed8;color:#fff}
+.out-btn.run{background:#0e7490;color:#fff}
+.out-btn span{display:block}
+/* document preview */
+.doc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;overflow-y:auto;padding:20px}
+.doc-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.doc-wrap{background:#fff;border-radius:8px;max-width:720px;width:100%;padding:48px;position:relative;margin:auto}
+.doc-close{position:absolute;top:12px;right:16px;background:#1e293b;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:.8rem}
+.doc-page{color:#1e293b;font-family:'Hiragino Mincho Pro','Times New Roman',serif}
+.doc-title{font-size:1.2rem;font-weight:900;text-align:center;border-bottom:2px solid #1e293b;padding-bottom:10px;margin-bottom:14px}
+.doc-meta{font-size:.75rem;color:#6b7280;text-align:right;margin-bottom:16px}
+.doc-h2{font-size:.95rem;font-weight:800;background:#f1f5f9;padding:6px 10px;border-left:4px solid #1d4ed8;margin:16px 0 8px;color:#1e293b}
+.doc-h3{font-size:.85rem;font-weight:700;color:#1d4ed8;margin:10px 0 4px}
+.doc-p{font-size:.82rem;line-height:1.7;color:#374151;margin-bottom:8px}
+.doc-tbl{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:.78rem}
+.doc-tbl th{background:#1e3a5f;color:#fff;padding:6px 10px;text-align:left}
+.doc-tbl td{padding:6px 10px;border-bottom:1px solid #e5e7eb;color:#374151}
+.doc-tbl tr:nth-child(even) td{background:#f8fafc}
+.doc-warn{background:#fff7ed;border:1px solid #fed7aa;border-radius:6px;padding:8px 12px;font-size:.78rem;color:#9a3412;margin:10px 0}
+.doc-hl{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;font-size:.82rem;color:#1e40af;margin:10px 0}
+.doc-check{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:.8rem;color:#374151}
+.page-num{text-align:right;font-size:.75rem;color:#9ca3af;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:8px}
+/* MCP */
+.mcp-section{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:18px;margin-bottom:20px;display:none}
+.mcp-section.open{display:block}
+.mcp-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.mcp-title{font-weight:800;color:#f1f5f9;font-size:.95rem}
+.mcp-tools-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.mcp-tool-tag{padding:3px 10px;border-radius:6px;font-size:.72rem;font-weight:700}
+.mcp-step{opacity:0;transform:translateY(6px);transition:all .35s;margin-bottom:12px}
+.mcp-step.show{opacity:1;transform:translateY(0)}
+.mcp-step-line{display:flex;align-items:flex-start;gap:10px}
+.mcp-step-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.mcp-step-body{flex:1}
+.mcp-action{font-size:.75rem;color:#64748b;font-family:monospace;margin-bottom:4px}
+.mcp-detail{font-size:.78rem;color:#94a3b8;margin-bottom:4px}
+.mcp-result{background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:8px 10px;font-size:.75rem;color:#4ade80;font-family:monospace;white-space:pre-wrap;min-height:20px}
+/* security section */
+.sec-box{background:linear-gradient(135deg,#1c1917,#1e293b);border:1px solid #d97706;border-radius:12px;padding:24px;margin:32px 0}
+.sec-box h2{color:#fbbf24;font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.sec-card{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:16px}
+.sec-card h3{font-size:.88rem;font-weight:700;color:#fde68a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec-card p{font-size:.8rem;color:#94a3b8;line-height:1.6}
+.footer{text-align:center;padding:32px 20px;color:#475569;font-size:.78rem;border-top:1px solid #1e293b}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">🤖 AIエージェント × 税理士事務所 デモ</div>
+  <h1>月次決算から監査まで<br><span>AIが残業をゼロにする</span></h1>
+  <p>Excel/CSVデータの読み込み・キャッシュフロー計算・クライアント報告書まで、複数エージェントが並列で処理。セキュリティ対策付き。</p>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div id="panels"></div>
+
+<!-- document overlay -->
+<div class="doc-overlay" id="docOverlay">
+  <div class="doc-wrap">
+    <button class="doc-close" onclick="document.getElementById('docOverlay').classList.remove('open')">✕ 閉じる</button>
+    <div class="doc-page" id="docContent"></div>
+  </div>
+</div>
+
+<!-- security section -->
+<div style="max-width:860px;margin:0 auto;padding:0 20px 40px">
+<div class="sec-box">
+  <h2>🔒 セキュリティ不安をゼロにする4つの対策</h2>
+  <div class="sec-grid">
+    <div class="sec-card">
+      <h3>🏠 データは社内で完結</h3>
+      <p>クライアントの税務データは外部クラウドに送信しない設計が可能。ローカルLLMまたは社内VPC内でAIを動作させ、データが外に出ない環境を構築します。</p>
+    </div>
+    <div class="sec-card">
+      <h3>🔐 エンドツーエンド暗号化</h3>
+      <p>Claude APIを利用する場合も通信はTLS1.3で暗号化。Anthropicは入力データをモデルの学習に使用しない契約（API利用規約）です。</p>
+    </div>
+    <div class="sec-card">
+      <h3>📋 税理士法・守秘義務への対応</h3>
+      <p>アクセスログ・操作履歴を全件記録。「誰が・いつ・どのデータにアクセスしたか」を証跡として残し、監査対応を可能にします。</p>
+    </div>
+    <div class="sec-card">
+      <h3>⚙️ 段階導入で安心</h3>
+      <p>最初は社内資料（議事録・メール文）だけでスタート。クライアントデータは社内システムの整備後に段階的に拡張。いきなり全件移行しません。</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="footer">シゴトAI — AIエージェント伴奏プログラム ¥298,000 / 3ヶ月</div>
+
+<script>
+const D=[
+  {icon:'📊',title:'月次決算 資料作成',time:'4時間 → 25分',
+   docs:['試算表','月次推移表','差異分析'],
+   task:'「クライアント（小売業）の先月分CSVデータが届いた。試算表・月次推移表・前月比較を作って、社長への報告コメントも書いてほしい」',
+   agents:[
+     {role:'Data',rc:'#dbeafe',rt:'#1e40af',name:'データ処理エージェント',work:'CSV取込・仕訳分類・勘定科目マッピング中',doc:'試算表（自動生成）',
+      out:'【CSV取込完了 — 2024年11月分】\n\n仕訳件数：1,847件 取込完了\n勘定科目マッピング：自動分類 完了（例外3件は要確認フラグ）\n\n売上高：¥28,450,000\n売上原価：¥18,320,000\n粗利益：¥10,130,000（粗利率 35.6%）\n\n⚠️ 要確認：通信費に前月比+42%の異常値（9件の仕訳を特定）'},
+     {role:'Analysis',rc:'#dcfce7',rt:'#15803d',name:'分析エージェント',work:'前月比・予算比・業界平均と比較中',doc:'差異分析レポート',
+      out:'【差異分析】\n\n▼ 粗利率：35.6%（前月比 ▼2.1pt）\n　→ 原因：11月セール品の原価率が想定より高い\n▼ 人件費：¥4,820,000（前月比 +¥380,000）\n　→ 残業代の増加（11月繁忙期）\n▲ 減価償却費：変動なし（年間計画通り）\n\n経営改善ポイント：セール期間中の仕入単価交渉が有効'},
+     {role:'Report',rc:'#fce7f3',rt:'#9d174d',name:'報告書エージェント',work:'社長向け報告コメントを作成中',doc:'経営者向けサマリー',
+      out:'【社長への報告コメント（案）】\n\n11月は売上¥2,845万（前月比+8.2%）と好調でしたが、\nセール時の仕入れコストが想定を上回り、粗利率が35.6%（前月37.7%）に低下しました。\n\n次月の重点アクション：\n① セール品の仕入れ単価を仕入先と再交渉\n② 通信費の内訳確認（+42%の異常値）\n③ 12月は繁忙期のため人件費予算を+15%で設定推奨'},
+   ],
+   result:{time:'25分',saved:'約3.5時間削減',files:['試算表（Excel）','月次推移表','差異分析レポート','社長向けサマリー'],note:'CSVデータを渡すだけで試算表・差異分析・報告コメントまで自動生成。毎月の繰り返し作業が25分で完了。'},
+   docTitle:'2024年11月 月次試算表 ＆ 差異分析レポート',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">月次試算表 ＆ 経営分析レポート（2024年11月）</div>
+<div class="doc-meta">作成日：2024年12月XX日　対象：〇〇小売株式会社</div>
+<div class="doc-h2">1. 損益サマリー</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>11月実績</th><th>10月実績</th><th>前月比</th><th>差異要因</th></tr></thead>
+<tbody>
+<tr><td>売上高</td><td>¥28,450,000</td><td>¥26,290,000</td><td style="color:#16a34a">▲ +8.2%</td><td>11月セール効果</td></tr>
+<tr><td>売上原価</td><td>¥18,320,000</td><td>¥16,400,000</td><td style="color:#dc2626">▼ +11.7%</td><td>セール品の原価率高</td></tr>
+<tr><td>粗利益</td><td>¥10,130,000</td><td>¥9,890,000</td><td>▲ +2.4%</td><td>—</td></tr>
+<tr><td>粗利率</td><td style="color:#dc2626">35.6%</td><td>37.7%</td><td style="color:#dc2626">▼ ▲2.1pt</td><td>要改善</td></tr>
+<tr><td>人件費</td><td>¥4,820,000</td><td>¥4,440,000</td><td style="color:#dc2626">▼ +8.6%</td><td>残業代（繁忙期）</td></tr>
+<tr><td>営業利益</td><td>¥2,890,000</td><td>¥3,110,000</td><td style="color:#dc2626">▼ ▲7.1%</td><td>費用増加の影響</td></tr>
+</tbody></table>
+<div class="doc-h2">2. 要確認項目</div>
+<div class="doc-warn">⚠️ 通信費：前月比+42%（¥280,000 → ¥397,000）— 9件の仕訳を特定。内訳確認が必要です。</div>
+<div class="doc-h2">3. 経営改善アクション</div>
+<table class="doc-tbl">
+<thead><tr><th>優先度</th><th>アクション</th><th>期待効果</th></tr></thead>
+<tbody>
+<tr><td>🔴 高</td><td>セール品の仕入れ単価を再交渉</td><td>粗利率 +1〜2pt改善</td></tr>
+<tr><td>🟡 中</td><td>通信費の内訳確認・不要契約の解約</td><td>月▲¥10〜15万節減</td></tr>
+<tr><td>🟢 低</td><td>12月の人件費予算を+15%で計画</td><td>繁忙期の人員確保</td></tr>
+</tbody></table>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_spreadsheet を実行',
+      detail:'試算表・月次推移表をGoogleスプレッドシートとして保存中…',
+      result:'📊 スプレッドシート作成完了\n「2024年11月 月次試算表_〇〇小売」\n「月次推移表（4〜11月比較）」\n→ クライアント共有フォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアント社長へ月次報告メールを送信中…',
+      result:'✉️ メール送信完了\n宛先：〇〇小売株式会社 田中社長\n件名：【月次報告】2024年11月 試算表のご共有\n→ 差異分析・改善提案を添付して送信'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'来月の月次報告ミーティングを設定中…',
+      result:'📅 カレンダー登録完了\n「12月 月次決算報告 — 田中社長」\n→ 来月の第2月曜日 10:00〜11:00\nZoomリンク自動生成・招待送信済み'},
+   ]
+  },
+  {icon:'💰',title:'キャッシュフロー計算',time:'3時間 → 20分',
+   docs:['CF計算書','資金繰り表','3ヶ月予測'],
+   task:'「クライアントから「来月と再来月の資金繰りが心配」と連絡が来た。今期のデータからキャッシュフロー計算書と向こう3ヶ月の資金繰り予測を作ってほしい」',
+   agents:[
+     {role:'CF',rc:'#fef9c3',rt:'#854d0e',name:'CF計算エージェント',work:'直接法・間接法でキャッシュフロー計算中',doc:'CF計算書（3区分）',
+      out:'【キャッシュフロー計算書 — 2024年4〜11月累計】\n\n■ 営業CF：▲¥1,240,000（マイナス）\n　売上回収の遅延（売掛金 +¥3,200,000増加）が主因\n\n■ 投資CF：▲¥4,500,000\n　9月に新POSシステム購入\n\n■ 財務CF：▲¥600,000\n　借入金返済\n\n期末現金残高：¥6,820,000\n⚠️ 前年同期比 ▲¥3,100,000 の減少'},
+     {role:'Forecast',rc:'#dbeafe',rt:'#1e40af',name:'資金予測エージェント',work:'12〜2月の入出金を予測中',doc:'3ヶ月資金繰り表',
+      out:'【資金繰り予測 — 12月〜2月】\n\n12月末予測残高：¥8,200,000（売上増・回収改善）\n1月末予測残高：¥5,800,000（固定費・年明け売上減）\n⚠️ 2月末予測残高：¥3,100,000\n　→ 安全在庫（月商1ヶ月分 ¥2,800万）を下回るリスク\n\n対策：1月中に短期借入 or 売掛金早期回収が必要'},
+     {role:'Advice',rc:'#dcfce7',rt:'#15803d',name:'提案エージェント',work:'資金改善策・融資提案を作成中',doc:'改善提案書',
+      out:'【資金繰り改善 提案3案】\n\n案A（推奨）：売掛金回収サイト短縮\n　回収期間を60日→45日に短縮 → 月+¥1,400万の改善\n\n案B：信用保証協会 短期運転資金融資\n　金額：最大¥3,000万 / 金利1.2〜1.8%\n　審査期間：約3週間（今月中に申請推奨）\n\n案C：仕入れ支払いサイト延長交渉\n　主要仕入先との交渉で30日延長 → 月▲¥800万の節減'},
+   ],
+   result:{time:'20分',saved:'約2.5時間削減',files:['CF計算書（3区分）','3ヶ月資金繰り予測表','改善提案書（3案比較）'],note:'クライアントからの「資金繰りが不安」の一言に、20分で根拠ある提案書を持って返答できる。'},
+   docTitle:'キャッシュフロー計算書 ＆ 3ヶ月資金繰り予測',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">キャッシュフロー計算書 ＆ 資金繰り予測（2024年12月〜2025年2月）</div>
+<div class="doc-meta">作成日：2024年12月XX日　対象：〇〇小売株式会社</div>
+<div class="doc-h2">1. キャッシュフロー計算書（2024年4〜11月累計）</div>
+<table class="doc-tbl">
+<thead><tr><th>区分</th><th>金額</th><th>主な要因</th></tr></thead>
+<tbody>
+<tr><td>営業活動によるCF</td><td style="color:#dc2626">▲ ¥1,240,000</td><td>売掛金回収遅延（+¥320万）</td></tr>
+<tr><td>投資活動によるCF</td><td style="color:#dc2626">▲ ¥4,500,000</td><td>POSシステム購入（9月）</td></tr>
+<tr><td>財務活動によるCF</td><td style="color:#dc2626">▲ ¥600,000</td><td>借入金返済</td></tr>
+<tr><td><strong>期末現金残高</strong></td><td><strong>¥6,820,000</strong></td><td>前年同期比 ▲¥310万</td></tr>
+</tbody></table>
+<div class="doc-h2">2. 3ヶ月資金繰り予測</div>
+<table class="doc-tbl">
+<thead><tr><th>月</th><th>予測期末残高</th><th>リスク判定</th><th>コメント</th></tr></thead>
+<tbody>
+<tr><td>12月末</td><td>¥8,200,000</td><td style="color:#16a34a">● 安全</td><td>繁忙期売上増</td></tr>
+<tr><td>1月末</td><td>¥5,800,000</td><td style="color:#d97706">⚠ 注意</td><td>年明け売上減・固定費</td></tr>
+<tr><td>2月末</td><td style="color:#dc2626;font-weight:700">¥3,100,000</td><td style="color:#dc2626;font-weight:700">🔴 要対策</td><td>安全在庫割れリスク</td></tr>
+</tbody></table>
+<div class="doc-warn">⚠️ 2月末に月商1ヶ月分（¥2,800万）を下回る可能性があります。1月中に対策が必要です。</div>
+<div class="doc-h2">3. 推奨対策</div>
+<div class="doc-hl">💡 【優先推奨】売掛金回収サイトを60日→45日に短縮。1月中にクライアントへ交渉着手で2月末に+¥1,400万の改善が見込まれます。</div>
+<div class="doc-p">代替案：信用保証協会の短期運転資金融資（最大¥3,000万、金利1.2〜1.8%）。今月中に申請すれば2月中旬に実行可能です。</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📊',bg:'#fef9c3',tool:'Google Sheets MCP',toolBg:'#fef9c3',toolC:'#854d0e',
+      action:'TOOL: sheets.create_spreadsheet を実行',
+      detail:'CF計算書・資金繰り予測をスプレッドシートに保存中…',
+      result:'📊 スプレッドシート作成完了\n「CF計算書_〇〇小売_2024」\n「資金繰り予測_12〜2月」\n数式付き — 入力値を変えると自動再計算されます'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアント社長へ緊急報告メールを送信中…',
+      result:'✉️ メール送信完了\n宛先：〇〇小売株式会社 田中社長\n件名：【緊急】2月の資金繰りについてご相談があります\n→ 資金繰り予測・改善3案を添付して送信'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'資金繰り対策ミーティングを緊急設定中…',
+      result:'📅 緊急MTG設定完了\n「【緊急】資金繰り対策ミーティング」\n→ 今週金曜日 15:00〜16:00\n田中社長・担当税理士に招待送信済み'},
+   ]
+  },
+  {icon:'🔍',title:'税務監査・チェック',time:'5時間 → 40分',
+   docs:['監査チェックリスト','指摘事項一覧','修正仕訳'],
+   task:'「クライアントの決算が近い。税務調査で指摘されやすいポイントを先回りでチェックして、修正が必要な仕訳があれば洗い出してほしい」',
+   agents:[
+     {role:'Audit',rc:'#fce7f3',rt:'#9d174d',name:'監査エージェント',work:'税務調査の頻出指摘事項を照合中',doc:'リスクチェックリスト',
+      out:'【税務リスク チェック結果（2024年度）】\n\n🔴 高リスク（要対応）\n① 役員報酬の月額変動（3〜7月に3回変更）\n　→ 事前確定届出給与の要件未充足の可能性\n② 交際費：¥2,850,000（前年比+68%）\n　→ 損金算入限度額の確認が必要\n\n🟡 中リスク（確認推奨）\n③ 減価償却：机・椅子をまとめて¥280,000で資産計上\n　→ 10万円未満の単品は即時損金算入が有利'},
+     {role:'Journal',rc:'#dbeafe',rt:'#1e40af',name:'仕訳チェックエージェント',work:'異常仕訳・計上誤りを自動検出中',doc:'要確認仕訳リスト',
+      out:'【異常仕訳 検出結果 — 12件】\n\n① 2024/8/15 消耗品費 ¥485,000\n　→ 金額が閾値超。備品への振替が必要か確認\n② 2024/10/3 雑費 ¥320,000\n　→ 勘定科目「雑費」への大額計上。内訳確認が必要\n③ 2024/11/30 修繕費 ¥1,200,000\n　→ 資本的支出か修繕費か判断が必要\n\n上記3件の修正仕訳案を作成済み'},
+     {role:'Tax',rc:'#dcfce7',rt:'#15803d',name:'節税エージェント',work:'合法的な節税ポイントを特定中',doc:'節税提案書',
+      out:'【節税提案 — 今期活用可能なもの】\n\n①小規模企業共済：社長未加入 → 年最大¥840,000が所得控除\n②経営セーフティ共済：未加入 → 掛金が全額損金算入（月最大¥20万）\n③事業年度末の在庫調整：期末在庫を抑えることで売上原価を増やし課税所得を圧縮\n\n推計節税額：¥850,000〜¥1,200,000（法人税・所得税合算）'},
+   ],
+   result:{time:'40分',saved:'約4.5時間削減',files:['リスクチェックリスト','異常仕訳12件リスト','修正仕訳案','節税提案書'],note:'税務調査の頻出指摘を先回りで検出。「指摘される前に直す」から「指摘される前に直す＋節税提案」まで一気に完成。'},
+   docTitle:'税務リスクチェックレポート ＆ 節税提案（2024年度決算）',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">税務リスクチェック ＆ 節税提案レポート（2024年度）</div>
+<div class="doc-meta">作成日：2024年12月XX日　担当：〇〇税理士事務所</div>
+<div class="doc-h2">1. 税務リスク チェック結果</div>
+<table class="doc-tbl">
+<thead><tr><th>リスク</th><th>項目</th><th>内容</th><th>対応</th></tr></thead>
+<tbody>
+<tr><td style="color:#dc2626">🔴 高</td><td>役員報酬</td><td>年中3回の月額変動</td><td>事前確定届出給与の要件確認・修正が必要</td></tr>
+<tr><td style="color:#dc2626">🔴 高</td><td>交際費</td><td>¥2,850,000（前年比+68%）</td><td>損金算入限度額（¥800万）・証憑の整備</td></tr>
+<tr><td style="color:#d97706">🟡 中</td><td>減価償却</td><td>10万円未満の備品を資産計上</td><td>即時損金算入に訂正（税務上有利）</td></tr>
+</tbody></table>
+<div class="doc-h2">2. 要修正 仕訳 Top3</div>
+<table class="doc-tbl">
+<thead><tr><th>日付</th><th>勘定科目</th><th>金額</th><th>修正内容</th></tr></thead>
+<tbody>
+<tr><td>2024/8/15</td><td>消耗品費</td><td>¥485,000</td><td>備品（工具器具備品）への振替を検討</td></tr>
+<tr><td>2024/10/3</td><td>雑費</td><td>¥320,000</td><td>適正科目への振替・証憑の添付</td></tr>
+<tr><td>2024/11/30</td><td>修繕費</td><td>¥1,200,000</td><td>資本的支出 vs 修繕費の判定が必要</td></tr>
+</tbody></table>
+<div class="doc-h2">3. 節税提案（今期中に実行可能）</div>
+<div class="doc-hl">💡 推計節税額：¥850,000〜¥1,200,000（法人税・所得税合算）</div>
+<div class="doc-p">① 小規模企業共済への加入（社長未加入）：年最大¥840,000が所得控除<br>② 経営セーフティ共済：月最大¥200,000が全額損金算入<br>③ 期末在庫調整：課税所得の圧縮</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'リスクチェックレポート・節税提案書を保存中…',
+      result:'📄 ドキュメント作成完了\n「税務リスクチェック_〇〇社_2024」\n「節税提案書_〇〇社_2024」\n→ 事務所内部フォルダに保存（クライアント非公開）'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアントへ決算前ご確認メールを送信中…',
+      result:'✉️ メール送信完了\n宛先：〇〇株式会社 田中社長\n件名：【決算前確認】税務リスクと節税のご提案\n→ リスク3点・修正仕訳・節税提案を説明資料付きで送付'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'決算前打ち合わせのアポを設定中…',
+      result:'📅 カレンダー登録完了\n「決算前打ち合わせ — 〇〇株式会社」\n→ 2週間後の火曜日 14:00〜15:30\n担当スタッフ全員に共有・招待送信済み'},
+   ]
+  },
+  {icon:'📝',title:'クライアント報告書',time:'2時間 → 15分',
+   docs:['経営分析レポート','提案書','説明スライド'],
+   task:'「来週の顧問先との面談に向けて、今年度の経営状況をまとめた報告書と「この1年の税理士としての価値」をわかりやすく伝える資料を作りたい」',
+   agents:[
+     {role:'Analysis',rc:'#e0e7ff',rt:'#3730a3',name:'経営分析エージェント',work:'損益・CF・財務指標を年間でまとめ中',doc:'年間経営サマリー',
+      out:'【2024年度 経営サマリー】\n\n売上高：¥342,000,000（前年比+12.3%）\n営業利益：¥18,700,000（前年比+8.1%）\n営業利益率：5.5%（業界平均4.2%）\n\n✅ 良かった点：売上成長・業界平均超の利益率\n⚠️ 改善余地：流動比率115%（業界平均150%を下回る）\n\n総合評価：堅調な成長。財務体質の強化が次の課題。'},
+     {role:'Value',rc:'#fce7f3',rt:'#9d174d',name:'価値訴求エージェント',work:'顧問税理士として提供した価値を定量化中',doc:'税理士価値レポート',
+      out:'【この1年、税理士が作った価値（定量）】\n\n① 節税効果：¥1,240,000\n　（セーフティ共済・経費の適正化）\n② 税務調査リスク回避：¥0（指摘ゼロで終了）\n③ 資金繰り改善提案：融資¥1,500万の実行支援\n④ 月次報告12回・面談8回・随時相談対応32件\n\n年間顧問料対比：投資対効果 約3.2倍'},
+     {role:'Slide',rc:'#dcfce7',rt:'#15803d',name:'資料作成エージェント',work:'面談用の説明資料を構成中',doc:'面談用スライド（構成）',
+      out:'【面談スライド構成（4枚）】\n\nSlide 1：「2024年、御社はこう成長しました」\n　→ 売上+12.3%・利益率5.5%（業界超）\nSlide 2：「税理士がこの1年に作った価値」\n　→ 節税¥124万・融資¥1,500万・指摘ゼロ\nSlide 3：「2025年の重点テーマ」\n　→ 財務体質強化・設備投資計画・補助金活用\nSlide 4：「来年も一緒にやること」\n　→ 四半期レビュー強化・DX支援'},
+   ],
+   result:{time:'15分',saved:'約1.5時間削減',files:['年間経営サマリー','税理士価値レポート','面談スライド（4枚構成）'],note:'「今年も頑張りました」で終わらず「定量的に証明した価値」を提示。顧問継続率・紹介率が上がる面談になる。'},
+   docTitle:'2024年度 経営分析レポート ＋ 顧問価値レポート',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">2024年度 経営分析 ＆ 顧問価値レポート</div>
+<div class="doc-meta">〇〇株式会社 御中　作成：〇〇税理士事務所　2024年12月</div>
+<div class="doc-h2">1. 2024年度 経営サマリー</div>
+<table class="doc-tbl">
+<thead><tr><th>指標</th><th>2024年度</th><th>2023年度</th><th>業界平均</th><th>評価</th></tr></thead>
+<tbody>
+<tr><td>売上高</td><td>¥342,000,000</td><td>¥304,600,000</td><td>—</td><td style="color:#16a34a">▲ +12.3%</td></tr>
+<tr><td>営業利益率</td><td>5.5%</td><td>5.7%</td><td>4.2%</td><td style="color:#16a34a">✅ 業界超</td></tr>
+<tr><td>流動比率</td><td style="color:#d97706">115%</td><td>120%</td><td>150%</td><td style="color:#d97706">⚠ 改善余地</td></tr>
+</tbody></table>
+<div class="doc-h2">2. この1年、税理士が作った価値（定量）</div>
+<table class="doc-tbl">
+<thead><tr><th>項目</th><th>内容</th><th>効果</th></tr></thead>
+<tbody>
+<tr><td>節税効果</td><td>セーフティ共済・経費適正化</td><td style="color:#16a34a;font-weight:700">▲ ¥1,240,000</td></tr>
+<tr><td>税務調査対応</td><td>先回り修正・指摘ゼロで終了</td><td style="color:#16a34a">リスク回避</td></tr>
+<tr><td>資金繰り支援</td><td>短期融資¥1,500万の実行支援</td><td style="color:#16a34a">資金確保</td></tr>
+<tr><td>サービス回数</td><td>月次報告12回・面談8回・相談32件</td><td>—</td></tr>
+</tbody></table>
+<div class="doc-hl">💡 年間顧問料対比：投資対効果 約3.2倍。節税+融資支援だけで顧問料の3倍超の価値を提供しました。</div>
+<div class="doc-h2">3. 2025年の重点テーマ</div>
+<div class="doc-p">① 流動比率の改善（目標150%）：余剰資金の活用と短期借入の返済計画<br>② 設備投資計画：補助金（IT導入補助金・事業再構築補助金）の活用検討<br>③ DX支援：AI活用による業務効率化と経費削減</div>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'経営分析レポート・価値レポートをドライブに保存中…',
+      result:'📄 ドキュメント作成完了\n「2024年度 経営分析_〇〇株式会社」\n「顧問価値レポート_2024」\n→ クライアント共有フォルダに保存しました'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'面談前にクライアントへ資料を事前送付中…',
+      result:'✉️ 事前送付メール送信完了\n宛先：〇〇株式会社 田中社長\n件名：【来週の面談資料】2024年度振り返りと2025年の計画\n→ 3点の資料リンクを添付して送信'},
+     {delay:1500,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'年次振り返り面談のアポを設定中…',
+      result:'📅 カレンダー登録完了\n「2024年度振り返り面談 — 〇〇株式会社」\n→ 来週木曜日 13:00〜14:30\n事務所会議室・Zoomどちらも設定済み'},
+   ]
+  },
+  {icon:'💻',title:'バックオフィス',time:'2時間/日 → 15分',
+   docs:['議事録','フォローメール','タスク管理'],
+   task:'「今日の面談メモから議事録を作り、クライアントへのフォローメールと、スタッフ向けのタスクリストも書いてほしい。今月の残業を減らしたい」',
+   agents:[
+     {role:'Minutes',rc:'#dbeafe',rt:'#1e40af',name:'議事録エージェント',work:'面談メモを議事録フォーマットに整理中',doc:'議事録（決定事項・ToDoつき）',
+      out:'【議事録 — 2024年12月5日 田中社長面談】\n\n■ 確認事項\n・11月の粗利率低下（▲2.1pt）を共有 → 仕入れ交渉を12月中に実施（田中社長）\n・通信費の異常値 → 来週中にクライアント側で内訳確認\n\n■ 決定事項\n・短期融資の申請：12月20日までに信用保証協会へ提出\n・次回面談：1月15日（水）14:00\n\n■ 担当者別 ToDoリスト（自動生成）'},
+     {role:'Mail',rc:'#dcfce7',rt:'#15803d',name:'メールエージェント',work:'フォローメールを作成中',doc:'クライアント向けメール',
+      out:'【フォローメール（案）】\n\n田中社長\n\nお世話になっております。本日はお時間をいただきありがとうございました。\n\n本日の面談で確認いたしました下記の件について、進捗をお知らせください。\n\n① 仕入れ先との単価交渉の進捗（12月中）\n② 通信費の内訳確認（来週中）\n\nご不明な点はいつでもご連絡ください。\n引き続きよろしくお願いいたします。'},
+     {role:'Task',rc:'#fce7f3',rt:'#9d174d',name:'タスク管理エージェント',work:'スタッフ向けタスクを期日付きで整理中',doc:'スタッフタスクリスト',
+      out:'【スタッフ向けタスクリスト（自動生成）】\n\n【高橋】期日：12/15\n□ 信用保証協会の書類準備・事前チェック\n□ 12月分CF予測の更新\n\n【山田】期日：12/20\n□ 修正仕訳3件の処理\n□ 交際費の証憑整理・損金算入限度額の確認\n\n【田中（担当）】期日：1/10\n□ 1月面談の準備資料（年次まとめ）を作成'},
+   ],
+   result:{time:'15分',saved:'約1.5時間削減',files:['議事録（決定事項・ToDoつき）','クライアントフォローメール','スタッフタスクリスト'],note:'面談メモを渡すだけで議事録・メール・タスクが15分で完成。「後でやろう」がゼロになり、毎日の残業が消える。'},
+   docTitle:'面談議事録 ＋ フォローメール ＋ タスクリスト',
+   docHtml:`<div class="doc-page">
+<div class="doc-title">面談議事録（2024年12月5日）〇〇株式会社 田中社長</div>
+<div class="doc-meta">作成：〇〇税理士事務所　担当：山田一郎</div>
+<div class="doc-h2">確認・報告事項</div>
+<div class="doc-p">① 11月の粗利率が▲2.1pt低下（セール仕入れコスト高）を共有<br>② 通信費に前月比+42%の異常値を検出・内訳確認を依頼<br>③ 短期融資（信用保証協会）の活用を提案 → 前向き検討</div>
+<div class="doc-h2">決定事項</div>
+<div class="doc-p">・仕入れ先との単価交渉：12月中に田中社長が実施<br>・通信費の内訳確認：来週中にクライアント側で確認<br>・融資申請書類の提出：12月20日までに信用保証協会へ<br>・次回面談：2025年1月15日（水）14:00〜</div>
+<div class="doc-h2">スタッフ別 タスクリスト</div>
+<table class="doc-tbl">
+<thead><tr><th>担当</th><th>タスク</th><th>期日</th></tr></thead>
+<tbody>
+<tr><td>高橋</td><td>信用保証協会の書類準備・事前チェック</td><td>12/15</td></tr>
+<tr><td>高橋</td><td>12月CF予測の更新</td><td>12/15</td></tr>
+<tr><td>山田</td><td>修正仕訳3件の処理（消耗品費・雑費・修繕費）</td><td>12/20</td></tr>
+<tr><td>田中（担当）</td><td>1月面談の準備資料（年次まとめ）作成</td><td>1/10</td></tr>
+</tbody></table>
+<div class="page-num">1 / 1</div></div>`,
+   mcpSteps:[
+     {delay:300,icon:'📅',bg:'#dbeafe',tool:'Google Calendar MCP',toolBg:'#dbeafe',toolC:'#1e40af',
+      action:'TOOL: calendar.create_event を実行',
+      detail:'次回面談・タスク期日をカレンダーに登録中…',
+      result:'📅 カレンダー登録完了\n「1月15日 田中社長面談」\n「12/15 高橋：融資書類」「12/20 山田：修正仕訳」\n→ スタッフ全員へリマインダー送信済み'},
+     {delay:900,icon:'📧',bg:'#fce7f3',tool:'Gmail MCP',toolBg:'#fce7f3',toolC:'#9d174d',
+      action:'TOOL: gmail.send_email を実行',
+      detail:'クライアントへフォローメールを自動送信中…',
+      result:'✉️ フォローメール送信完了\n宛先：〇〇株式会社 田中社長\n件名：【本日のまとめ】面談のフォローアップ\n→ 決定事項・次回面談日程を送付'},
+     {delay:1500,icon:'📁',bg:'#dcfce7',tool:'Google Drive MCP',toolBg:'#dcfce7',toolC:'#15803d',
+      action:'TOOL: drive.create_document を実行',
+      detail:'議事録・タスクリストをドライブに保存中…',
+      result:'📄 ドキュメント保存完了\n「議事録_20241205_田中社長」\n「タスクリスト_12月_スタッフ用」\n→ 事務所内部フォルダ（クライアント非公開）に保存'},
+   ]
+  },
+];
+
+let timers=[];
+
+function sel(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.panel').forEach((p,j)=>p.classList.toggle('active',i===j));
+}
+
+function showDoc(idx){
+  document.getElementById('docContent').innerHTML=D[idx].docHtml;
+  document.getElementById('docOverlay').classList.add('open');
+}
+
+function run(d){
+  const idx=D.indexOf(d);
+  const panel=document.querySelectorAll('.panel')[idx];
+  panel.querySelector('.result-box').style.display='none';
+  const mcpSec=panel.querySelector('.mcp-section');
+  if(mcpSec){mcpSec.classList.remove('open');}
+  timers.forEach(clearTimeout);timers=[];
+  const cards=panel.querySelectorAll('.agent-card');
+  cards.forEach(c=>c.classList.remove('show'));
+  const outs=panel.querySelectorAll('.agent-out');
+  outs.forEach(o=>{o.textContent='';});
+  cards.forEach((card,i)=>{
+    timers.push(setTimeout(()=>{
+      card.classList.add('show');
+      const out=card.querySelector('.agent-out');
+      const text=d.agents[i].out;
+      let ci=0;
+      const iv=setInterval(()=>{
+        if(ci<text.length){out.textContent+=text[ci++];}
+        else clearInterval(iv);
+      },12);
+    },i*700));
+  });
+  timers.push(setTimeout(()=>{
+    const rb=panel.querySelector('.result-box');
+    rb.style.display='block';
+    rb.scrollIntoView({behavior:'smooth',block:'nearest'});
+  },d.agents.length*700+400));
+}
+
+function showMcp(idx){
+  const d=D[idx];
+  const panel=document.querySelectorAll('.panel')[idx];
+  const sec=panel.querySelector('.mcp-section');
+  sec.classList.add('open');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  const steps=sec.querySelectorAll('.mcp-step');
+  steps.forEach(s=>{s.classList.remove('show');s.querySelector('.mcp-result').textContent='';});
+  timers.forEach(clearTimeout);timers=[];
+  d.mcpSteps.forEach((ms,i)=>{
+    timers.push(setTimeout(()=>{
+      steps[i].classList.add('show');
+      const res=steps[i].querySelector('.mcp-result');
+      const txt=ms.result;let ci=0;
+      const iv=setInterval(()=>{
+        if(ci<txt.length){res.textContent+=txt[ci++];}
+        else clearInterval(iv);
+      },14);
+    },ms.delay));
+  });
+}
+
+// build tabs & panels
+const tabsEl=document.getElementById('tabs');
+const panelsEl=document.getElementById('panels');
+
+D.forEach((d,i)=>{
+  const tab=document.createElement('div');
+  tab.className='tab'+(i===0?' active':'');
+  tab.innerHTML=`${d.icon} ${d.title}`;
+  tab.onclick=()=>sel(i);
+  tabsEl.appendChild(tab);
+
+  const panel=document.createElement('div');
+  panel.className='panel'+(i===0?' active':'');
+
+  const mcpLegend=d.mcpSteps.map(ms=>`<span class="mcp-tool-tag" style="background:${ms.toolBg};color:${ms.toolC}">${ms.tool}</span>`).join('');
+  const mcpStepsHtml=d.mcpSteps.map((ms,si)=>`
+    <div class="mcp-step">
+      <div class="mcp-step-line">
+        <div class="mcp-step-icon" style="background:${ms.bg}">${ms.icon}</div>
+        <div class="mcp-step-body">
+          <div class="mcp-action">${ms.action}</div>
+          <div class="mcp-detail">${ms.detail}</div>
+          <div class="mcp-result"></div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  panel.innerHTML=`
+    <div class="task-box"><strong>💬 依頼内容</strong>${d.task}</div>
+    <div class="agents">
+      ${d.agents.map(a=>`
+        <div class="agent-card">
+          <div class="agent-header">
+            <span class="role-badge" style="background:${a.rc};color:${a.rt}">${a.role}</span>
+            <span class="agent-name">${a.name}</span>
+          </div>
+          <div class="agent-work"><div class="spinner"></div>${a.work}</div>
+          <div class="agent-out"></div>
+        </div>`).join('')}
+    </div>
+    <div class="result-box">
+      <h3>✅ 完了 — ${d.result.time} で処理完了</h3>
+      <div class="result-grid">
+        <div class="result-stat"><div class="val">${d.result.time.split('→')[1].trim()}</div><div class="lbl">処理時間</div></div>
+        <div class="result-stat"><div class="val">${d.result.saved}</div><div class="lbl">時間削減</div></div>
+        <div class="result-stat"><div class="val">${d.result.files.length}件</div><div class="lbl">出力ファイル</div></div>
+      </div>
+      <div class="result-files">${d.result.files.map(f=>`<span class="file-chip">📄 ${f}</span>`).join('')}</div>
+      <div class="result-note">💡 ${d.result.note}</div>
+    </div>
+    <div class="btn-row">
+      <button class="out-btn run" onclick="run(D[${i}])"><span>▶ エージェントを動かす</span></button>
+      <button class="out-btn primary" onclick="showDoc(${i})"><span>📄 実際に出力する</span></button>
+      <button class="out-btn" style="background:#0f172a;border:1px solid #334155;color:#94a3b8;margin-top:0" onclick="showMcp(${i})"><span>🔗 MCP連携デモ — Google連携で動かす</span></button>
+    </div>
+    <div class="mcp-section">
+      <div class="mcp-header">
+        <span style="font-size:1.4rem">🔗</span>
+        <span class="mcp-title">MCP連携デモ — AIエージェントがGoogleと繋がって動く</span>
+      </div>
+      <div class="mcp-tools-legend">${mcpLegend}</div>
+      ${mcpStepsHtml}
+    </div>
+  `;
+  panelsEl.appendChild(panel);
+});
+</script>
+</body>
+</html>
