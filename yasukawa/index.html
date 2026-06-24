@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>起業準備をAIで事業の形に | 安川様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#4c1d95 0%,#7c3aed 50%,#be185d 100%);color:#fff;padding:52px 24px 44px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:16px}
+.hero h1{font-size:clamp(20px,4vw,32px);font-weight:700;margin-bottom:10px;line-height:1.3}
+.hero p{font-size:14px;opacity:.85;max-width:580px;margin:0 auto 20px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#7c3aed}
+
+.section{max-width:900px;margin:0 auto;padding:40px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#7c3aed;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#fdf4ff;color:#7e22ce;border:1px solid #d8b4fe}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#fdf4ff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#7e22ce;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#d8b4fe;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#fdf4ff;border:1px solid #d8b4fe;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#7c3aed}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">安川様 専用提案書 | シゴトAI</div>
+  <h1>起業準備を、AIで<br>事業の形に変えるロードマップ</h1>
+  <p>「商品開発・オンラインスクール・書籍出版」<br>3つの構想を、3ヶ月で前に進めるAI活用案をご提案します</p>
+  <div class="tags">
+    <span class="tag">起業準備中</span>
+    <span class="tag">ブーケ制作・販売</span>
+    <span class="tag">人材育成スクール</span>
+    <span class="tag">書籍出版・執筆</span>
+    <span class="tag">ChatGPT活用中</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">現在地</div><div class="ctx-val">起業準備・構想段階</div></div>
+  <div class="ctx"><div class="ctx-label">事業の柱</div><div class="ctx-val">3つの構想を統合</div></div>
+  <div class="ctx"><div class="ctx-label">現状のAI</div><div class="ctx-val">ChatGPTで壁打ち</div></div>
+  <div class="ctx"><div class="ctx-label">目標</div><div class="ctx-val">構想 → 商品化</div></div>
+</div>
+
+<!-- 事業全体像 -->
+<div class="section">
+  <div class="sec-title">事業全体像</div>
+  <div class="sec-sub">ブーケ・講座・出版は別々ではなく、1つの世界観を届ける事業としてつなげられます</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #db2777;border-radius:10px;padding:20px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#db2777;letter-spacing:.1em;margin-bottom:8px">入口商品</div>
+      <div style="font-size:28px;margin-bottom:8px">💐</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">ブーケ制作・販売</div>
+      <div style="font-size:12px;color:#64748b;line-height:1.5">想いを形にする体験商品。世界観を伝えながら、次のサービスへの入口になる</div>
+      <div style="margin-top:12px;font-size:11px;background:#fff1f2;color:#be123c;border-radius:6px;padding:6px 10px;font-weight:600">体験・共感 → ファン化</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #7c3aed;border-radius:10px;padding:20px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px">本命商品</div>
+      <div style="font-size:28px;margin-bottom:8px">🎓</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">人材育成スクール</div>
+      <div style="font-size:12px;color:#64748b;line-height:1.5">人生の転換点にいる方を継続支援。セミナー→オンラインスクールへと発展させる本命サービス</div>
+      <div style="margin-top:12px;font-size:11px;background:#fdf4ff;color:#7e22ce;border-radius:6px;padding:6px 10px;font-weight:600">継続課金 → 安定収益</div>
+    </div>
+    <div style="background:#fff;border:1px solid #e2e8f0;border-top:4px solid #d97706;border-radius:10px;padding:20px;text-align:center">
+      <div style="font-size:10px;font-weight:700;color:#d97706;letter-spacing:.1em;margin-bottom:8px">信頼形成</div>
+      <div style="font-size:28px;margin-bottom:8px">📖</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px">書籍・発信</div>
+      <div style="font-size:12px;color:#64748b;line-height:1.5">価値観を伝え、見込み客と出会う導線。書籍は最強の名刺となり、スクールへの流入を作る</div>
+      <div style="margin-top:12px;font-size:11px;background:#fffbeb;color:#92400e;border-radius:6px;padding:6px 10px;font-weight:600">権威性 → 集客の自動化</div>
+    </div>
+  </div>
+
+  <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;margin-bottom:36px;text-align:center">
+    <div style="font-size:12px;color:#64748b;margin-bottom:6px">3つはバラバラではなく「1つの物語」でつながります</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap">
+      <span style="background:#fff1f2;color:#be123c;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700">💐 体験する</span>
+      <span style="color:#94a3b8;font-size:18px">→</span>
+      <span style="background:#fdf4ff;color:#7e22ce;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700">🎓 学び成長する</span>
+      <span style="color:#94a3b8;font-size:18px">→</span>
+      <span style="background:#fffbeb;color:#92400e;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700">📖 世界観に共鳴する</span>
+    </div>
+  </div>
+
+  <!-- 5つのAIエージェント -->
+  <div class="sec-title">必要なAIエージェント</div>
+  <div class="sec-sub">ChatGPTを壁打ち相手で終わらせず、事業づくりの各工程に担当を持たせます</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">🧭 事業設計AIエージェント <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">起業準備全体の土台。ターゲット・価値提案・価格・商品軸を整理する</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#fef3c7;color:#92400e">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">「誰のための事業か」を明確にする</div>
+                <div class="ft-detail">「人生の転換点にいる人」という大きな像を、年代・状況・悩み・求めているものまで具体化。ターゲット顧客像を文章と一覧で整理</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#6d28d9;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">3つの柱の位置づけと価格帯を整理</div>
+                <div class="ft-detail">ブーケ（入口）・スクール（本命）・書籍（信頼）それぞれの役割・価格・提供方法を表にまとめ、事業設計の全体図を作成</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">Drive MCP（事業設計シートとして保存）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#db2777;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">コンセプト文・キャッチコピーの案を複数生成</div>
+                <div class="ft-detail">「人生の転換点を、〇〇で後押しする」など、SNS・LP・名刺に使えるコンセプト文を5〜10案出して比較・選択</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#16a34a;animation-delay:1.7s">④</div>
+              <div class="ft-content" style="animation-delay:1.7s">
+                <div class="ft-name">次の商品開発・発信に向けた優先順位案を提示</div>
+                <div class="ft-detail">「まずブーケから始めて、3ヶ月後にスクール体験会」など、事業を前に進める具体的なネクストステップを整理</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">構想が「事業」になる</span><span style="color:#7c3aed">　頭の中をバラバラにせず、1枚の設計図にまとめられる</span></div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#db2777">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">🛍️ 商品開発AIエージェント</div>
+          <div class="agent-role">ブーケ・講座・出版を「売れる商品」に落とし込む</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#db2777;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">ブーケ商品の説明文・販売ページ原稿を作成</div>
+                <div class="ft-detail">「なぜこのブーケか」「どんな想いが込められているか」を言語化。BASEやminneで使える商品説明文・タイトルを複数案生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#9d174d;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">オンラインスクールのカリキュラム骨子を設計</div>
+                <div class="ft-detail">「人生の転換点を支援する〇週間プログラム」の全体構成・各回のテーマ・ワーク内容・価格帯を設計。体験会プランも合わせて作成</div>
+                <span class="ft-badge" style="background:#fce7f3;color:#9d174d">受講者の変化を言語化して購買意欲を高める</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">書籍の企画書・章立て・内容骨子を作成</div>
+                <div class="ft-detail">出版社へ持ち込める企画書フォーマット、Amazonで自己出版できる構成案、まずは小冊子として配布できる内容まで段階的に作成</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">Drive MCP（企画書・原稿として保存）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#16a34a;animation-delay:1.7s">④</div>
+              <div class="ft-content" style="animation-delay:1.7s">
+                <div class="ft-name">申込ページ・体験会の案内文を生成</div>
+                <div class="ft-detail">Canva・ペライチ・Notionに貼り付けられる体験会案内文・LP原稿をセットで作成。すぐ公開できる状態に</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">構想が「商品」になる</span><span style="color:#7c3aed">　ブーケ・スクール・書籍の3つが同時に具体化される</span></div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#d97706">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">✍️ 発信・出版AIエージェント</div>
+          <div class="agent-role">SNS投稿・小冊子・書籍原稿を継続的に生成。見込み客との出会いを自動化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">Calendar</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#d97706;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">世界観・価値観を伝えるSNS投稿を量産</div>
+                <div class="ft-detail">Instagram・X・Facebookで使える投稿を月30本生成。「今日の気づき」「クライアントの変化」「ブーケに込めた想い」など、ファンが増えるコンテンツを型化</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">書籍・小冊子の原稿を章ごとに生成</div>
+                <div class="ft-detail">章立てをもとに各章の原稿ドラフトを生成。安川様の言葉・体験・考え方をインタビュー形式で引き出して文章化。自己出版・Kindle・配布用小冊子に対応</div>
+                <span class="ft-badge" style="background:#fffbeb;color:#92400e">Drive MCP（原稿を自動保存・章ごとに整理）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">発信スケジュールをカレンダーに自動設定</div>
+                <div class="ft-detail">「月・水・金に投稿」「毎月第1週に新テーマの記事」など発信サイクルを設定。カレンダーに自動登録して継続発信を仕組み化</div>
+                <span class="ft-badge" style="background:#fce7f3;color:#9d174d">Calendar MCP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">発信が途切れない</span><span style="color:#7c3aed">　安川様の世界観が継続的に外に出て、見込み客との出会いが増える</span></div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0891b2">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">📚 講座運営AIエージェント</div>
+          <div class="agent-role">カリキュラム・教材・受講者フォローを自動化。講師業務に集中できる環境を作る</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">Calendar</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0891b2;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">各回の教材・ワークシートを自動生成</div>
+                <div class="ft-detail">「第3回：価値観の棚卸し」などのテーマに合わせて、レジュメ・ワークシート・振り返りシートを自動作成。受講者に配布できる形に</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">受講者へのフォローメールを自動化</div>
+                <div class="ft-detail">「受講後お礼メール」「宿題リマインド」「次回予告」など受講者の体験を高めるメールを自動作成・送付。申込から卒業まで安心感を提供</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">受講者の声から教材・カリキュラムを改善</div>
+                <div class="ft-detail">アンケートの記述をAIが整理・分析。「〇〇のワークが特に好評」「〇回目の内容が難しかった」などの傾向を可視化して次期に活かす</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">講師に集中できる</span><span style="color:#7c3aed">　準備・フォロー・改善をAIが担当。安川様は受講者と向き合うだけ</span></div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#16a34a">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">💌 顧客対応AIエージェント</div>
+          <div class="agent-role">問い合わせ・申込前相談・体験会案内を丁寧かつ素早く対応</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#16a34a;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">問い合わせへの返信文を自動作成</div>
+                <div class="ft-detail">「スクールについて詳しく知りたい」「ブーケを贈り物にしたい」など、相手の状況に合わせた丁寧な返信文を生成。安川様らしい温かい文体で</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#059669;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">体験会・個別相談の案内文を自動生成</div>
+                <div class="ft-detail">「体験会に興味がある」という方へ、日時・内容・申込方法をまとめた案内メールを自動作成。問い合わせから申込までをスムーズに</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP（返信・案内を自動送付）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">面談用の説明資料を自動準備</div>
+                <div class="ft-detail">個別相談の前に「安川様の事業概要・スクール内容・料金・よくある質問」をまとめたA4資料を自動生成。毎回ゼロから作る手間なし</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive MCP（資料を保存・共有）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">一人でも丁寧に対応できる</span><span style="color:#7c3aed">　起業初期から「ちゃんとした事業者」として動ける体制に</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 最初の1週間 -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">最初の1週間プラン</div>
+    <div class="sec-sub">8日間で「自分の事業が形になり始めた」と実感できる成果物を作ります</div>
+    <div style="display:flex;flex-direction:column;gap:0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;opacity:.7;padding-top:2px">Day 0</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">申込日 — 事業テーマの確認</div>
+          <div style="font-size:12px;opacity:.8">ブーケ・スクール・出版の3つの構想を整理。まず1体目の方向性を決定</div>
+        </div>
+        <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;font-size:11px;white-space:nowrap;flex-shrink:0">成果物：事業テーマ確認</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#fdf4ff;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#7c3aed;padding-top:2px">Day 1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">AI顧問面談1回目（初回50分）</div>
+          <div style="font-size:12px;color:#475569">安川様の構想・ターゲット・世界観を深掘り。事業設計AIエージェントの方向性を決定</div>
+        </div>
+        <div style="background:#ede9fe;border-radius:8px;padding:6px 12px;font-size:11px;color:#7e22ce;font-weight:600;white-space:nowrap;flex-shrink:0">方向性決定</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#fff;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#db2777;padding-top:2px">Day 2-3</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">事業設計AIエージェントを設定・完成</div>
+          <div style="font-size:12px;color:#475569">ターゲット顧客像・価値提案・商品軸・コンセプト文を整理。1枚の事業設計シートを完成</div>
+        </div>
+        <div style="background:#fce7f3;border-radius:8px;padding:6px 12px;font-size:11px;color:#9d174d;font-weight:600;white-space:nowrap;flex-shrink:0">事業設計シート</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#f8fafc;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#d97706;padding-top:2px">Day 4-6</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">ブーケ・講座・出版の整理資料を作成</div>
+          <div style="font-size:12px;color:#475569">3つの柱それぞれの商品案・説明文・価格案を仮でも言語化。「形になり始めた」感覚を体感</div>
+        </div>
+        <div style="background:#fffbeb;border-radius:8px;padding:6px 12px;font-size:11px;color:#92400e;font-weight:600;white-space:nowrap;flex-shrink:0">3柱の整理資料</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#fffbeb;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#d97706;padding-top:2px">Day 7</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">AI顧問面談2回目 — 次の1体を決定</div>
+          <div style="font-size:12px;color:#475569">1週間の成果を確認。商品開発AIエージェントへ進む準備を整え、2ヶ月目の動き方を合意</div>
+        </div>
+        <div style="background:#fef9c3;border-radius:8px;padding:6px 12px;font-size:11px;color:#854d0e;font-weight:600;white-space:nowrap;flex-shrink:0">継続判断できる状態へ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 導入後にできること -->
+<div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">導入後にできるようになること</div>
+    <div class="sec-sub">起業準備の迷いを、具体的な資料・商品・発信に変えられます</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#fff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#7c3aed;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">事業コンセプト案</div><div style="font-size:11px;color:#64748b">自分の言葉で語れる「何者か」が明確になる</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#7c3aed;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">ターゲット顧客像</div><div style="font-size:11px;color:#64748b">「誰のためか」が具体的な人物像になる</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #fbb6ce;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#db2777;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">ブーケ商品の説明文</div><div style="font-size:11px;color:#64748b">想いが伝わる商品ページ・SNSの言葉が揃う</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#7c3aed;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">スクールのカリキュラム</div><div style="font-size:11px;color:#64748b">体験会・本講座の全体構成が完成する</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #fde68a;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#d97706;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">書籍の章立て・原稿</div><div style="font-size:11px;color:#64748b">小冊子から出版企画書まで段階的に完成</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#7c3aed;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">SNS投稿・LP原稿</div><div style="font-size:11px;color:#64748b">発信が途切れない仕組みと、集客ページの言葉が揃う</div></div>
+      </div>
+      <div style="background:#fff;border:1px solid #d8b4fe;border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px">
+        <span style="color:#7c3aed;font-size:18px;flex-shrink:0">✓</span>
+        <div><div style="font-size:13px;font-weight:700;margin-bottom:2px">面談・相談用の説明資料</div><div style="font-size:11px;color:#64748b">個別相談や体験会でそのまま使える資料が揃う</div></div>
+      </div>
+    </div>
+
+    <!-- 費用対効果 -->
+    <div class="sec-title">費用対効果の考え方</div>
+    <div class="sec-sub">まだ売上前の段階では「迷う時間を減らし、商品化を早める」ことが最初の投資回収です</div>
+    <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed,#be185d);border-radius:12px;padding:24px;color:#fff;margin-bottom:8px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+        <div style="text-align:center;padding:12px;background:rgba(255,255,255,.1);border-radius:8px">
+          <div style="font-size:24px;margin-bottom:6px">⏳</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">一人で悩む時間を削減</div>
+          <div style="font-size:11px;opacity:.8">「何から始めるか」で止まる時間をゼロに。事業化のスピードが上がる</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:rgba(255,255,255,.1);border-radius:8px">
+          <div style="font-size:24px;margin-bottom:6px">🎯</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">事業軸を早く固められる</div>
+          <div style="font-size:11px;opacity:.8">ブーケ・スクール・出版の優先順位と関係性が1ヶ月で見える</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:rgba(255,255,255,.1);border-radius:8px">
+          <div style="font-size:24px;margin-bottom:6px">🚀</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">商品化・販売準備まで進む</div>
+          <div style="font-size:11px;opacity:.8">構想止まりにならず、実際に売れる状態まで3ヶ月で到達</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:rgba(255,255,255,.1);border-radius:8px">
+          <div style="font-size:24px;margin-bottom:6px">🔮</div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px">3ヶ月後、次の行動が明確に</div>
+          <div style="font-size:11px;opacity:.8">「何をすればいいか」ではなく「どう実行するか」の段階に進める</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3ヶ月ロードマップ -->
+    <div class="sec-title" style="margin-top:36px">3ヶ月ロードマップ</div>
+    <div class="sec-sub">最初から全部を作るのではなく、1ヶ月ごとにAIエージェントを増やしながら事業を形にします</div>
+    <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:8px">
+      <div style="flex:1;min-width:160px;background:#4c1d95;color:#fff;border-radius:8px 0 0 8px;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">1週間目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">事業の土台を作る</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">事業設計AIエージェント稼働。ターゲット・商品軸・コンセプトが揃う</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 事業設計シート完成</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#7c3aed;color:#fff;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">商品を作る</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">商品開発AIエージェント追加。ブーケ・講座・出版の商品案と価格が決まる</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 3商品の説明文完成</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#db2777;color:#fff;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">発信・出版を動かす</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">発信・出版AIエージェント追加。SNS・小冊子・書籍構成が揃う。集客の仕組みができる</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 投稿＋小冊子完成</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#d97706;color:#fff;border-radius:0 8px 8px 0;padding:16px">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">販売準備を整える</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">講座・顧客対応AIエージェント追加。申込導線・体験会・説明資料が完成</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 販売開始できる状態</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:48px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI 3ヶ月サポート内容</div>
+    <div class="sec-sub">学ぶだけでなく、安川様の事業に合わせて使える形にします</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px">
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">💬</div>
+          <div><div style="font-size:10px;font-weight:700;color:#7c3aed;letter-spacing:.06em">01</div><div style="font-size:14px;font-weight:700">初回面談（50分）</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">事業構想・ターゲット・世界観を丁寧にヒアリング。<span style="color:#7c3aed;font-weight:600">1体目の設計方針を決定</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🎫</div>
+          <div><div style="font-size:10px;font-weight:700;color:#7c3aed;letter-spacing:.06em">02</div><div style="font-size:14px;font-weight:700">顧問チケット 3枚</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">面談30分／枚。商品の壁打ち・原稿レビュー・発信の方向性など<span style="color:#7c3aed;font-weight:600">事業づくりに使えるチケット</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">📱</div>
+          <div><div style="font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.06em">03</div><div style="font-size:14px;font-weight:700">LINEサポート（無制限）</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">「この文章どう思う？」「ターゲットこれでいい？」を<span style="color:#16a34a;font-weight:600">回数を気にせず相談</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:28px;flex-shrink:0">🎓</div>
+        <div><div style="font-size:13px;font-weight:700;color:#ea580c;margin-bottom:4px">セミナー <span style="font-size:11px;background:#ea580c;color:#fff;border-radius:10px;padding:1px 8px;margin-left:4px">永久参加可</span></div><div style="font-size:12px;color:#64748b;line-height:1.5">AI活用・起業・発信の最新事例を3ヶ月後も継続してキャッチアップ</div></div>
+      </div>
+      <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:28px;flex-shrink:0">🖥️</div>
+        <div><div style="font-size:13px;font-weight:700;color:#0d9488;margin-bottom:4px">オンライン自習室</div><div style="font-size:12px;color:#64748b;line-height:1.5">原稿・投稿文・カリキュラムを作業しながらその場で相談できる環境</div></div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed,#be185d);border-radius:12px;padding:24px;color:#fff;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:12px;opacity:.7;margin-bottom:6px">シゴトAI 3ヶ月プログラム（税込）</div>
+        <div style="font-size:42px;font-weight:800;line-height:1">¥298,000</div>
+        <div style="font-size:12px;opacity:.7;margin-top:6px">保証期間8日間 ── 効果を実感できなければ返金対応</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#d8b4fe;font-size:16px">✓</span><span style="font-size:13px">初回面談 50分</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#d8b4fe;font-size:16px">✓</span><span style="font-size:13px">顧問チケット 3枚（面談30分×3回）</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#d8b4fe;font-size:16px">✓</span><span style="font-size:13px">LINEサポート 3ヶ月（回数無制限）</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#d8b4fe;font-size:16px">✓</span><span style="font-size:13px">講義セミナー 永久参加</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#fde68a;font-size:16px">★</span><span style="font-size:13px;color:#fde68a;font-weight:700">8日間 効果保証つき</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:linear-gradient(135deg,#4c1d95,#7c3aed,#be185d);color:#fff;text-align:center;padding:36px 24px;border-top:1px solid rgba(255,255,255,.1)">
+  <div style="font-size:13px;opacity:.8;margin-bottom:6px">シゴトAI — AIエージェント伴走プログラム</div>
+  <div style="font-size:18px;font-weight:700">まず1週間。頭の中の構想を、<br>外に出して事業の形にします</div>
+</div>
+
+<script>
+const agents=document.querySelectorAll('.agent');
+function animateAgent(agent,delay){
+  setTimeout(()=>{
+    const dots=agent.querySelectorAll('.ft-dot');
+    const contents=agent.querySelectorAll('.ft-content');
+    const saving=agent.querySelector('.saving');
+    dots.forEach((dot,i)=>{
+      dot.style.animation='none';dot.style.opacity='0';dot.style.transform='scale(0)';
+      setTimeout(()=>{dot.style.animation=`dot-pop 0.4s ease ${i*.5}s forwards`;},50);
+    });
+    contents.forEach((c,i)=>{
+      c.style.animation='none';c.style.opacity='0';c.style.transform='translateX(-6px)';
+      setTimeout(()=>{c.style.animation=`content-in 0.4s ease ${i*.5}s forwards`;},50);
+    });
+    if(saving){saving.style.animation='none';saving.style.opacity='0';
+      setTimeout(()=>{saving.style.animation='fade-in 0.5s ease 2.5s forwards';},50);}
+  },delay);
+}
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      animateAgent(entry.target,Array.from(agents).indexOf(entry.target)*300);
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.15});
+agents.forEach(a=>observer.observe(a));
+</script>
+</body>
+</html>
