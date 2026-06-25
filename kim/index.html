@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>タクシー・ハイヤー業務をAIで自動化 | キム様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 50%,#1d4ed8 100%);color:#fff;padding:52px 24px 44px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:16px}
+.hero h1{font-size:clamp(20px,4vw,32px);font-weight:700;margin-bottom:10px;line-height:1.3}
+.hero p{font-size:14px;opacity:.85;max-width:580px;margin:0 auto 20px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#1d4ed8}
+
+.section{max-width:900px;margin:0 auto;padding:40px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#1d4ed8;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#bfdbfe;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#1d4ed8}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">キム様 専用提案書 | シゴトAI</div>
+  <h1>タクシー・ハイヤー事業に<br>AIの「分身」を作るロードマップ</h1>
+  <p>SNS・メール・予約・社内指示・ホームページ──<br>今すべて手動でやっていることを、AIが代わりに動かします</p>
+  <div class="tags">
+    <span class="tag">タクシー・ハイヤー</span>
+    <span class="tag">旅行・観光</span>
+    <span class="tag">車両整備</span>
+    <span class="tag">管理・指示業務</span>
+    <span class="tag">AI初めての方</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">業種</div><div class="ctx-val">タクシー・ハイヤー・旅行・整備</div></div>
+  <div class="ctx"><div class="ctx-label">役割</div><div class="ctx-val">社内指示・管理担当</div></div>
+  <div class="ctx"><div class="ctx-label">現在のAI活用</div><div class="ctx-val">ほぼゼロからのスタート</div></div>
+  <div class="ctx"><div class="ctx-label">やりたいこと</div><div class="ctx-val">AIを「自分の分身」に</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">今、キム様の会社で起きていること</div>
+  <div class="sec-sub">「全部自分でやっている」状態から、AIが代わりに動く体制へ</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📱</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">SNS・インスタが手つかず</div>
+      <div style="font-size:12px;color:#64748b">投稿したくても時間も方法もわからない。集客のチャンスを逃している</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📧</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">メール対応が全て手作業</div>
+      <div style="font-size:12px;color:#64748b">予約確認・問い合わせ・取引先とのやり取り、全部自分でタイプしている</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🗂️</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">社内指示も全部口頭</div>
+      <div style="font-size:12px;color:#64748b">ドライバー・整備スタッフへの指示が属人化。情報が残らない</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🌐</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">ホームページが更新できない</div>
+      <div style="font-size:12px;color:#64748b">業者任せで費用がかかる。サービス変更があっても反映が遅れる</div>
+    </div>
+  </div>
+
+  <!-- 5つのAIエージェント -->
+  <div class="sec-title">必要なAIエージェント</div>
+  <div class="sec-sub">AIが初めてでも大丈夫。使い方を覚えるのではなく、「動かし方だけ」を覚えます</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#1d4ed8">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">📱 SNS・集客AIエージェント <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">インスタグラム・Facebook投稿を自動生成。AIが文章と投稿案を毎回用意する</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#fef3c7;color:#92400e">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1d4ed8;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">インスタ・Facebook投稿文を毎回自動作成</div>
+                <div class="ft-detail">「今日の車両紹介」「お盆の旅行プラン」「整備キャンペーン」など、テーマを伝えるだけでAIが投稿文・ハッシュタグ・キャプションをセットで生成。コピペするだけで投稿できる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1e40af;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">月間投稿カレンダーを自動作成</div>
+                <div class="ft-detail">1ヶ月分の投稿テーマ・投稿日・文章案を一括で作成。「何を投稿しよう」と毎回悩む時間ゼロに。季節イベント・地域ネタも自動で組み込む</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Drive MCP（投稿カレンダーとして保存）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0891b2;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">ハイヤー・旅行プランの宣伝文を生成</div>
+                <div class="ft-detail">「空港送迎プラン」「観光貸し切りタクシー」「法人ハイヤー割引」など、サービスごとの魅力を伝える宣伝文を複数パターン生成。LP・チラシにも使える</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#16a34a;animation-delay:1.7s">④</div>
+              <div class="ft-content" style="animation-delay:1.7s">
+                <div class="ft-name">問い合わせが来た時の返信文を自動生成</div>
+                <div class="ft-detail">「料金を教えてください」「貸し切りは可能ですか？」などSNS・HPからの問い合わせに対して、会社の情報を踏まえた返信文を即座に生成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">SNS発信がゼロから動き出す</span><span style="color:#1d4ed8">　文章を考える必要はなし。AIが全部用意する</span></div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0891b2">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📧 メール・顧客対応AIエージェント</div>
+          <div class="agent-role">予約確認・問い合わせ・取引先メールをAIが代わりに下書き。送るだけの状態にする</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0891b2;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">予約確認メールを自動作成・送付</div>
+                <div class="ft-detail">ハイヤー・タクシー・旅行プランの予約が入ったら、日時・場所・料金・担当ドライバーをまとめた確認メールをAIが生成。Gmail MCPで直接送付も可能</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP（確認メール自動送付）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">取引先・法人客へのメールを下書き</div>
+                <div class="ft-detail">「見積もり送付」「請求書の案内」「契約更新のご挨拶」など、ビジネスメールの下書きを30秒で生成。キム様が確認して送るだけ</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">よくある問い合わせへの定型返信を作成</div>
+                <div class="ft-detail">「料金は？」「何名まで乗れますか？」「チャイルドシートは？」など頻出質問への回答集をAIが整理。次回以降はコピペで即返信できる状態に</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive MCP（FAQ集として保存・更新）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">メール対応が10分→1分に</span><span style="color:#1d4ed8">　AIが下書きを用意。キム様は確認して送るだけ</span></div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">🚖 配車・予約管理AIエージェント</div>
+          <div class="agent-role">予約情報・配車スケジュール・ドライバー割り当てをAIが整理。判断する時間を減らす</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#fef3c7;color:#92400e">Sheets</span>
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">Calendar</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">予約情報をスプレッドシートで一元管理</div>
+                <div class="ft-detail">電話・メール・ネットから入る予約を1つのシートにまとめ、日時・乗降場所・人数・担当車両を自動整理。「今日どこに誰が行くか」が一目でわかる</div>
+                <span class="ft-badge" style="background:#fef3c7;color:#92400e">Sheets MCP（予約台帳を自動更新）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#6d28d9;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">ドライバー・車両の割り当て案を提示</div>
+                <div class="ft-detail">「明日13時に空港送迎が2件ある」という状況で、手が空いているドライバーと車種を確認して割り当て案を自動生成。キム様がOKを押すだけ</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">繁忙期・旅行シーズンの予約状況を先読み</div>
+                <div class="ft-detail">GW・お盆・年末などの繁忙期に向けて、前年の予約データをもとに混雑予測を作成。ドライバーのシフト調整・増車の判断材料を事前に提示</div>
+                <span class="ft-badge" style="background:#fce7f3;color:#9d174d">Calendar MCP（シフト・予約をカレンダーに反映）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">「誰が空いてる？」の確認が不要に</span><span style="color:#1d4ed8">　配車の判断材料をAIが毎朝用意する</span></div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#d97706">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">🗂️ 社内指示・業務連絡AIエージェント</div>
+          <div class="agent-role">ドライバー・整備スタッフへの指示・連絡文をAIが作成。口頭頼りの業務を記録に変える</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#d97706;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">ドライバーへの業務指示書を自動作成</div>
+                <div class="ft-detail">「明日の送迎先・時間・注意事項」をキム様が話すだけでAIが指示書を作成。ドライバーに送れる形で即完成。「言った言わない」がなくなる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">整備・点検の手順書・チェックリストを生成</div>
+                <div class="ft-detail">「法定点検の手順」「オイル交換の作業順序」「車内清掃チェック」など整備スタッフ向けの手順書・チェックリストをAIが作成。新人教育にも使える</div>
+                <span class="ft-badge" style="background:#fffbeb;color:#92400e">Drive MCP（マニュアルとして保存・共有）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#16a34a;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">スタッフへの連絡メール・通知文を自動生成</div>
+                <div class="ft-detail">「台風接近のため明日は早番シフト変更」「年末年始の勤務について」など緊急・定期の社内連絡をAIが文章化。メールやLINEにそのまま貼れる形で</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP（一斉送信も可能）</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">口頭指示が記録になる</span><span style="color:#1d4ed8">　言い忘れ・伝わっていない、がなくなる</span></div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#16a34a">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">🌐 ホームページ・LP制作AIエージェント</div>
+          <div class="agent-role">サービスページの文章・料金表・お知らせ更新をAIが代わりに作成。業者依存をなくす</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#16a34a;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">サービスページの紹介文・料金表を作成</div>
+                <div class="ft-detail">「空港送迎タクシー」「観光ハイヤー貸し切り」「旅行パッケージ」「車両整備」などサービスごとの紹介文・特徴・料金説明をAIが作成。業者に渡す文章素材として即使える</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#059669;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">季節キャンペーン・お知らせ文を自動生成</div>
+                <div class="ft-detail">「夏の観光貸し切りキャンペーン開始」「年末年始の特別料金のご案内」など季節に合わせたお知らせをAIが作成。HPやSNSにそのまま貼れる形で</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive MCP（ページ原稿として保存）</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#1d4ed8;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">Googleマイビジネスの返信文を自動作成</div>
+                <div class="ft-detail">Googleマップのクチコミへの返信文をAIが生成。良い口コミ・悪い口コミ両方に対して、ブランドイメージを守りながら誠実に返せる文章を即座に提示</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">HP更新が業者待ちゼロに</span><span style="color:#1d4ed8">　文章素材をAIが用意するので、更新が自社でできるようになる</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 最初の1週間 -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">最初の1週間プラン</div>
+    <div class="sec-sub">AIが初めてでも大丈夫。まず「これがあれば楽になる」1体を動かすところから始めます</div>
+    <div style="display:flex;flex-direction:column;gap:0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:linear-gradient(135deg,#0f172a,#1d4ed8);color:#fff">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;opacity:.7;padding-top:2px">Day 0</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">申込日 — 業務のヒアリング</div>
+          <div style="font-size:12px;opacity:.8">タクシー・ハイヤー・旅行・整備の4つの業務の中で、今一番手間がかかっていることを確認</div>
+        </div>
+        <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;font-size:11px;white-space:nowrap;flex-shrink:0">業務の優先順位確認</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#eff6ff;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#1d4ed8;padding-top:2px">Day 1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">AI顧問面談1回目（初回50分）</div>
+          <div style="font-size:12px;color:#475569">業務内容・スタッフ構成・よくある問い合わせを深掘り。1体目のSNS・集客AIエージェントの方向性を決定</div>
+        </div>
+        <div style="background:#dbeafe;border-radius:8px;padding:6px 12px;font-size:11px;color:#1d4ed8;font-weight:600;white-space:nowrap;flex-shrink:0">方向性決定</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#fff;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#0891b2;padding-top:2px">Day 2-3</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">SNS・集客AIエージェントを設定・完成</div>
+          <div style="font-size:12px;color:#475569">会社の情報・サービス内容・トーン（文体）をAIに覚えさせる。インスタ投稿を1本完成させて感触を確認</div>
+        </div>
+        <div style="background:#dbeafe;border-radius:8px;padding:6px 12px;font-size:11px;color:#0891b2;font-weight:600;white-space:nowrap;flex-shrink:0">1本目の投稿完成</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#f8fafc;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#7c3aed;padding-top:2px">Day 4-6</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">メール対応AIエージェントを追加</div>
+          <div style="font-size:12px;color:#475569">よくあるメール・問い合わせのパターンをAIに覚えさせる。返信を下書きさせて「これだけ楽になる」と体感</div>
+        </div>
+        <div style="background:#ede9fe;border-radius:8px;padding:6px 12px;font-size:11px;color:#7c3aed;font-weight:600;white-space:nowrap;flex-shrink:0">メール自動下書き</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;background:#fffbeb;border-top:1px solid #e2e8f0">
+        <div style="width:60px;flex-shrink:0;font-size:11px;font-weight:700;color:#d97706;padding-top:2px">Day 7</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;margin-bottom:2px">AI顧問面談2回目 — 使い心地を確認</div>
+          <div style="font-size:12px;color:#475569">1週間使ってみた感想を共有。「ここをもっとこうしたい」を調整して2ヶ月目の方針を合意</div>
+        </div>
+        <div style="background:#fef9c3;border-radius:8px;padding:6px 12px;font-size:11px;color:#854d0e;font-weight:600;white-space:nowrap;flex-shrink:0">改善・次のステップ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 独学 vs シゴトAI -->
+<div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">独学 vs シゴトAI</div>
+    <div class="sec-sub">「自分で調べて覚える」のと、「プロと一緒に動かしていく」の違い</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:28px">
+      <div style="background:#fff5f5;padding:20px;border-right:1px solid #e2e8f0">
+        <div style="font-size:13px;font-weight:700;color:#dc2626;margin-bottom:14px;text-align:center">❌ 独学の場合</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#dc2626;flex-shrink:0;font-size:14px">✗</span><span style="font-size:12px;color:#475569">何から始めるかわからないまま時間が過ぎる</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#dc2626;flex-shrink:0;font-size:14px">✗</span><span style="font-size:12px;color:#475569">ChatGPTを使ってみても「業務に使えない」と感じて止まる</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#dc2626;flex-shrink:0;font-size:14px">✗</span><span style="font-size:12px;color:#475569">タクシー業界向けの活用例が見つからない</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#dc2626;flex-shrink:0;font-size:14px">✗</span><span style="font-size:12px;color:#475569">勉強の時間が取れず、結局何も変わらない</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#dc2626;flex-shrink:0;font-size:14px">✗</span><span style="font-size:12px;color:#475569">SNSもメールも今まで通り全部手作業のまま</span></div>
+        </div>
+      </div>
+      <div style="background:#f0f9ff;padding:20px">
+        <div style="font-size:13px;font-weight:700;color:#0369a1;margin-bottom:14px;text-align:center">✅ シゴトAI の場合</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#0891b2;flex-shrink:0;font-size:14px">✓</span><span style="font-size:12px;color:#475569">「タクシー・ハイヤー業務」に合わせたAIを最初から設計</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#0891b2;flex-shrink:0;font-size:14px">✓</span><span style="font-size:12px;color:#475569">1週間でインスタ投稿とメール下書きが動き始める</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#0891b2;flex-shrink:0;font-size:14px">✓</span><span style="font-size:12px;color:#475569">わからないことはLINEでその日中に相談できる</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#0891b2;flex-shrink:0;font-size:14px">✓</span><span style="font-size:12px;color:#475569">「覚える」のではなく「使える」状態を一緒に作る</span></div>
+          <div style="display:flex;gap:8px;align-items:flex-start"><span style="color:#0891b2;flex-shrink:0;font-size:14px">✓</span><span style="font-size:12px;color:#475569">3ヶ月後、キム様の「分身」AIが複数稼働している</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3ヶ月ロードマップ -->
+    <div class="sec-title" style="margin-top:36px">3ヶ月ロードマップ</div>
+    <div class="sec-sub">最初から5体全部は作りません。1体ずつ確実に動かして、3ヶ月で「分身」が揃います</div>
+    <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:8px">
+      <div style="flex:1;min-width:160px;background:#0f172a;color:#fff;border-radius:8px 0 0 8px;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">1週間目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">SNS・メールが動き始める</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">インスタ投稿・メール下書きをAIが担当。「これだけで十分便利」を体感</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: SNS投稿1本完成</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#1e3a5f;color:#fff;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">配車・予約を整理する</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">予約管理AIを追加。「今日の予約状況」を一目で把握できる仕組みが整う</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 予約台帳が自動化</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#1d4ed8;color:#fff;padding:16px;border-right:none">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">社内指示が記録になる</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">社内連絡AIを追加。ドライバー・整備スタッフへの指示が文書化され、口頭頼りから脱出</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 指示書・手順書が完成</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#0891b2;color:#fff;border-radius:0 8px 8px 0;padding:16px">
+        <div style="font-size:11px;opacity:.7;margin-bottom:6px">3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">HP・集客まで自走する</div>
+        <div style="font-size:11px;opacity:.8;margin-bottom:8px">HP制作AIを追加。サービスページ・お知らせ更新が自社でできるようになり、業者依存ゼロへ</div>
+        <div style="font-size:11px;background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px">Goal: 「分身」5体が稼働</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:48px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI 3ヶ月サポート内容</div>
+    <div class="sec-sub">AIが初めてでも、一人で悩まず動かせる体制でサポートします</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px">
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">💬</div>
+          <div><div style="font-size:10px;font-weight:700;color:#1d4ed8;letter-spacing:.06em">01</div><div style="font-size:14px;font-weight:700">初回面談（50分）</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">業務内容・課題・やりたいことを丁寧にヒアリング。<span style="color:#1d4ed8;font-weight:600">キム様専用の設計に仕上げる</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#dbeafe;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🎫</div>
+          <div><div style="font-size:10px;font-weight:700;color:#1d4ed8;letter-spacing:.06em">02</div><div style="font-size:14px;font-weight:700">顧問チケット 3枚</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">面談30分／枚。「うまく動かない」「もっとこうしたい」を<span style="color:#1d4ed8;font-weight:600">プロと一緒に調整</span></div>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">📱</div>
+          <div><div style="font-size:10px;font-weight:700;color:#16a34a;letter-spacing:.06em">03</div><div style="font-size:14px;font-weight:700">LINEサポート（無制限）</div></div>
+        </div>
+        <div style="height:1px;background:#f1f5f9;margin-bottom:12px"></div>
+        <div style="font-size:12px;color:#475569;line-height:1.6">「これどうやるの？」「この文章でいい？」を<span style="color:#16a34a;font-weight:600">何回でも当日中に返答</span></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
+      <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:28px;flex-shrink:0">🎓</div>
+        <div><div style="font-size:13px;font-weight:700;color:#ea580c;margin-bottom:4px">セミナー <span style="font-size:11px;background:#ea580c;color:#fff;border-radius:10px;padding:1px 8px;margin-left:4px">永久参加可</span></div><div style="font-size:12px;color:#64748b;line-height:1.5">AI活用の最新事例・新しいエージェントの使い方を3ヶ月後も継続してキャッチアップ</div></div>
+      </div>
+      <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:16px;display:flex;gap:14px;align-items:flex-start">
+        <div style="font-size:28px;flex-shrink:0">🖥️</div>
+        <div><div style="font-size:13px;font-weight:700;color:#0d9488;margin-bottom:4px">オンライン自習室</div><div style="font-size:12px;color:#64748b;line-height:1.5">実際に動かしながらわからないことをその場で解決できる環境</div></div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0f172a,#1e3a5f,#1d4ed8);border-radius:12px;padding:24px;color:#fff;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:12px;opacity:.7;margin-bottom:6px">シゴトAI 3ヶ月プログラム（税込）</div>
+        <div style="font-size:42px;font-weight:800;line-height:1">¥298,000</div>
+        <div style="font-size:12px;opacity:.7;margin-top:6px">保証期間8日間 ── 効果を実感できなければ返金対応</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#93c5fd;font-size:16px">✓</span><span style="font-size:13px">初回面談 50分</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#93c5fd;font-size:16px">✓</span><span style="font-size:13px">顧問チケット 3枚（面談30分×3回）</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#93c5fd;font-size:16px">✓</span><span style="font-size:13px">LINEサポート 3ヶ月（回数無制限）</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#93c5fd;font-size:16px">✓</span><span style="font-size:13px">講義セミナー 永久参加</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:#fde68a;font-size:16px">★</span><span style="font-size:13px;color:#fde68a;font-weight:700">8日間 効果保証つき</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="background:linear-gradient(135deg,#0f172a,#1e3a5f,#1d4ed8);color:#fff;text-align:center;padding:36px 24px">
+  <div style="font-size:13px;opacity:.8;margin-bottom:6px">シゴトAI — AIエージェント伴走プログラム</div>
+  <div style="font-size:18px;font-weight:700">AIが初めてでも大丈夫。<br>キム様の業務に合わせた「分身」を一緒に作ります</div>
+</div>
+
+<script>
+const agents=document.querySelectorAll('.agent');
+function animateAgent(agent,delay){
+  setTimeout(()=>{
+    const dots=agent.querySelectorAll('.ft-dot');
+    const contents=agent.querySelectorAll('.ft-content');
+    const saving=agent.querySelector('.saving');
+    dots.forEach((dot,i)=>{
+      dot.style.animation='none';dot.style.opacity='0';dot.style.transform='scale(0)';
+      setTimeout(()=>{dot.style.animation=`dot-pop 0.4s ease ${i*.5}s forwards`;},50);
+    });
+    contents.forEach((c,i)=>{
+      c.style.animation='none';c.style.opacity='0';c.style.transform='translateX(-6px)';
+      setTimeout(()=>{c.style.animation=`content-in 0.4s ease ${i*.5}s forwards`;},50);
+    });
+    if(saving){saving.style.animation='none';saving.style.opacity='0';
+      setTimeout(()=>{saving.style.animation='fade-in 0.5s ease 2.5s forwards';},50);}
+  },delay);
+}
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      animateAgent(entry.target,Array.from(agents).indexOf(entry.target)*300);
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.15});
+agents.forEach(a=>observer.observe(a));
+</script>
+</body>
+</html>
