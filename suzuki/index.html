@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>飲食業の店舗業務をAIで効率化 | 鈴木様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#431407 0%,#9a3412 50%,#ea580c 100%);color:#fff;padding:52px 24px 44px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:16px}
+.hero h1{font-size:clamp(20px,4vw,32px);font-weight:700;margin-bottom:10px;line-height:1.3}
+.hero p{font-size:14px;opacity:.85;max-width:580px;margin:0 auto 20px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#ea580c}
+
+.section{max-width:900px;margin:0 auto;padding:40px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#ea580c;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#ea580c;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#fed7aa;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#ea580c}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">鈴木様 専用提案書 | シゴトAI</div>
+  <h1>飲食業の「毎日発生する作業」を<br>AI従業員で段階的に軽くするロードマップ</h1>
+  <p>AI初心者でも、明日から使える形で始められます。<br>まずは店舗で一番時間のかかる文章作業からAI従業員化しましょう。</p>
+  <div class="tags">
+    <span class="tag">店舗事務・予約対応</span>
+    <span class="tag">口コミ返信</span>
+    <span class="tag">SNS投稿</span>
+    <span class="tag">シフト・教育</span>
+    <span class="tag">AI初心者でもOK</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">現在のAI活用</div><div class="ctx-val">ChatGPT・Geminiを少し</div></div>
+  <div class="ctx"><div class="ctx-label">課題①</div><div class="ctx-val">事務・予約対応の手間</div></div>
+  <div class="ctx"><div class="ctx-label">課題②</div><div class="ctx-val">口コミ返信が追いつかない</div></div>
+  <div class="ctx"><div class="ctx-label">課題③</div><div class="ctx-val">SNS投稿が続かない</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">今、鈴木様の店舗業務で起きていること</div>
+  <div class="sec-sub">AIを使いたいと思っているが、「自分の仕事にどう使うか」の具体的な形がまだない状態</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📋</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">予約・問い合わせ対応に時間がかかる</div>
+      <div style="font-size:12px;color:#64748b">電話・メール・SNSからの問い合わせに毎回個別で対応。返信文を一から書いている</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">⭐</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">口コミへの返信が後回しになる</div>
+      <div style="font-size:12px;color:#64748b">Googleマップ・食べログ等の口コミは返信したいが、営業中は手が回らず放置しがち</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📱</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">SNS投稿が続けられない</div>
+      <div style="font-size:12px;color:#64748b">投稿ネタを考えて文章を書く時間がなく、更新が止まってしまう。集客への影響が心配</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">👥</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">スタッフ連絡・教育に手間がかかる</div>
+      <div style="font-size:12px;color:#64748b">シフト調整の連絡や新人への説明を毎回手作業。マニュアルも整備できていない</div>
+    </div>
+  </div>
+
+  <!-- AIエージェント -->
+  <div class="sec-title">必要なAI従業員</div>
+  <div class="sec-sub">いきなり全自動ではなく、まずは毎日使う文章作成・整理から始めるのが現実的です</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#9a3412">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">📋 店舗事務AI従業員 <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">予約返信・問い合わせ対応・発注メモなど、毎日発生する店舗事務を30秒で処理</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#9a3412;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">予約・問い合わせへの返信案を即作成</div>
+                <div class="ft-detail">「〇名で予約したい」「当日でも入れますか？」など、よく来る問い合わせパターンを覚えさせることで、毎回一から書かずに返信できる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#ea580c;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">発注メモ・在庫確認のリスト作成</div>
+                <div class="ft-detail">「今週足りないものをリスト化して」「発注書の文面を作って」など、仕入れ関連の事務を短縮</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets連携で自動リスト化</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#c2410c;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">キャンペーン・告知文の下書き作成</div>
+                <div class="ft-detail">「〇〇フェアの告知文」「特別コースの案内文」など、季節ごとの告知文をネタ出しから文章化まで対応</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">1日15〜30分</span>の事務作業を短縮</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">⭐ 口コミ・問い合わせ返信AI従業員</div>
+          <div class="agent-role">Googleマップ・食べログなどの口コミに、感謝・共感・リピート誘導を込めた返信文を生成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#fef9c3;color:#a16207">Google</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">高評価口コミへの丁寧なお礼返信</div>
+                <div class="ft-detail">「ありがとうございます」で終わらない。具体的なメニューや体験に触れた、温かみのある返信文を即生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">低評価・クレーム口コミへの対応文</div>
+                <div class="ft-detail">感情的にならず、誠実さが伝わる謝罪・改善を伝える返信文のパターンを事前設計。対応漏れをなくす</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#ea580c;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">再来店・リピートを促すメッセージ追加</div>
+                <div class="ft-detail">「またぜひいらしてください」にひと工夫。次回来店を誘う季節情報やキャンペーン情報を自然に添える</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">放置していた口コミ</span>に毎日対応できるように</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">📱 SNS・集客投稿AI従業員</div>
+          <div class="agent-role">Instagram・Facebook・Xへの投稿ネタ出しから文章作成まで、週の投稿をまとめて準備</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">Instagram</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Facebook</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">週の投稿ネタを5件まとめてアイデア出し</div>
+                <div class="ft-detail">「今週の投稿ネタを5つ考えて」と指示するだけで、メニュー・季節・スタッフ紹介など多角的なネタを提案</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">ネタを選んだら本文・ハッシュタグまで生成</div>
+                <div class="ft-detail">投稿本文・絵文字・ハッシュタグ一式をセット作成。鈴木様がOKを出してコピペするだけで投稿できる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#14b8a6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">キャンペーン・季節企画の投稿文も対応</div>
+                <div class="ft-detail">「夏フェアの告知投稿」「バレンタイン限定コースの宣伝」など、イベント告知文もパターン化して作成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">週1回30分</span>で1週間分の投稿を準備できる</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#6d28d9">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">👥 シフト・スタッフ教育AI従業員</div>
+          <div class="agent-role">シフト連絡文・新人教育マニュアル・接客文言の整備をまとめて担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#6d28d9;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">シフト調整・連絡文を自動作成</div>
+                <div class="ft-detail">「〇〇さんに来週のシフト変更をお願いするLINEを書いて」と指示するだけで、丁寧な連絡文が完成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">新人向けマニュアル・接客フロー作成</div>
+                <div class="ft-detail">「新人スタッフ向けの接客手順書」「よくある質問への答え方」などのマニュアルをAIと一緒に整備</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive保存で全員が確認できる</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">スタッフ対応の属人化</span>を解消してマニュアル化</div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#475569">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">🍽 メニュー改善・求人AI従業員</div>
+          <div class="agent-role">メニュー説明文の見直し、求人票の作成、スタッフ募集文の作成まで担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">各種媒体</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#475569;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">メニュー名・説明文のブラッシュアップ</div>
+                <div class="ft-detail">「このメニューをもっと食欲をそそる表現にして」と伝えるだけで、魅力的なメニュー説明文を即作成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#64748b;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">求人票・スタッフ募集文の作成</div>
+                <div class="ft-detail">「アルバイト募集のIndeed掲載文」「飲食未経験者向けの募集文」などを条件を伝えるだけで作成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">人材採用・メニュー改訂</span>の文章作業を効率化</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 独学 vs シゴトAI -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">独学・動画学習・伴走型の違い</div>
+    <div class="sec-sub">忙しい飲食業務の中で「自分の店舗業務に使う形」まで落とせるかどうかが重要です</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">独学</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>自分で調べる時間がかかる</li>
+          <li>どこから始めればいいか迷う</li>
+          <li>店舗業務への応用で止まりやすい</li>
+          <li>毎回プロンプトをゼロから考える</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">動画学習</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識は増えるが実務に置き換えにくい</li>
+          <li>自分の店舗・メニューへの当てはめで止まる</li>
+          <li>質問できない・フォローがない</li>
+          <li>学んで終わり、使い続けにくい</li>
+        </ul>
+      </div>
+      <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#ea580c">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#92400e;padding-left:16px;line-height:2">
+          <li>店舗業務の文面・導線に合わせて設計</li>
+          <li>口コミ返信・投稿・予約対応の型まで作る</li>
+          <li>LINEでつまずきをその場で解消</li>
+          <li>1週間で1体目を実務投入できる</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI従業員を作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、鈴木様の店舗業務に合ったAI従業員が稼働します</div>
+    <div style="display:flex;flex-direction:column;gap:0">
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ea580c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">鈴木様の店舗業務・困りごとを整理し、最初に作るAI従業員を決定。ツールと進め方もこの場で確認します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:8px;padding:2px 10px;font-weight:600">ロードマップ作成</span>
+            <span style="font-size:11px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:8px;padding:2px 10px;font-weight:600">ツール決定</span>
+            <span style="font-size:11px;background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;border-radius:8px;padding:2px 10px;font-weight:600">レクチャー</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ea580c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI従業員プランナーの作成 <span style="font-size:12px;color:#ea580c;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">どんな業務を担当させるか、どんな文体・トーンにするかを決める「AI従業員の設計書」をAI顧問と一緒に作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ea580c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI従業員の作成 <span style="font-size:12px;color:#ea580c;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">プランナーをもとに、実際のAI従業員（カスタムGPT等）を構築。鈴木様の業務に最適化した設定を行います</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#ea580c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI従業員の育成 <span style="font-size:12px;color:#ea580c;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際に使いながら精度を上げる育成フェーズ。「もう少し柔らかいトーンで」「この情報も入れて」など、実務で改善していきます</div>
+        </div>
+      </div>
+
+    </div>
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#92400e">不明点があればLINEでコーチに相談できます（回数無制限）。つまずいたまま進める必要はありません。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#fff7ed;border-top:1px solid #fed7aa;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">3ヶ月で、店舗業務にAI従業員を定着させる</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fed7aa">
+        <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">店舗事務AIを作る</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>現状整理・面談</li>
+          <li>店舗事務AI従業員を設定</li>
+          <li>予約返信・告知文で実践</li>
+          <li>改善・次の領域を確認</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fed7aa">
+        <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">口コミ・問い合わせ対応に展開</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>口コミ返信AI従業員を作成</li>
+          <li>対応パターンを型化</li>
+          <li>返信漏れをなくす仕組みに</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fed7aa">
+        <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">SNS・リピート施策へ拡張</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>SNS投稿AI従業員を作成</li>
+          <li>週次投稿ルーティンを確立</li>
+          <li>リピート誘導文も設計</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fed7aa">
+        <div style="font-size:11px;font-weight:700;color:#ea580c;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">シフト・教育・発注まで広げる</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>スタッフ連絡・教育AIを作成</li>
+          <li>マニュアル整備・求人文対応</li>
+          <li>生産性10倍を実感する段階へ</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート内容 -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">AIツールの使い方を学ぶだけでなく、鈴木様の実務に合わせて「使える形」に落とし込む伴走が受けられます</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務整理・AI設計・ロードマップ策定を1回で完了</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。作成・改善・次の領域への展開を一緒に進める</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">営業中につまずいても、その場でコーチに相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#431407,#9a3412);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#9a3412;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#92400e;line-height:1.7">申込後8日以内に「AI従業員が使える状態」にならなければ、全額返金します。まず1体目を動かして判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#1e293b;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">飲食業務のAI従業員化を、鈴木様の実務に合わせて設計・伴走するプログラムです</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料は鈴木様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const dots = el.querySelectorAll('.ft-dot');
+    const contents = el.querySelectorAll('.ft-content');
+    const savings = el.querySelectorAll('.saving');
+    dots.forEach((d,i) => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{
+        d.style.animation=`dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards`;
+      }, delay);
+    });
+    contents.forEach((c,i) => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{
+        c.style.animation=`content-in .3s ease forwards`;
+      }, delay);
+    });
+    savings.forEach((s,i) => {
+      setTimeout(()=>{
+        s.style.animation=`fade-in .4s ease forwards`;
+      }, 1500);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
