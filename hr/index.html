@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人事×AI｜本業効率化から独立へ | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(99,102,241,.1);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;border-radius:50%;background:rgba(139,92,246,.1);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(22px,4.5vw,36px);font-weight:800;margin-bottom:12px;line-height:1.25}
+.hero h1 em{font-style:normal;color:#a5b4fc}
+.hero p{font-size:14px;opacity:.85;max-width:600px;margin:0 auto 24px;line-height:1.7}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.dual-bar{background:#fff;border-bottom:1px solid #e2e8f0;padding:0}
+.dual-bar-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr}
+.dual-col{padding:18px 24px;text-align:center}
+.dual-col:first-child{border-right:1px solid #e2e8f0;background:#f8fafc}
+.dual-col:last-child{background:#faf5ff}
+.dual-label{font-size:11px;color:#64748b;margin-bottom:4px;letter-spacing:.04em}
+.dual-val{font-size:13px;font-weight:700}
+.dual-val.now{color:#4f46e5}
+.dual-val.future{color:#7c3aed}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#4f46e5;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#c4b5fd;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#4f46e5}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+
+/* future path */
+.path-card{background:#fff;border-radius:14px;padding:22px;border:1px solid #e2e8f0;position:relative;overflow:hidden;transition:box-shadow .2s}
+.path-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
+.path-card.biz::before{background:linear-gradient(90deg,#7c3aed,#db2777)}
+.path-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<!-- ヒーロー -->
+<div class="hero">
+  <div class="hero-badge">人事担当者様 専用提案書 | シゴトAI</div>
+  <h1>「AIを使える人事」は、<br><em>最強の個人ブランド</em>になる。</h1>
+  <p>今のお仕事をAIで3倍速にしながら、<br>そのスキルをそのまま将来の独立・副業へ展開する。<br>人事×AIという掛け算で、2つの夢を同時に叶えるロードマップをご提案します。</p>
+  <div class="tags">
+    <span class="tag">求人票作成</span>
+    <span class="tag">面接日程調整</span>
+    <span class="tag">応募者対応</span>
+    <span class="tag">面接評価要約</span>
+    <span class="tag">人事資料作成</span>
+    <span class="tag">→ 将来の独立へ</span>
+  </div>
+</div>
+
+<!-- 2カラムバー -->
+<div class="dual-bar">
+  <div class="dual-bar-inner">
+    <div class="dual-col">
+      <div class="dual-label">STEP ① 今すぐ</div>
+      <div class="dual-val now">本業の人事業務をAI化して時間を作る</div>
+    </div>
+    <div class="dual-col">
+      <div class="dual-label">STEP ② 将来へ</div>
+      <div class="dual-val future">そのスキルで独立・個人事業を立ち上げる</div>
+    </div>
+  </div>
+</div>
+
+<!-- ① 本業AI化 -->
+<div class="section">
+  <div style="display:inline-block;background:#ede9fe;color:#5b21b6;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:16px;letter-spacing:.04em">STEP ① 本業の人事業務をAI従業員化する</div>
+  <div class="sec-title" style="margin-bottom:6px">人事の仕事は、AIと最も相性がいい職種のひとつです</div>
+  <div class="sec-sub">求人票・日程調整・評価要約・資料作成……どれも「型のある文章作業」。だからAIが驚くほど使える領域です</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#3730a3">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">📝 AI求人票作成アシスタント <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">職種・条件・求める人物像を伝えるだけで、媒体別の求人票・JD・スカウト文が3分で完成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Drive</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#3730a3;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">Indeed・LinkedIn・自社HP用に媒体別で最適化して生成</div>
+                <div class="ft-detail">「営業マネージャー、東京、年収600万〜」と伝えるだけで、各媒体のフォーマットに合わせた求人票を自動生成。毎回ゼロから書く手間がなくなる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#4f46e5;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">スカウトメール・ダイレクトリクルーティング文も作成</div>
+                <div class="ft-detail">応募者のプロフィールに合わせてパーソナライズされたスカウト文を生成。「刺さる」スカウトで返信率を上げる</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#6366f1;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">過去の採用データから「当たり求人票」のパターンを学習</div>
+                <div class="ft-detail">採用できた求人票・できなかった求人票を比較分析し、表現のコツを蓄積。精度が上がり続けるAI従業員に育てられる</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">1求人あたり2〜3時間</span>の作成作業が30分以内に</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0369a1">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📅 AI採用アシスタント（応募者対応・日程調整）</div>
+          <div class="agent-role">応募確認メール・面接案内・日程調整・不採用通知まで、採用フローの文章対応を一括担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#f0fdf4;color:#15803d">Calendar</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">応募者への初回返信・書類選考通過メールを即生成</div>
+                <div class="ft-detail">応募者名・ポジション・次ステップを入力するだけで、丁寧で企業ブランドに合った返信メールを自動作成。対応漏れがなくなる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0284c7;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">面接日程調整の往復メールを短縮</div>
+                <div class="ft-detail">候補日提示・確定・リスケ対応のメールテンプレートを業務に組み込み。Calendar連携で「調整→確定→リマインド」の流れを自動化</div>
+                <span class="ft-badge" style="background:#f0fdf4;color:#15803d">Calendar MCP連携</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0ea5e9;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">不採用通知・辞退後フォローメールも丁寧に</div>
+                <div class="ft-detail">後味の良い不採用通知は企業ブランドを守る。将来の再応募や口コミに影響するため、AI従業員が品質を一定に保つ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">1採用あたり数十通</span>のメール対応が大幅短縮</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">🎯 AI面接評価アシスタント</div>
+          <div class="agent-role">面接メモ・録音テキストから評価シートを自動生成。複数面接官の評価をまとめてレポート化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">面接メモから評価シートを自動生成</div>
+                <div class="ft-detail">面接中のメモや録音テキストを貼り付けるだけで、「志望動機・スキル・カルチャーフィット・懸念点」を項目別に要約した評価シートを作成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">複数面接官のフィードバックを統合して合否判断レポートに</div>
+                <div class="ft-detail">「Aさんは◎、Bさんは△」といったバラバラな評価を集約し、採用判断に使えるサマリーを生成。社内稟議の資料作りも効率化</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets集計連携</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">評価シート作成・集計</span>の時間を大幅に削減</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">📊 AI人事資料作成アシスタント</div>
+          <div class="agent-role">採用レポート・人員計画・評価制度資料・社内FAQ対応など、人事の定型資料をまとめて担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">採用実績レポート・月次サマリーを自動作成</div>
+                <div class="ft-detail">数字を渡すだけで、「今月の応募数・通過率・内定率・費用対効果」をまとめた経営報告用レポートを自動生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">社内FAQ・人事規定の問い合わせ対応を自動化</div>
+                <div class="ft-detail">「有給の申請方法は？」「産休の手続きは？」など、繰り返し来る社内問い合わせをAI FAQに集約。個別対応の時間を削減</div>
+                <span class="ft-badge" style="background:#fef9c3;color:#a16207">社内ナレッジ連携</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">月次レポート・FAQ対応</span>が半自動化</div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#475569">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">📈 AI人事データ分析アシスタント</div>
+          <div class="agent-role">採用チャネル別コスト・離職率・人員構成データを分析し、人事戦略の判断材料を作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#475569;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">採用チャネル別の費用対効果・通過率を可視化</div>
+                <div class="ft-detail">「IndeedとLinkedIn、どちらが費用対効果が高いか」「職種別の採用工数はどこが重いか」をデータで把握し、次の採用計画に活かす</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">データドリブンな人事判断</span>を最短で実現</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 将来の独立へ -->
+<div style="background:linear-gradient(135deg,#1e1b4b,#312e81,#4c1d95);padding:56px 0;color:#fff">
+  <div style="max-width:900px;margin:0 auto;padding:0 16px">
+    <div style="display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#e0e7ff;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:20px;letter-spacing:.04em">STEP ② 本業の実績を、将来の個人事業へ展開する</div>
+    <div style="font-size:clamp(18px,3vw,26px);font-weight:800;margin-bottom:10px;line-height:1.3">「AIを使える人事」は、<br>今後最も需要が伸びる<span style="color:#a5b4fc">個人ブランド</span>のひとつです。</div>
+    <div style="font-size:13px;opacity:.8;margin-bottom:32px;max-width:620px;line-height:1.8">本業でAI×人事の実績を積みながら、そのスキルと経験をそのまま将来の独立・個人事業に転換する。「会社員だから終わり」ではなく、<strong style="color:#c4b5fd">本業が最高の実績作りの場</strong>になります。</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🤝</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">AI導入支援コンサル</div>
+        <div style="font-size:11px;opacity:.7;line-height:1.6">「人事×AI」の導入経験を活かして、中小企業の採用・人事業務のAI化を支援する。すでに現場で実績があるため説得力が違う</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">AI研修講師・セミナー</div>
+        <div style="font-size:11px;opacity:.7;line-height:1.6">「現役人事が教えるAI活用」は他の講師と差別化できる。社内研修の外部委託や、人事向けセミナーの登壇など需要は急増中</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">📋</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">採用コンサル・人事顧問</div>
+        <div style="font-size:11px;opacity:.7;line-height:1.6">AI活用スキル×人事の専門知識で、スタートアップや中小企業の採用設計・評価制度構築を副業・独立案件として受注</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">⚙️</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px">AI業務改善支援</div>
+        <div style="font-size:11px;opacity:.7;line-height:1.6">人事に限らず、「業務のAI化ができる人材」は全業種で不足している。本業で培ったノウハウを横展開できる</div>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;background:rgba(255,255,255,.06);border:1px solid rgba(165,180,252,.3);border-radius:12px;padding:20px 24px">
+      <div style="font-size:13px;color:#a5b4fc;font-weight:700;margin-bottom:8px">💡 重要なポイント</div>
+      <div style="font-size:13px;opacity:.85;line-height:1.8">本業でAI×人事の実績を積むことが、最高のポートフォリオになります。<br>「〇〇社の採用をAIで3倍効率化した」という実績は、独立後の提案で圧倒的な説得力を持ちます。<strong style="color:#c4b5fd">今の仕事が、将来への投資になる。</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- 独学 vs シゴトAI -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">独学・動画学習・伴走型の違い</div>
+    <div class="sec-sub">「学ぶ」だけでなく、「本業で使える形」「独立に活かせる形」まで落とせるかどうかが鍵です</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">独学</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>何から手をつければいいか迷う</li>
+          <li>人事業務への応用で止まりやすい</li>
+          <li>独立への道筋が見えない</li>
+          <li>毎回ゼロからプロンプトを考える</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">動画学習</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識はつくが実務に置き換えにくい</li>
+          <li>自分の業務への当てはめで止まる</li>
+          <li>質問できない・フォローがない</li>
+          <li>「独立」という目標と紐づかない</li>
+        </ul>
+      </div>
+      <div style="background:#f5f3ff;border:2px solid #c4b5fd;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#4f46e5">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#4c1d95;padding-left:16px;line-height:2">
+          <li>人事業務の型に合わせてAI設計</li>
+          <li>求人票・評価・報告の型を一緒に作る</li>
+          <li>本業の実績が独立への武器になる</li>
+          <li>LINEで詰まったところをその場で解消</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI従業員を作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、人事業務に合ったAI従業員が稼働します</div>
+    <div style="display:flex;flex-direction:column;gap:0">
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">担当業務・独立の目標・AIの現在地を整理。最初に作るAI従業員と3ヶ月のロードマップをこの場で決定します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">ロードマップ作成</span>
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">ツール決定</span>
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">独立戦略の整理</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI従業員プランナーの作成 <span style="font-size:12px;color:#4f46e5;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">どの人事業務を任せるか、どんな評価基準・文体にするかを設計。「自分専用の人事AIアシスタント」の仕様書を作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI従業員の作成 <span style="font-size:12px;color:#4f46e5;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">プランナーをもとに実際のAI従業員を構築。求人票・評価シート・メールなど、今の業務にすぐ使える状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#4f46e5;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI従業員の育成 <span style="font-size:12px;color:#4f46e5;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実務で使いながら精度を上げていく育成フェーズ。使えば使うほど「自社の採用文化」を学んだAI従業員に育ちます</div>
+        </div>
+      </div>
+
+    </div>
+    <div style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#4c1d95">不明点があればLINEでコーチに相談できます（回数無制限）。忙しい人事業務の合間でも、つまずいたまま止まる必要はありません。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#f5f3ff;border-top:1px solid #c4b5fd;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">本業の効率化と、独立への実績作りを同時に進める3ヶ月間</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #c4b5fd">
+        <div style="font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">求人票AIを作って即使う</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>現状整理・面談</li>
+          <li>求人票AI従業員を設定</li>
+          <li>実際の求人票で試用</li>
+          <li>改善・次の領域を確認</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #c4b5fd">
+        <div style="font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">採用フロー全体をAI化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>応募者対応AIを作成</li>
+          <li>面接評価AIを設計</li>
+          <li>採用フローを型化</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #c4b5fd">
+        <div style="font-size:11px;font-weight:700;color:#4f46e5;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">人事報告・FAQ対応を効率化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>人事報告書AIを作成</li>
+          <li>社内FAQシステムを構築</li>
+          <li>実績データを蓄積し始める</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #7c3aed">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#5b21b6">独立への実績が完成</div>
+        <ul style="font-size:12px;color:#4c1d95;padding-left:14px;line-height:1.8">
+          <li>「AI×人事」の実績ポートフォリオ完成</li>
+          <li>副業・独立の最初の一歩を設計</li>
+          <li>将来事業の方向性を決定</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート内容 -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">「本業の効率化」と「将来の独立」という2つの目的を、1つのプログラムで同時に叶えます</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務整理・独立目標・AI設計・ロードマップ策定を1回で完了</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。作成・改善・独立戦略の展開を一緒に進める</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">業務中に詰まってもその場でコーチに相談。独立の疑問も気軽に</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用・独立事例セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#4c1d95;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#5b21b6;line-height:1.7">申込後8日以内に「AI従業員が使える状態」にならなければ、全額返金します。まず1体目を動かして判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#0f172a;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">「AIを使える人事」という最強ポジションへ。本業と独立、2つの目標を同時に叶えるプログラムです</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料は人事担当者様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const dots = el.querySelectorAll('.ft-dot');
+    const contents = el.querySelectorAll('.ft-content');
+    const savings = el.querySelectorAll('.saving');
+    dots.forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    contents.forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    savings.forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1500);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
