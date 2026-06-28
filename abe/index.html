@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>不動産賃貸業のAI活用ロードマップ | アベ様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0a1628 0%,#0f2d4a 50%,#1a4731 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🏢';position:absolute;top:16px;right:7%;font-size:72px;opacity:.05}
+.hero::after{content:'📋';position:absolute;bottom:16px;left:5%;font-size:60px;opacity:.05}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(21px,4.2vw,34px);font-weight:800;margin-bottom:12px;line-height:1.25}
+.hero h1 em{font-style:normal;color:#6ee7b7}
+.hero p{font-size:14px;opacity:.82;max-width:600px;margin:0 auto 24px;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#059669}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#059669;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#059669;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#bbf7d0;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#059669}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">アベ様 専用提案書 | シゴトAI</div>
+  <h1>融資資料・事業計画書・稟議書を<br><em>毎回ゼロから作らない</em>仕組みへ。</h1>
+  <p>良い物件を見つけた時に、すぐ数字と説明を整えられるか。<br>不動産賃貸業でのAI活用は、融資スピードと物件取得力を上げます。<br>既にAIを試し始めているアベ様に、次のステップをご提案します。</p>
+  <div class="tags">
+    <span class="tag">📋 融資資料・事業計画書</span>
+    <span class="tag">🏦 銀行向け稟議書</span>
+    <span class="tag">📊 収益シミュレーション</span>
+    <span class="tag">🏠 物件管理・リフォーム企画</span>
+    <span class="tag">💬 銀行面談準備</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">現在のAI活用</div><div class="ctx-val">資料作成・相場調査に活用中</div></div>
+  <div class="ctx"><div class="ctx-label">一番の課題</div><div class="ctx-val">融資資料を毎回手作業</div></div>
+  <div class="ctx"><div class="ctx-label">目標</div><div class="ctx-val">銀行提出資料を速く・確実に</div></div>
+  <div class="ctx"><div class="ctx-label">展開先</div><div class="ctx-val">収益計算・物件管理まで</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">アベ様の不動産業務で繰り返し起きていること</div>
+  <div class="sec-sub">毎回時間と頭を使っている作業に「型」を作ることで、物件取得のスピードが変わります</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🏦</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">融資資料を作るたびにゼロから</div>
+      <div style="font-size:12px;color:#64748b">事業計画書・収益計算書・物件概要・資産背景の整理……銀行に出すたびに同じ作業が繰り返される</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📊</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">収益計算の抜け漏れが心配</div>
+      <div style="font-size:12px;color:#64748b">表面利回り・実質利回り・キャッシュフロー・返済シミュレーションを毎回手計算。確認が多く時間がかかる</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">💬</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">銀行面談の準備が属人的</div>
+      <div style="font-size:12px;color:#64748b">担当者から聞かれる質問・反論への答えを頭の中で整理。論点の整理と言語化に時間がかかる</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🔧</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">リフォーム企画・物件管理も手作業</div>
+      <div style="font-size:12px;color:#64748b">リフォーム案の検討・修繕履歴の整理・空室対策の募集文……物件取得後の管理業務が積み上がる</div>
+    </div>
+  </div>
+
+  <div class="sec-title">アベ様に必要なAI従業員</div>
+  <div class="sec-sub">融資資料から物件管理まで、不動産賃貸業の全フローにAI従業員を配置します</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f2d4a">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">🏦 融資資料作成AI従業員 <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">事業計画書・収益計算書・物件概要・銀行向け稟議書のたたき台を、物件情報を入れるだけで作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f2d4a;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">物件情報・収益条件・返済条件を入力→事業計画書のたたき台を即生成</div>
+                <div class="ft-detail">所在地・価格・想定賃料・借入条件などを入力するだけで、銀行提出用の事業計画書の構成と文面を自動作成。「何を書くか」ではなく「確認して仕上げる」状態からスタートできる</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Docs出力対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1a4731;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">収益計算書・キャッシュフロー試算表を自動整形</div>
+                <div class="ft-detail">表面利回り・実質利回り・NOI・DSCR・キャッシュフロー・返済後手残りを項目ごとに整理。銀行担当者が見やすい形に整えた計算書を出力</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets連携・自動計算</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#059669;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">物件概要・資産背景の整理シートを自動作成</div>
+                <div class="ft-detail">銀行が確認したい「物件の強み・立地・築年数・担保評価・オーナーの資産背景」を論点別に整理。説明に抜け漏れがなくなる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#10b981;animation-delay:1.7s">④</div>
+              <div class="ft-content" style="animation-delay:1.7s">
+                <div class="ft-name">銀行向け稟議書のたたき台・添付資料リストを出力</div>
+                <div class="ft-detail">銀行の稟議書フォーマットに合わせた記載項目と文面を生成。「この物件なら追加で必要な書類はこれ」という不足資料リストも同時に整理</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">稟議書フォーマット対応</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">融資資料1件あたり半日〜1日</span>の作業が2〜3時間に</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0369a1">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📊 物件収益シミュレーションAI従業員</div>
+          <div class="agent-role">物件候補の収益性を瞬時に試算。複数物件の比較表・シナリオ別シミュレーションを自動作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">Web検索</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">物件情報を入れるだけで収益シミュレーション表を即出力</div>
+                <div class="ft-detail">購入価格・想定賃料・空室率・諸費用・ローン条件を入力するだけで、10年・20年のキャッシュフロー試算表を自動生成。「この物件は買えるか」を即判断</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0284c7;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">楽観・中立・悲観の3シナリオを自動作成</div>
+                <div class="ft-detail">空室率・賃料下落・修繕費増加などのリスク要因を変えた3パターンを自動計算。銀行へのリスク説明にも使える説得力のある資料に</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">シナリオ比較表で出力</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0ea5e9;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">複数物件を横並びで比較する一覧表を作成</div>
+                <div class="ft-detail">検討中の物件A・B・Cを同じ条件で比較した一覧表を瞬時に作成。どの物件が最も収益性が高いか・リスクが低いかを一目で判断できる</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">物件1件の収益計算</span>が30分から5分に</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">💬 銀行面談準備AI従業員</div>
+          <div class="agent-role">融資担当者からの想定質問・反論への回答・論点整理を事前に網羅して面談の成功率を上げる</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">銀行担当者が聞いてくる質問リストを事前に網羅</div>
+                <div class="ft-detail">物件情報・収益計算・返済能力・担保評価など、担当者が確認したい論点を先読みして質問と模範回答のセットを作成。「この質問が来たらこう答える」を事前に準備</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#8b5cf6;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">不足資料・弱点の整理と補強ポイントの提示</div>
+                <div class="ft-detail">「この物件の融資申請で銀行に突っ込まれそうな点は？」と聞くだけで、弱点箇所と補強方法をリストアップ。提出前の最終チェックに使える</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">弱点チェックリスト出力</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">面談当日の想定外の質問</span>がなくなり、成功率が上がる</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">🔧 リフォーム企画AI従業員</div>
+          <div class="agent-role">物件取得後のリフォーム案・費用見積もり概算・賃料アップ試算・デザイン方向性を整理</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">物件の特性・ターゲット入居者・予算からリフォーム案を作成</div>
+                <div class="ft-detail">「築25年・1LDK・ファミリー層向け・予算150万」と伝えるだけで、優先順位付きのリフォーム箇所リストとデザイン方向性を提案。業者への説明資料としてそのまま使える</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">リフォーム費用と賃料アップの費用対効果を試算</div>
+                <div class="ft-detail">「水回り交換に80万かけると賃料は何円上げられるか」という費用対効果の試算表を作成。投資判断の根拠を数字で整理できる</div>
+                <span class="ft-badge" style="background:#fef9c3;color:#a16207">費用対効果試算表つき</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">リフォーム企画の整理</span>が打ち合わせ前に完了</div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#475569">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">🏠 物件管理AI従業員</div>
+          <div class="agent-role">修繕履歴の整理・空室対策の募集文・入居者対応の文面・賃貸相場リサーチをまとめて担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#475569;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">修繕履歴・点検記録を物件ごとに整理・蓄積</div>
+                <div class="ft-detail">「〇号室、〇月に給湯器交換、費用〇万円」と入力するだけで物件別・設備別の修繕履歴を自動整理。次回の大規模修繕時期の目安も管理</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets物件管理台帳連携</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#64748b;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">空室対策の募集文・SUUMOコメントを即作成</div>
+                <div class="ft-detail">物件スペック・周辺環境・リフォーム内容を入力するだけで、SUUMO・HOME'S向けの魅力的な募集文を作成。「刺さる」表現で空室期間を短縮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">物件管理の事務作業</span>が大幅に削減</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 独学との違い -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">無料AIとの違い</div>
+    <div class="sec-sub">違いは「使い方」ではなく、アベ様専用の入力項目と出力フォーマットを持つかどうかです</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">無料AI（独学）</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>毎回プロンプトをゼロから考える</li>
+          <li>出てきた結果をゼロから整形する</li>
+          <li>融資資料の「型」が作れない</li>
+          <li>銀行目線の論点が漏れる</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">動画学習</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識はつくが不動産業務に落とせない</li>
+          <li>融資・稟議書への応用で止まる</li>
+          <li>銀行担当者目線の設計ができない</li>
+          <li>自分の物件に合わせた型が作れない</li>
+        </ul>
+      </div>
+      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#059669">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#065f46;padding-left:16px;line-height:2">
+          <li>実際の物件で融資資料の型を設計</li>
+          <li>事業計画書・稟議書・収益計算を一緒に作る</li>
+          <li>銀行目線の論点を整理して入れ込む</li>
+          <li>1件作れば次からは流用できる形に</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI従業員を作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、実際の物件の融資資料たたき台が完成します</div>
+
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">対象物件と作りたい資料を整理。最初に作るAI従業員と、銀行が求める論点をこの場で設計します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:2px 10px;font-weight:600">物件情報整理</span>
+            <span style="font-size:11px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:2px 10px;font-weight:600">融資論点の設計</span>
+            <span style="font-size:11px;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;border-radius:8px;padding:2px 10px;font-weight:600">出力フォーマット決定</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI従業員プランナーの作成 <span style="font-size:12px;color:#059669;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">どの物件情報を入力させるか、どの書類を出力するかを設計。「アベ様専用の融資資料作成AI」の仕様書を作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI従業員の作成 <span style="font-size:12px;color:#059669;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際の物件を題材に融資資料作成AIを構築。事業計画書・収益計算書・稟議書たたき台をすぐ出せる状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#059669;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI従業員の育成 <span style="font-size:12px;color:#059669;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">1件目の資料を実際に作りながら精度を上げる。「この銀行はこの論点を重視する」など、アベ様のノウハウをAIに蓄積していきます</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#065f46">不明点があればLINEでコーチに相談できます（回数無制限）。銀行面談の前日でも、書類の修正相談でも気軽に。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#f0fdf4;border-top:1px solid #bbf7d0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">3ヶ月で、物件検討から融資資料作成までAIを使った標準フローを完成させる</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bbf7d0">
+        <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">1件目の融資資料たたき台を作る</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>対象物件・資料の種類を決定</li>
+          <li>融資資料作成AIを設定</li>
+          <li>事業計画書・収益計算書を出力</li>
+          <li>銀行目線で弱点を修正</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bbf7d0">
+        <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">収益計算・物件概要・銀行説明資料の型化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>収益シミュレーションAIを作成</li>
+          <li>複数物件の比較フォーマットを整備</li>
+          <li>銀行面談準備AIを設計</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bbf7d0">
+        <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">リフォーム企画・空室対策へ展開</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>リフォーム企画AIを作成</li>
+          <li>空室対策の募集文を型化</li>
+          <li>賃貸相場リサーチを効率化</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #059669">
+        <div style="font-size:11px;font-weight:700;color:#059669;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#065f46">AI標準フローが完成</div>
+        <ul style="font-size:12px;color:#065f46;padding-left:14px;line-height:1.8">
+          <li>物件検討→融資申請の全工程をAI化</li>
+          <li>物件管理AIで運営を効率化</li>
+          <li>今後5〜10年の事業展開を楽に</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">目的はAIに詳しくなることではなく、不動産賃貸業の実務を楽にすることです</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">物件・融資条件・作りたい資料の整理からロードマップ策定まで</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。融資資料の精度向上・次の物件への展開を伴走</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">銀行面談前・資料提出前でも気軽に相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0a1628,#1a4731);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#065f46;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#059669;line-height:1.7">申込後8日以内に「実際の物件で融資資料のたたき台が作れる状態」にならなければ、全額返金します。まず1件試してから判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#0a1628;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">不動産賃貸業の融資・収益計算・物件管理を、毎回ゼロから作らない仕組みへ。</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料はアベ様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
