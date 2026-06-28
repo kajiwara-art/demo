@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIが24時間働くフリーランス秘書 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0c0a1e 0%,#1a1040 45%,#2d1b69 100%);color:#fff;padding:60px 24px 52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'✈';position:absolute;top:20px;right:8%;font-size:64px;opacity:.06;transform:rotate(15deg)}
+.hero::after{content:'🚄';position:absolute;bottom:20px;left:6%;font-size:56px;opacity:.06}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(22px,4.5vw,38px);font-weight:800;margin-bottom:14px;line-height:1.2}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:14px;opacity:.82;max-width:600px;margin:0 auto 28px;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#7c3aed}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#7c3aed;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#e9d5ff;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#7c3aed}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">フリーランス秘書 専用提案書 | シゴトAI</div>
+  <h1>あなたの代わりに動く<br><em>AI秘書を、24時間365日</em>雇う時代へ。</h1>
+  <p>飛行機・新幹線の手配から、スケジュール管理・メール対応・経費処理まで。<br>「秘書がいたらな」と思っていた仕事を、AIが全部引き受けます。<br>フリーランスだから、あなた自身が一番のボスです。</p>
+  <div class="tags">
+    <span class="tag">✈ 飛行機・新幹線予約</span>
+    <span class="tag">📅 スケジュール管理</span>
+    <span class="tag">📧 メール・文書対応</span>
+    <span class="tag">🧾 経費精算</span>
+    <span class="tag">📋 会議・議事録</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">対象</div><div class="ctx-val">フリーランス・個人事業主</div></div>
+  <div class="ctx"><div class="ctx-label">課題①</div><div class="ctx-val">出張手配に時間がかかる</div></div>
+  <div class="ctx"><div class="ctx-label">課題②</div><div class="ctx-val">事務作業が本業を圧迫</div></div>
+  <div class="ctx"><div class="ctx-label">課題③</div><div class="ctx-val">秘書を雇う余裕はない</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">フリーランスの「あるある」な時間泥棒</div>
+  <div class="sec-sub">本来やるべき仕事に集中できていますか？事務作業が知らず知らず半日を奪っています</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">✈️</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">出張のたびに比較・予約に30分</div>
+      <div style="font-size:12px;color:#64748b">航空券・新幹線・ホテルをバラバラに検索して比較して予約して、経費申請まで全部自分でやっている</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📧</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">メール返信・日程調整が積み上がる</div>
+      <div style="font-size:12px;color:#64748b">クライアントからの問い合わせ、打ち合わせ調整、各種確認メールを一人で全部さばいている</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🧾</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">経費処理・請求書作成が後回し</div>
+      <div style="font-size:12px;color:#64748b">月末に領収書をかき集めて整理して請求書を書いて……時間もミスも多い作業が毎月発生する</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📋</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">会議準備・議事録が負担</div>
+      <div style="font-size:12px;color:#64748b">事前資料の準備、当日のメモ取り、会議後の議事録作成まで全部一人。本業の時間が確実に削られる</div>
+    </div>
+  </div>
+
+  <div class="sec-title">あなた専用のAI秘書チーム</div>
+  <div class="sec-sub">高級秘書サービスが月何十万もするなら、AI秘書に任せる。24時間・即対応・疲れ知らず</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#1e3a8a">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">✈️ 出張・交通手配AI秘書 <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">飛行機・新幹線・ホテルの検索から予約確認・日程整理まで、出張手配を丸ごと担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Calendar</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">Web検索</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1e3a8a;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">「〇月〇日に大阪出張」と伝えるだけで最適な交通手段を提案</div>
+                <div class="ft-detail">日時・目的地・希望条件（早め着・のぞみ指定・早割など）を入力すると、新幹線・飛行機の便と料金を比較して最適案を提示。予約サイトへの直リンクで即予約できる</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">新幹線・飛行機・高速バス対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1d4ed8;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">出張先のホテル検索・条件絞り込みも自動化</div>
+                <div class="ft-detail">「会場から徒歩10分以内・朝食付き・1万円以下」など細かい条件を伝えるだけで候補をリストアップ。比較表で一目でわかる形に整理</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#3b82f6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">予約情報をカレンダーに自動登録・確認メールを整理</div>
+                <div class="ft-detail">予約完了後、出発時刻・乗り換え情報・ホテルのチェックイン時間をカレンダーに一括登録。前日リマインドも設定</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Calendar MCP連携</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#6366f1;animation-delay:1.7s">④</div>
+              <div class="ft-content" style="animation-delay:1.7s">
+                <div class="ft-name">出張後の経費リストを自動まとめ</div>
+                <div class="ft-detail">交通費・宿泊費・食事代を出張ごとにリスト化して経費申請の下準備を完了。領収書の整理メモも自動生成</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets経費管理連携</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">出張1回あたり30〜60分</span>の手配作業が5分に</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📅 スケジュール管理AI秘書</div>
+          <div class="agent-role">打ち合わせ調整・日程候補の提示・リマインド設定まで、カレンダー管理を全自動化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#f0fdf4;color:#15803d">Calendar</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">「来週どこか空いてる？」に即答して候補を提示</div>
+                <div class="ft-detail">カレンダーを確認して空き時間を自動抽出。クライアントへの日程候補メールを即生成。「〇〇様、以下の日程はいかがでしょうか」まで書き上げる</div>
+                <span class="ft-badge" style="background:#f0fdf4;color:#15803d">Calendar読み取り対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">確定した予定を自動でカレンダーに登録・リマインド設定</div>
+                <div class="ft-detail">メールで日程が決まったら、件名・場所・Zoom URLをカレンダーに自動登録。前日・1時間前のリマインドも自動セット</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#14b8a6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">週次スケジュールのサマリーを毎朝通知</div>
+                <div class="ft-detail">「今日の予定」「今週の締め切り」「移動が必要な予定」を毎朝整理して通知。手帳を見返す手間がなくなる</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">日程調整の往復メール</span>が1回で完結</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">📧 メール・文書対応AI秘書</div>
+          <div class="agent-role">クライアントへのメール返信・提案書・契約書送付文・お礼状など、ビジネス文書を即作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">受信メールを読み解いて返信案を30秒で作成</div>
+                <div class="ft-detail">問い合わせ・依頼・お礼・催促など、受信メールの種類を判断して最適な返信文を自動生成。「確認して送るだけ」の状態にする</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#8b5cf6;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">提案書・見積書の送付文・お礼状をワンタッチ作成</div>
+                <div class="ft-detail">「〇〇社への提案書送付メール」「打ち合わせ後のお礼メール」など、シーン別のテンプレートを学習させて毎回ゼロから書かない仕組みに</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail MCP対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#a78bfa;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">重要メールのサマリー・アクション整理</div>
+                <div class="ft-detail">「今日の未返信メールで緊急度が高いものを教えて」と聞くだけで優先順位をつけてリスト化。対応漏れをゼロにする</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">メール対応に費やす1日1〜2時間</span>を大幅短縮</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">🧾 経費精算・請求書AI秘書</div>
+          <div class="agent-role">領収書の整理・経費リスト化・請求書の下書き作成まで、月末の煩雑な事務を自動化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">領収書の内容を入力するだけで経費シートに自動追記</div>
+                <div class="ft-detail">「交通費1,080円、〇〇社訪問」と送るだけで日付・金額・カテゴリ・摘要をSheetsに自動入力。月末に集計するだけの状態を常に維持</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets自動追記</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">請求書・納品書の下書きをテンプレートから即生成</div>
+                <div class="ft-detail">「〇〇社向け、〇月分、金額〇〇円」と伝えるだけで、請求書の下書きを完成。確認してPDF化するだけで送付できる</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">月末の経費・請求作業</span>が半日から30分に</div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0369a1">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">📋 会議準備・議事録AI秘書</div>
+          <div class="agent-role">事前アジェンダ作成・当日のメモ整理・議事録の清書・アクションアイテム抽出まで対応</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">打ち合わせ前のアジェンダ・事前資料を自動作成</div>
+                <div class="ft-detail">「〇〇社との定例、テーマはサイトリニューアルの進捗」と伝えるだけで、確認事項・議題・質問リストを整理したアジェンダを生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0284c7;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">会議メモ・録音テキストから議事録を即清書</div>
+                <div class="ft-detail">会議中のメモや文字起こしを貼り付けるだけで、「決定事項・議論内容・次回確認事項」に整理された議事録を自動作成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0ea5e9;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">アクションアイテムを担当者・期日付きで抽出してメール送付</div>
+                <div class="ft-detail">「Aさんが〇〇を〇日までに確認」など、次のアクションを箇条書きで抽出してそのまま議事録メールとして送付できる状態にする</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Gmail送付対応</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">議事録作成30分</span>が5分に。会議後すぐ送れる</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AIが動くイメージ -->
+<div style="background:linear-gradient(135deg,#0c0a1e,#1a1040,#2d1b69);padding:52px 0;color:#fff">
+  <div style="max-width:900px;margin:0 auto;padding:0 16px;text-align:center">
+    <div style="font-size:clamp(18px,3vw,26px);font-weight:800;margin-bottom:10px">「出張お願い」の一言で<br><span style="color:#a78bfa">これだけのことが動き出す</span></div>
+    <div style="font-size:13px;opacity:.75;margin-bottom:36px">実際のやりとりイメージ</div>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:560px;margin:0 auto">
+      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 18px;text-align:left">
+        <div style="font-size:11px;color:#a78bfa;margin-bottom:4px;font-weight:700">あなた</div>
+        <div style="font-size:13px">来週水曜、大阪で14時から打ち合わせ。新幹線で行って、前泊したい。</div>
+      </div>
+      <div style="text-align:center;font-size:18px;opacity:.4">↓ AI秘書が動く</div>
+      <div style="background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:12px;padding:14px 18px;text-align:left">
+        <div style="font-size:11px;color:#a78bfa;margin-bottom:6px;font-weight:700">AI秘書</div>
+        <div style="font-size:12px;line-height:2;opacity:.9">✅ 火曜夜の新幹線3便を比較提示（のぞみ・ひかり・料金付き）<br>✅ 会場近くのホテル候補を3件リストアップ<br>✅ カレンダーに「大阪出張・〇〇社打ち合わせ」を登録<br>✅ 前日リマインドを設定<br>✅ 経費シートに交通費・宿泊費の仮入力</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 独学 vs シゴトAI -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">独学・動画学習・伴走型の違い</div>
+    <div class="sec-sub">「秘書AIを作る」には、自分の仕事の流れを整理してAIに教える設計力が必要です</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">独学</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>何から作ればいいか迷う</li>
+          <li>出張手配・スケジュールへの応用で止まる</li>
+          <li>毎回プロンプトをゼロから書く</li>
+          <li>秘書らしい動作に仕上げられない</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">動画学習</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識はつくが実務に落とせない</li>
+          <li>自分の業務スタイルに合わせられない</li>
+          <li>Calendar・Gmail連携の設定で詰まる</li>
+          <li>使い続ける仕組みが作れない</li>
+        </ul>
+      </div>
+      <div style="background:#faf5ff;border:2px solid #e9d5ff;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#7c3aed">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#4c1d95;padding-left:16px;line-height:2">
+          <li>出張・スケジュール・メールの型を一緒に設計</li>
+          <li>Calendar・Gmail連携の設定まで伴走</li>
+          <li>1週間で「毎日使える秘書AI」が完成</li>
+          <li>LINEで詰まったらすぐ解消</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI秘書を作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、あなたの仕事スタイルに合ったAI秘書が動き始めます</div>
+    <div style="display:flex;flex-direction:column;gap:0">
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">仕事の流れ・出張頻度・使っているツールを整理。最初に作るAI秘書と連携ツールをこの場で決定します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">業務フロー整理</span>
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">ツール決定</span>
+            <span style="font-size:11px;background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;border-radius:8px;padding:2px 10px;font-weight:600">カレンダー連携確認</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI秘書プランナーの作成 <span style="font-size:12px;color:#7c3aed;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">どんな業務を任せるか・どんな返し方をするかを設計。「自分専用の秘書」の仕様書をAI顧問と一緒に作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI秘書の作成 <span style="font-size:12px;color:#7c3aed;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">プランナーをもとに実際のAI秘書を構築。出張手配・スケジュール・メール対応をすぐ使える状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI秘書の育成 <span style="font-size:12px;color:#7c3aed;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実務で使いながら精度を上げる育成フェーズ。「このクライアントはもう少し丁寧なトーンで」など、使うほど自分専用に育ちます</div>
+        </div>
+      </div>
+
+    </div>
+    <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#4c1d95">不明点があればLINEでコーチに相談できます（回数無制限）。移動中・外出先でも、つまずいたままにしなくてOKです。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#faf5ff;border-top:1px solid #e9d5ff;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">3ヶ月で、フリーランスの全事務業務にAI秘書を配置する</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #e9d5ff">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">出張手配AIを作って即使う</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>業務フロー整理・面談</li>
+          <li>出張・交通手配AI秘書を設定</li>
+          <li>実際の出張で試用・改善</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #e9d5ff">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">スケジュール・メール対応を自動化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>カレンダー連携の設定</li>
+          <li>日程調整・メール返信AIを作成</li>
+          <li>毎日の事務対応を型化</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #e9d5ff">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">経費・請求書・議事録を効率化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>経費精算・請求書AIを作成</li>
+          <li>会議議事録AIを設計</li>
+          <li>月末作業を大幅圧縮</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #7c3aed">
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#5b21b6">AI秘書チームが完成</div>
+        <ul style="font-size:12px;color:#4c1d95;padding-left:14px;line-height:1.8">
+          <li>5体のAI秘書が日常業務を担当</li>
+          <li>本業に使える時間が大幅増加</li>
+          <li>「一人なのに秘書がいる」状態へ</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">「AIを学ぶ」のではなく、あなたの仕事スタイルに合ったAI秘書を一緒に作る伴走型プログラムです</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務整理・AI設計・ロードマップ策定を1回で完了</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。作成・改善・次の秘書AIの展開を伴走</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">外出先でも移動中でも、詰まったらすぐ相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0c0a1e,#2d1b69);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#4c1d95;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#5b21b6;line-height:1.7">申込後8日以内に「AI秘書が使える状態」にならなければ、全額返金します。まず出張手配AIを1体動かして判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#0c0a1e;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">フリーランスの事務仕事を、AI秘書チームに任せる時代へ。一人でも、秘書がいる働き方を。</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料はフリーランス秘書業務効率化のご提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
