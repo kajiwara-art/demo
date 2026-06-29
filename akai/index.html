@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>生命保険営業×AI活用ロードマップ | アカイ様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0c1a35 0%,#1e3a5f 50%,#0f4c75 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:rgba(234,179,8,.07);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;border-radius:50%;background:rgba(59,130,246,.08);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(21px,4vw,34px);font-weight:800;margin-bottom:12px;line-height:1.25}
+.hero h1 em{font-style:normal;color:#fde68a}
+.hero p{font-size:14px;opacity:.85;max-width:600px;margin:0 auto 24px;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#1d4ed8}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#1d4ed8;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#bfdbfe;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#1d4ed8}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">アカイ様 専用提案書 | シゴトAI</div>
+  <h1>AIを「調べ物ツール」から<br><em>提案・セミナー・顧客管理を支える</em><br>実務パートナーへ。</h1>
+  <p>提案資料作成・セミナー企画・社会情勢リサーチ・顧客フォロー管理——<br>生命保険営業の日常業務を支える4つのAIアシスタントで、<br>提案スピードと品質を同時に引き上げます。</p>
+  <div class="tags">
+    <span class="tag">📋 お客様向け提案資料</span>
+    <span class="tag">🎤 セミナー企画・構成</span>
+    <span class="tag">🌏 社会情勢リサーチ</span>
+    <span class="tag">👥 顧客管理・フォロー</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">現在のAI活用</div><div class="ctx-val">調べ物・情報収集に活用中</div></div>
+  <div class="ctx"><div class="ctx-label">最優先①</div><div class="ctx-val">提案資料・セミナー資料作成</div></div>
+  <div class="ctx"><div class="ctx-label">最優先②</div><div class="ctx-val">世界情勢を提案に活かす</div></div>
+  <div class="ctx"><div class="ctx-label">目標</div><div class="ctx-val">日常業務の型を作る</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">現在、時間と手間がかかっていること</div>
+  <div class="sec-sub">生命保険営業は「情報収集→整理→資料化→提案」のサイクルが多い。それぞれにAIが入ると大きく変わります</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📋</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">提案資料を毎回ゼロから作っている</div>
+      <div style="font-size:12px;color:#64748b">お客様の状況に合わせた提案書を毎回構成から考えて作成。顧客タイプが変わるたびに同じ手間が繰り返される</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🎤</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">セミナー準備のハードルが高い</div>
+      <div style="font-size:12px;color:#64748b">テーマ選定・構成・スライド作成・台本まで全部1人。準備に時間がかかるのでセミナー開催の頻度を上げられない</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🌏</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">社会情勢を提案に活かしきれていない</div>
+      <div style="font-size:12px;color:#64748b">金利・物価・医療・相続などのトレンドを把握しているが、保障提案との接続を言語化するのに時間がかかる</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">👥</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">顧客情報の整理・次の提案が追いつかない</div>
+      <div style="font-size:12px;color:#64748b">面談メモや顧客の関心事が散在していて、次の提案やフォローアップに活かせていない。管理の仕組みがない</div>
+    </div>
+  </div>
+
+  <div class="sec-title">アカイ様に必要な4つのAIアシスタント</div>
+  <div class="sec-sub">個人情報を扱いすぎず、すぐ成果が見える資料作成から始めて、顧客管理へ段階的に展開します</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#1e3a5f">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">🎤 セミナー企画AIアシスタント <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">テーマ・構成・スライド案・話す台本・参加者向けチェックリストまで、セミナー1本分を丸ごと設計</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1e3a5f;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">テーマを伝えるだけでセミナーの全体構成を即出力</div>
+                <div class="ft-detail">例：「今の社会情勢から考える保障の見直し」というテーマを入力すると「問題提起→情勢整理→よくある不安→保障の考え方→個別相談導線」の構成と各スライドの要点を自動生成</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">個人情報不要・すぐ使える</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1d4ed8;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">話す台本・スライド原稿・参加者向けチェックリストを作成</div>
+                <div class="ft-detail">構成が決まったら「各スライドで話すべき内容」を台本形式で生成。参加者に持ち帰ってもらえるチェックリストや案内文も同時作成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#3b82f6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">セミナー構成を提案資料にそのまま転用</div>
+                <div class="ft-detail">「このセミナー内容を、50代既婚者向けの個別提案資料に変えて」と指示するだけで、セミナー資産を個別面談用の提案書に再活用。作る手間を大幅削減</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive保存→次回から流用可能</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">セミナー準備の丸1日</span>が半日以下に。開催頻度を上げられる</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📋 提案資料AIアシスタント</div>
+          <div class="agent-role">顧客の年代・家族構成・保障ニーズを入力するだけで、提案骨子と説明文の初稿を自動作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">顧客タイプを入力→提案ストーリーと骨子を即生成</div>
+                <div class="ft-detail">「40代・共働き・子ども2人・医療保障の見直しを検討」など顧客属性を入力するだけで、その方に刺さる提案の切り口・流れ・説明ポイントを自動設計</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">保障ニーズ比較表・よくある疑問への回答を自動生成</div>
+                <div class="ft-detail">「なぜ今見直すべきか」「他社との違い」「よくある不安への回答」など、面談でよく聞かれる論点を先回りして整理した補足資料も一緒に作成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#14b8a6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">顧客タイプ別テンプレを蓄積して次回から流用</div>
+                <div class="ft-detail">「このお客様への提案が上手くいった」というパターンを型として保存。次に似た顧客が来た時は、テンプレを呼び出して微調整するだけで提案書が完成する仕組みに</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">顧客タイプ別テンプレライブラリ化</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">提案資料の初稿作成</span>が毎回ゼロから→テンプレ活用で大幅短縮</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">🌏 保障提案リサーチAIアシスタント</div>
+          <div class="agent-role">世界情勢・金利・物価・医療・相続などのトレンドを、保障提案の文脈に繋げた説明資料に整理</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">Web調査</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">社会情勢トピックを「保障が必要な理由」に変換</div>
+                <div class="ft-detail">「インフレが進んでいる」「金利が上昇している」「医療費が上がっている」などのニュースを入力すると、「だからこそ今この保障が重要」という提案文脈に自動変換。お客様への説明に使える言葉に整理</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#8b5cf6;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">テーマ別（医療・介護・相続・老後資金）の論点整理シートを作成</div>
+                <div class="ft-detail">「相続対策に関心のあるお客様向けの最新トレンドをまとめて」と指示するだけで、現状の制度・注意点・よくある誤解・提案の切り口をA4一枚に整理した補助資料を生成</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">テーマ別論点整理シート</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#a78bfa;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">情報の正確性確認・出典管理も同時に整理</div>
+                <div class="ft-detail">生命保険の提案では情報の正確さが重要。出力した情報の出典・確認すべきポイント・最終確認事項をリストアップ。使う前のチェックリストとして機能させる</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">情報収集→提案接続の作業</span>が自動化。説得力のある情勢説明が即できる</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">👥 顧客管理AIアシスタント</div>
+          <div class="agent-role">顧客属性・関心テーマ・現在の保障・次回提案候補を一覧化し、フォローすべき顧客を抽出</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">面談メモを貼り付けるだけで顧客台帳に自動整理</div>
+                <div class="ft-detail">面談後のメモ・気になった発言・関心事を入力すると「年代・家族構成・関心テーマ・現在の保障・次回提案候補・フォロー予定日」を自動整形して顧客一覧に追記</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets顧客台帳に自動入力</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">「今月フォローすべき顧客」「セミナー案内すべき顧客」を自動抽出</div>
+                <div class="ft-detail">「相続に関心がある50代以上のお客様リストを出して」「半年以上連絡していない方を抽出して」と指示するだけで、次のアクション候補を即リストアップ</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#f59e0b;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">個人情報は社内ルールに沿って、まずサンプルデータで設計</div>
+                <div class="ft-detail">最初は実データを使わず、サンプル顧客データで仕組みを構築・テスト。実務導入の際は社内コンプライアンスルールを確認しながら安全に展開</div>
+                <span class="ft-badge" style="background:#fef9c3;color:#a16207">段階的・安全に実務導入</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">顧客情報の抜け漏れ</span>が減り、次の提案につながる機会が増える</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- セミナー完成イメージ -->
+<div style="background:linear-gradient(135deg,#0c1a35,#1e3a5f,#0f4c75);padding:52px 0;color:#fff">
+  <div style="max-width:900px;margin:0 auto;padding:0 16px">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="font-size:clamp(17px,3vw,24px);font-weight:800;margin-bottom:8px;line-height:1.3">セミナー資料の完成イメージ</div>
+      <div style="font-size:13px;opacity:.75">「今の社会情勢から考える保障の見直し」をテーマにAIで作ると</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:#93c5fd;font-weight:700;margin-bottom:8px;letter-spacing:.04em">PART 1｜問題提起</div>
+        <div style="font-size:12px;opacity:.85;line-height:1.7">物価上昇・医療費増加・老後資金の不安……「今のままで本当に大丈夫？」という問いを立てる</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:#93c5fd;font-weight:700;margin-bottom:8px;letter-spacing:.04em">PART 2｜情勢整理</div>
+        <div style="font-size:12px;opacity:.85;line-height:1.7">金利・インフレ・医療制度の変化を図解。「なぜ今が見直しのタイミングか」を数字で示す</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:#93c5fd;font-weight:700;margin-bottom:8px;letter-spacing:.04em">PART 3｜よくある不安</div>
+        <div style="font-size:12px;opacity:.85;line-height:1.7">「保険料が高い」「どれが必要か分からない」という参加者のリアルな不安を先回りして回答</div>
+      </div>
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:16px">
+        <div style="font-size:11px;color:#93c5fd;font-weight:700;margin-bottom:8px;letter-spacing:.04em">PART 4｜個別相談導線</div>
+        <div style="font-size:12px;opacity:.85;line-height:1.7">「ご自身の状況を確認したい方は——」と自然に個別相談に誘導するクロージングスライド</div>
+      </div>
+    </div>
+    <div style="background:rgba(253,230,138,.12);border:1px solid rgba(253,230,138,.25);border-radius:10px;padding:16px 20px;display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:20px;flex-shrink:0">💡</span>
+      <div style="font-size:12px;opacity:.9;line-height:1.8">この構成から、AIが自動で「話す台本」「参加者向けチェックリスト」「セミナー後の案内文」も生成します。<br>セミナー資産をそのまま個別提案資料に転用できるので、作った資料が何度も使い回せる形になります。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 独学との違い -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">独学との違い</div>
+    <div class="sec-sub">AIは触れるだけでも便利ですが、実務成果にするには「型」と「伴走」が重要です</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">独学</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>毎回プロンプトをゼロから考える</li>
+          <li>出てきた結果の精度が安定しない</li>
+          <li>保険業務特有の言葉・論点を教えられない</li>
+          <li>セミナー・提案資料に使える形にならない</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">動画学習のみ</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識は増えるが実務への落とし込みで止まる</li>
+          <li>「自分のお客様向け」の提案資料に応用できない</li>
+          <li>情勢リサーチと提案の接続が作れない</li>
+          <li>質問できない・フォローがない</li>
+        </ul>
+      </div>
+      <div style="background:#eff6ff;border:2px solid #bfdbfe;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#1d4ed8">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#1e40af;padding-left:16px;line-height:2">
+          <li>業務成果物を決めてAIアシスタントを設計</li>
+          <li>セミナー・提案・顧客管理の型を一緒に作る</li>
+          <li>1体作れば次回から流用できる仕組みに</li>
+          <li>LINEで詰まったらすぐ相談できる</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAIアシスタントを作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、セミナー1本分の構成・スライド案・台本が完成します</div>
+
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">作りたいセミナーテーマと提案資料の方向性を整理。最初に作るAIアシスタントとゴールをこの場で設計します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:8px;padding:2px 10px;font-weight:600">セミナーテーマ決定</span>
+            <span style="font-size:11px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:8px;padding:2px 10px;font-weight:600">資料設計</span>
+            <span style="font-size:11px;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;border-radius:8px;padding:2px 10px;font-weight:600">ツール確認</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AIアシスタントプランナーの作成 <span style="font-size:12px;color:#1d4ed8;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">どんな入力をすれば・どんな成果物が出るかを設計。「アカイ様専用のセミナー企画AIアシスタント」の仕様書を作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AIアシスタントの作成 <span style="font-size:12px;color:#1d4ed8;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際のAIアシスタントを構築。実在のセミナーテーマを使って、構成・台本・スライド案をすぐ出せる状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#1d4ed8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AIアシスタントの育成 <span style="font-size:12px;color:#1d4ed8;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際に使いながら精度を上げる。「このトーンで話したい」「このお客様層向けに調整して」と伝えるたびに、アカイ様専用の資料が仕上がっていきます</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#1e40af">不明点があればLINEでコーチに相談できます（回数無制限）。「このお客様への提案文を見てほしい」「セミナーの流れを確認してほしい」など気軽に。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#eff6ff;border-top:1px solid #bfdbfe;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">AIを「質問する道具」から「日常業務の型を一緒に作るアシスタント」に育てる3ヶ月</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bfdbfe">
+        <div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">セミナー1本分を丸ごと完成</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>テーマを決めて面談・設計</li>
+          <li>セミナー企画AIを構築</li>
+          <li>構成・台本・チェックリスト作成</li>
+          <li>提案資料への転用パターン設計</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bfdbfe">
+        <div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">提案資料の型を顧客タイプ別に整備</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>提案資料AIを作成</li>
+          <li>年代・ニーズ別テンプレを蓄積</li>
+          <li>社会情勢リサーチAIを設計</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bfdbfe">
+        <div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">社会情勢→提案接続の型を作成</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>テーマ別論点整理シートを蓄積</li>
+          <li>セミナー・提案資料と連携</li>
+          <li>情報の正確性チェックフローを設計</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #1d4ed8">
+        <div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#1e40af">顧客管理の一覧化が完成</div>
+        <ul style="font-size:12px;color:#1e40af;padding-left:14px;line-height:1.8">
+          <li>顧客管理AIをサンプルで設計</li>
+          <li>フォロー・提案候補の抽出を自動化</li>
+          <li>日常業務のAIアシスタント体制が完成</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">ゴールはAIに詳しくなることではなく、提案準備・セミナー準備・顧客フォローを速くすることです</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務整理・セミナーテーマ設計・最初のAIアシスタントを1回で決定</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。資料の精度向上・次のアシスタント展開を一緒に進める</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">面談前・資料作成中でも気軽に相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0c1a35,#0f4c75);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#1d4ed8;line-height:1.7">申込後8日以内に「実際のセミナーテーマで構成・台本・スライド案が使える状態」にならなければ、全額返金します。まず1本作って判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#0c1a35;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">生命保険営業の提案・セミナー・顧客管理を、AIアシスタントで支える3ヶ月間。</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料はアカイ様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
