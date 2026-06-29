@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ブランドマーケティング×AI部下チーム | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#1a0533 0%,#3b0764 45%,#be185d 100%);color:#fff;padding:60px 24px 52px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(236,72,153,.12);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;background:rgba(167,139,250,.1);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(22px,4.5vw,36px);font-weight:800;margin-bottom:12px;line-height:1.2}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#f9a8d4,#fde68a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:14px;opacity:.85;max-width:600px;margin:0 auto 26px;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#be185d}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#be185d;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#fdf2f8;border:1px solid #fbcfe8;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#be185d;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#fbcfe8;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#fdf2f8;border:1px solid #fbcfe8;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#be185d}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">マーケティング担当者様 専用提案書 | シゴトAI</div>
+  <h1>1人で抱えてきた全業務に、<br><em>AI部下チームを配置する。</em></h1>
+  <p>画像生成・ブランド管理・代理店対応・商品企画・デザイン——<br>これまで1人でこなしてきた業務それぞれに、専任のAI部下を置く。<br>あなたはディレクションだけに集中できる体制を作ります。</p>
+  <div class="tags">
+    <span class="tag">🎨 画像生成・ビジュアル制作</span>
+    <span class="tag">📣 ブランド管理・マーケティング</span>
+    <span class="tag">🤝 代理店対応</span>
+    <span class="tag">💡 商品企画</span>
+    <span class="tag">✍️ コピー・コンテンツ制作</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">現在地</div><div class="ctx-val">ビジネスプラン導入1〜2週間</div></div>
+  <div class="ctx"><div class="ctx-label">最優先</div><div class="ctx-val">画像生成の効率化</div></div>
+  <div class="ctx"><div class="ctx-label">体制</div><div class="ctx-val">担当者1人で全業務を担当</div></div>
+  <div class="ctx"><div class="ctx-label">目標</div><div class="ctx-val">AI部下に自動化・委任</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">今、1人で抱えている業務の重さ</div>
+  <div class="sec-sub">ブランド管理・マーケティング・代理店・商品企画・デザイン——全部が「あなたの仕事」になっている</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🎨</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">画像生成の依頼が増え続けている</div>
+      <div style="font-size:12px;color:#64748b">社内から求められる画像・ビジュアルの量が増加。1件ずつ手作業で対応していると時間がいくらあっても足りない</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📣</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">ブランドガイドラインの管理が手作業</div>
+      <div style="font-size:12px;color:#64748b">ブランドの統一感を保つための確認・修正・フィードバックを毎回一から対応。属人的なチェック作業が続く</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🤝</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">代理店・社内対応の文章作業が多い</div>
+      <div style="font-size:12px;color:#64748b">代理店への指示書・社内への企画提案・商品コンセプト文書など、毎回ゼロから書いている文章業務が積み上がる</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">💡</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">商品企画のアイデア出しに時間がかかる</div>
+      <div style="font-size:12px;color:#64748b">新商品・新企画のアイデア出し・コンセプト整理・競合調査を一人でこなしている。クオリティを保ちながら量をこなすのが限界に近い</div>
+    </div>
+  </div>
+
+  <!-- AI部下チームコンセプト -->
+  <div style="background:linear-gradient(135deg,#1a0533,#3b0764,#be185d);border-radius:14px;padding:24px;color:#fff;margin-bottom:36px;text-align:center">
+    <div style="font-size:13px;opacity:.8;margin-bottom:8px;letter-spacing:.04em">シゴトAIのコンセプト</div>
+    <div style="font-size:clamp(17px,3vw,24px);font-weight:800;margin-bottom:10px;line-height:1.3">「動画でエージェントは自分の部下を作る」<br><span style="color:#f9a8d4">——その感覚が、まさに正しい。</span></div>
+    <div style="font-size:12px;opacity:.8;max-width:540px;margin:0 auto;line-height:1.8">AIエージェントは「ツール」ではなく「部下」です。指示を出せば動き、ブランドのルールを覚え、毎回同じクオリティで成果物を出してくれる。あなたはマネジメントに専念できます。</div>
+  </div>
+
+  <div class="sec-title">あなたのAI部下チーム</div>
+  <div class="sec-sub">業務ごとに専任の部下を配置する。あなたはGOサインを出すだけ</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">🎨 画像生成ディレクターAI部下 <span class="priority-badge">★ 最初の1体</span></div>
+          <div class="agent-role">ブランドガイドラインを学習し、指示ひとつで統一感のある画像・ビジュアルをまとめて生成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#ede9fe;color:#5b21b6">Midjourney</span>
+          <span class="tool-badge" style="background:#ede9fe;color:#5b21b6">DALL-E</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">ブランドガイドラインを覚えた状態で毎回画像を生成</div>
+                <div class="ft-detail">「カラーコード・フォント・トーン・禁止表現」などのガイドラインを事前に学習。「新商品のバナー画像を5パターン」と指示するだけで、ブランドに沿った画像を即生成</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">ガイドライン記憶済みで毎回ゼロ説明不要</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#8b5cf6;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">用途別（SNS・LP・代理店向け・社内資料）に自動サイズ展開</div>
+                <div class="ft-detail">Instagram正方形・Stories・Twitter・Webバナー・印刷用など、用途ごとのサイズに自動展開。「全サイズ出して」の一言で複数フォーマットを一括生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#a78bfa;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">プロンプトの型を蓄積して、次回からさらに速く</div>
+                <div class="ft-detail">「このビジュアルが一番良かった」と伝えると、そのプロンプトを保存・改善。使えば使うほど「このブランドの画像といえばこれ」という型が育っていく</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive画像ライブラリに自動保存</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">画像1案件あたり1〜2時間</span>が10〜15分に短縮</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#be185d">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">📣 ブランドマネジメントAI部下</div>
+          <div class="agent-role">ブランドガイドラインの確認・社内外へのブランド説明・NG表現チェックを自動化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">ブランドDB</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#be185d;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">制作物・文章のブランド整合性チェックを自動化</div>
+                <div class="ft-detail">デザイン案・コピー・SNS投稿文を入力すると「このブランドのトーンに合っているか」「NGワードが含まれていないか」を即チェック。フィードバックも自動生成</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#db2777;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">代理店・社内向けブランドガイドの説明文を自動作成</div>
+                <div class="ft-detail">「新しい代理店にブランドのルールを伝えるための説明書」「社内の別部署向けブランド使用ガイド」などを、既存のガイドラインをもとに自動作成</div>
+                <span class="ft-badge" style="background:#fce7f3;color:#9d174d">ブランドDB参照</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">ブランドチェック・説明資料作成</span>の手間を大幅削減</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0369a1">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">🤝 代理店・社内対応AI部下</div>
+          <div class="agent-role">代理店への指示書・提案書・報告書・社内への企画提案文書を、条件を入れるだけで自動作成</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">代理店への制作指示書・ブリーフィングシートを即作成</div>
+                <div class="ft-detail">「キャンペーン概要・ターゲット・トーン・納期」を入力するだけで、代理店に渡せるブリーフィング資料を自動作成。毎回ゼロから書く必要がなくなる</div>
+                <span class="ft-badge" style="background:#dbeafe;color:#1d4ed8">Docs出力対応</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0284c7;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">社内向け企画提案書・進捗報告書の下書き作成</div>
+                <div class="ft-detail">「この企画を経営陣に通すための提案書」「今月のマーケ施策の進捗レポート」など、上申・報告資料の下書きをデータ入力だけで自動生成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">代理店・社内向け文書作成</span>が半分以下の時間に</div>
+    </div>
+
+    <!-- Agent 4 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">4</div>
+        <div class="agent-meta">
+          <div class="agent-name">💡 商品企画AI部下</div>
+          <div class="agent-role">新商品・新企画のアイデア出し・コンセプト設計・競合調査・ネーミング案をまとめて担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">Web調査</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">「こういう商品・企画が欲しい」→アイデアを10案即出力</div>
+                <div class="ft-detail">ターゲット・価格帯・ブランドポジションを伝えるだけで、コンセプト違いの商品アイデアを一気に展開。1人でのブレストの限界を突破</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">競合商品調査・ポジショニング整理を自動化</div>
+                <div class="ft-detail">「この市場の競合商品を調べて、うちのブランドがどこで差別化できるか整理して」と指示するだけで、競合比較表とポジショニングマップの素材を即生成</div>
+                <span class="ft-badge" style="background:#f0fdf4;color:#15803d">Web調査→比較表自動作成</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">企画の初期アイデア出し</span>に費やす時間を大幅短縮</div>
+    </div>
+
+    <!-- Agent 5 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#b45309">5</div>
+        <div class="agent-meta">
+          <div class="agent-name">✍️ コピー・コンテンツ制作AI部下</div>
+          <div class="agent-role">商品コピー・SNS投稿文・LP文章・プレスリリースなど、あらゆるマーケティングテキストを担当</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Docs</span>
+          <span class="tool-badge" style="background:#fce7f3;color:#9d174d">SNS</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#b45309;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">ブランドの「声」を覚えたコピーライターとして機能</div>
+                <div class="ft-detail">ブランドのトーン・世界観・禁止ワードを学習したうえで、商品コピー・キャッチフレーズ・SNS文章を生成。「らしさ」を外さない文章が量産できる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#d97706;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">SNS・LP・メルマガ・代理店向け資料の文章をシーン別に作成</div>
+                <div class="ft-detail">媒体別の文章トーンを切り替えながら、Instagram・X・LP・メルマガ・代理店向け提案資料の文章を一括作成。同じ情報を何度も書き直す手間をゼロに</div>
+                <span class="ft-badge" style="background:#fef9c3;color:#a16207">媒体別トーン切り替え対応</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="saving"><span class="saving-num">コピー・文章作成</span>の時間が1/3以下に</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AI部下として機能するイメージ -->
+<div style="background:linear-gradient(135deg,#1a0533,#3b0764,#9d174d);padding:52px 0;color:#fff">
+  <div style="max-width:900px;margin:0 auto;padding:0 16px;text-align:center">
+    <div style="font-size:clamp(17px,3vw,24px);font-weight:800;margin-bottom:10px;line-height:1.3">「バナー5パターン出して」の一言で<br><span style="color:#f9a8d4">これだけの部下が動き出す</span></div>
+    <div style="font-size:13px;opacity:.75;margin-bottom:32px">あなたはGOサインを出すだけ。実行はAI部下チームが担当</div>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:580px;margin:0 auto">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px 18px;text-align:left">
+        <div style="font-size:11px;color:#f9a8d4;margin-bottom:4px;font-weight:700">あなた（マネージャー）</div>
+        <div style="font-size:13px">秋の新商品ローンチ向けに、SNS・LP・代理店向け資料のビジュアルとコピーをまとめて準備して。</div>
+      </div>
+      <div style="text-align:center;font-size:18px;opacity:.4">↓ AI部下チームが分業</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);border-radius:10px;padding:12px 14px;text-align:left">
+          <div style="font-size:10px;color:#c4b5fd;margin-bottom:4px;font-weight:700">🎨 画像生成AI部下</div>
+          <div style="font-size:11px;opacity:.85">SNS・LP・印刷用を全サイズ自動展開</div>
+        </div>
+        <div style="background:rgba(249,168,212,.1);border:1px solid rgba(249,168,212,.2);border-radius:10px;padding:12px 14px;text-align:left">
+          <div style="font-size:10px;color:#f9a8d4;margin-bottom:4px;font-weight:700">✍️ コピーAI部下</div>
+          <div style="font-size:11px;opacity:.85">媒体別の文章をブランドトーンで一括作成</div>
+        </div>
+        <div style="background:rgba(110,231,183,.08);border:1px solid rgba(110,231,183,.2);border-radius:10px;padding:12px 14px;text-align:left">
+          <div style="font-size:10px;color:#6ee7b7;margin-bottom:4px;font-weight:700">📣 ブランドチェックAI部下</div>
+          <div style="font-size:11px;opacity:.85">全制作物のガイドライン整合性を確認</div>
+        </div>
+        <div style="background:rgba(147,197,253,.08);border:1px solid rgba(147,197,253,.2);border-radius:10px;padding:12px 14px;text-align:left">
+          <div style="font-size:10px;color:#93c5fd;margin-bottom:4px;font-weight:700">🤝 代理店対応AI部下</div>
+          <div style="font-size:11px;opacity:.85">代理店向けブリーフィング資料を自動作成</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 独学との違い -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">ツールを使うのと「部下を持つ」の違い</div>
+    <div class="sec-sub">ChatGPTを使うだけでは「毎回指示を出すツール」。シゴトAIでは「覚えて動く部下」を作ります</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">ChatGPTをそのまま使う</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>毎回ブランドのルールを説明する</li>
+          <li>出力のトーンが毎回ブレる</li>
+          <li>画像・コピー・資料が連携しない</li>
+          <li>「私のAI」ではなく「公共のツール」</li>
+        </ul>
+      </div>
+      <div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#64748b">独学・動画学習</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:16px;line-height:2">
+          <li>知識はつくが実務への落とし込みで止まる</li>
+          <li>自分のブランドへの当てはめが難しい</li>
+          <li>画像生成と文書作成を連携させられない</li>
+          <li>部下を「育てる」設計ができない</li>
+        </ul>
+      </div>
+      <div style="background:#fdf2f8;border:2px solid #fbcfe8;border-radius:12px;padding:20px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:#be185d">シゴトAI（伴走型）</div>
+        <ul style="font-size:12px;color:#9d174d;padding-left:16px;line-height:2">
+          <li>ブランドガイドを覚えた部下として設計</li>
+          <li>画像・コピー・資料を連携して動かす</li>
+          <li>1体作れば毎回の説明が不要になる</li>
+          <li>使うほど「自分のブランドの部下」に育つ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4ステップ -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI部下を作る</div>
+    <div class="sec-sub">初回面談から最短1週間で、画像生成AI部下がブランドのルールを覚えて動き始めます</div>
+
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#be185d;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">ブランドの現状・最もボトルネックになっている業務を整理。最初に作るAI部下と、覚えさせるブランドルールをこの場で設計します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;border-radius:8px;padding:2px 10px;font-weight:600">業務整理</span>
+            <span style="font-size:11px;background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;border-radius:8px;padding:2px 10px;font-weight:600">ブランドルール設計</span>
+            <span style="font-size:11px;background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;border-radius:8px;padding:2px 10px;font-weight:600">AI部下の役割決定</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#be185d;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI部下プランナーの作成 <span style="font-size:12px;color:#be185d;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">「何を覚えさせるか」「どんな成果物を出させるか」を設計。ブランドガイドライン・禁止表現・出力フォーマットをAI部下に教える仕様書を作ります</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#be185d;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI部下の作成 <span style="font-size:12px;color:#be185d;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際のAI部下（画像生成ディレクターAI）を構築。ブランドガイドを学習済みの状態で、即業務投入できる状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#be185d;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI部下の育成 <span style="font-size:12px;color:#be185d;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際の案件で使いながら精度を上げる。「このトーンは違う」「このサイズも追加して」と教えるたびに、あなた専属の部下に育っていきます</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#9d174d">不明点があればLINEでコーチに相談できます（回数無制限）。「この画像のプロンプトどう書けばいい？」「代理店向け資料の構成を見てほしい」など何でも気軽に。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#fdf2f8;border-top:1px solid #fbcfe8;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">3ヶ月で、ブランドマーケティングの全業務にAI部下を配置する</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fbcfe8">
+        <div style="font-size:11px;font-weight:700;color:#be185d;margin-bottom:8px;letter-spacing:.04em">PHASE 1｜最初の1週間</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">画像生成AI部下を稼働</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>ブランドガイドを学習させる</li>
+          <li>画像生成AI部下を構築</li>
+          <li>実案件のビジュアルで試用</li>
+          <li>プロンプトの型を蓄積</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fbcfe8">
+        <div style="font-size:11px;font-weight:700;color:#be185d;margin-bottom:8px;letter-spacing:.04em">PHASE 2｜1ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">コピー・ブランド管理を自動化</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>コピーAI部下を作成</li>
+          <li>ブランドチェックAIを設計</li>
+          <li>画像×コピーの連携フローを確立</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #fbcfe8">
+        <div style="font-size:11px;font-weight:700;color:#be185d;margin-bottom:8px;letter-spacing:.04em">PHASE 3｜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">代理店・社内対応まで展開</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>代理店対応AI部下を作成</li>
+          <li>ブリーフィング資料を型化</li>
+          <li>社内提案書の自動化</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #be185d">
+        <div style="font-size:11px;font-weight:700;color:#be185d;margin-bottom:8px;letter-spacing:.04em">PHASE 4｜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#9d174d">AI部下チームが完成</div>
+        <ul style="font-size:12px;color:#9d174d;padding-left:14px;line-height:1.8">
+          <li>商品企画・競合調査もAI化</li>
+          <li>全業務にAI部下が配置された状態</li>
+          <li>あなたはディレクションのみに専念</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- シゴトAI サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">AIを学ぶのではなく、あなたのブランドを理解したAI部下チームを一緒に作ります</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務整理・ブランドルール設計・最初のAI部下を1回で決定</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。AI部下の育成・次の部下の設計を一緒に進める</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">制作物が思い通りにならない時も、すぐコーチに相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#1a0533,#be185d);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#9d174d;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#be185d;line-height:1.7">申込後8日以内に「ブランドガイドを覚えた画像生成AI部下が使える状態」にならなければ、全額返金します。まず1体動かして判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#1a0533;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">1人のブランドマーケターに、AI部下チームを。あなたはマネジメントだけに集中できる体制へ。</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料はブランドマーケティング担当者様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
