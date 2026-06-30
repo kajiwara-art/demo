@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>建設コンサルタント×AI従業員3体設計 | 佐々木様専用 | シゴトAI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Sans',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6}
+
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);color:#fff;padding:56px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'🏗';position:absolute;top:12px;right:6%;font-size:80px;opacity:.05}
+.hero::after{content:'📐';position:absolute;bottom:12px;left:5%;font-size:64px;opacity:.05}
+.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 16px;font-size:12px;letter-spacing:.06em;margin-bottom:20px}
+.hero h1{font-size:clamp(21px,4vw,34px);font-weight:800;margin-bottom:12px;line-height:1.25}
+.hero h1 em{font-style:normal;color:#7dd3fc}
+.hero p{font-size:14px;opacity:.84;max-width:600px;margin:0 auto 24px;line-height:1.8}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tag{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:3px 12px;font-size:12px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:16px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center}
+.ctx{text-align:center;min-width:120px}
+.ctx-label{font-size:11px;color:#64748b;margin-bottom:2px}
+.ctx-val{font-size:13px;font-weight:600;color:#0369a1}
+
+.section{max-width:900px;margin:0 auto;padding:44px 16px}
+.sec-title{font-size:18px;font-weight:700;color:#1e293b;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';display:block;width:4px;height:20px;background:#0369a1;border-radius:2px}
+.sec-sub{font-size:13px;color:#64748b;margin-bottom:24px;padding-left:12px}
+
+.agents{display:flex;flex-direction:column;gap:20px}
+.agent{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.agent-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #f1f5f9}
+.agent-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.agent-meta{flex:1}
+.agent-name{font-size:15px;font-weight:700;color:#1e293b}
+.agent-role{font-size:12px;color:#64748b}
+.agent-tools{display:flex;gap:6px;flex-wrap:wrap}
+.tool-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.priority-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc}
+
+.auto-flow{padding:16px 20px}
+.auto-flow-inner{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:14px 16px}
+.auto-flow-title{font-size:11px;font-weight:700;color:#0369a1;margin-bottom:10px;letter-spacing:.04em}
+.flow-timeline{display:flex;flex-direction:column}
+.ft-row{display:flex;align-items:flex-start;gap:12px;position:relative}
+.ft-row:not(:last-child) .ft-line{width:2px;background:#bae6fd;position:absolute;left:11px;top:22px;bottom:0}
+.ft-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;position:relative;z-index:1}
+.ft-content{padding:3px 0 14px}
+.ft-name{font-size:12px;font-weight:700;color:#1e293b;margin-bottom:2px}
+.ft-detail{font-size:11px;color:#64748b;line-height:1.4}
+.ft-badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:600;margin-top:4px}
+
+.saving{display:inline-flex;align-items:center;gap:6px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:8px 14px;font-size:12px;margin:0 20px 16px}
+.saving-num{font-size:16px;font-weight:800;color:#0369a1}
+
+/* GPT list inside agent */
+.gpt-list{padding:14px 20px 16px}
+.gpt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.gpt-card{border-radius:8px;padding:10px 12px;border:1px solid}
+.gpt-card .gpt-num{font-size:10px;font-weight:700;margin-bottom:4px;opacity:.7}
+.gpt-card .gpt-title{font-size:12px;font-weight:700;margin-bottom:2px}
+.gpt-card .gpt-desc{font-size:11px;opacity:.7;line-height:1.4}
+
+.kpi-row{display:flex;gap:12px;flex-wrap:wrap;padding:0 20px 16px}
+.kpi-chip{display:flex;align-items:center;gap:6px;background:#f0f9ff;border:1px solid #7dd3fc;border-radius:20px;padding:5px 14px;font-size:12px}
+.kpi-val{font-weight:800;color:#0369a1}
+
+.agent .ft-dot{opacity:0;transform:scale(0)}
+.agent .ft-content{opacity:0;transform:translateX(-6px)}
+.agent .saving{opacity:0}
+
+@keyframes dot-pop{to{opacity:1;transform:scale(1)}}
+@keyframes content-in{to{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{to{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">佐々木様 専用提案書 | シゴトAI</div>
+  <h1>建設コンサルタントの非効率を、<br><em>AI従業員3体で段階的に解消する。</em></h1>
+  <p>報告書・技術資料の作成、法令・仕様書の調査、タスク・議事録の管理——<br>Claude・Copilotをすでに使いこなしている佐々木様の次のステップは、<br>業務ごとに専任のAI従業員を配置して、毎回ゼロから作業しない仕組みを作ることです。</p>
+  <div class="tags">
+    <span class="tag">📝 設計資料・報告書作成</span>
+    <span class="tag">🔍 法令・仕様書調査</span>
+    <span class="tag">📋 議事録・タスク管理</span>
+    <span class="tag">Claude / Copilot 活用中</span>
+    <span class="tag">月1体ペースで3ヶ月展開</span>
+  </div>
+</div>
+
+<div class="context">
+  <div class="ctx"><div class="ctx-label">職種</div><div class="ctx-val">建設コンサルタント（会社員）</div></div>
+  <div class="ctx"><div class="ctx-label">現在のAI</div><div class="ctx-val">Claude・Microsoft Copilot</div></div>
+  <div class="ctx"><div class="ctx-label">課題</div><div class="ctx-val">非効率業務のAI改善</div></div>
+  <div class="ctx"><div class="ctx-label">ツール</div><div class="ctx-val">Codex（Bルート）</div></div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-title">建設コンサル業務で繰り返し発生する非効率</div>
+  <div class="sec-sub">「どうしても非効率な部分がある、そこを解決できないか」——この課題に正面から向き合います</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:36px">
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📝</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">報告書・技術資料の作成に時間がかかる</div>
+      <div style="font-size:12px;color:#64748b">調査結果を報告書にまとめる作業・提案書の構成を考える作業が毎回発生。文書作成の手間が業務時間の大半を占めている</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🔍</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">法令・仕様書の検索と整理に手間がかかる</div>
+      <div style="font-size:12px;color:#64748b">関連法令・設計基準・仕様書を毎回検索して整理している。複数資料を比較してまとめる作業が繰り返し発生する</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">📋</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">会議の議事録・タスク管理が属人的</div>
+      <div style="font-size:12px;color:#64748b">会議メモの清書・次回アクションの整理・メール文面の作成など、管理業務が積み上がりやすい。抜け漏れも起きやすい</div>
+    </div>
+    <div style="background:#fff;border:1px solid #fecaca;border-radius:10px;padding:16px">
+      <div style="font-size:20px;margin-bottom:8px">🔄</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:#dc2626">AIを使っているが「毎回ゼロから」になっている</div>
+      <div style="font-size:12px;color:#64748b">Claude・Copilotを使っているが、毎回指示を考えて出力を整形している。建設コンサル業務に最適化された型がまだできていない</div>
+    </div>
+  </div>
+
+  <!-- ピラミッド -->
+  <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;margin-bottom:36px">
+    <div style="font-size:14px;font-weight:700;margin-bottom:16px;color:#1e293b;display:flex;align-items:center;gap:8px">
+      <span style="display:block;width:4px;height:16px;background:#0369a1;border-radius:2px"></span>
+      佐々木様のAI活用 4段ピラミッド
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:540px;margin:0 auto">
+      <div style="background:#0369a1;color:#fff;border-radius:8px;padding:12px 16px;text-align:center">
+        <div style="font-size:11px;opacity:.75;margin-bottom:2px">【第4段】目指すゴール</div>
+        <div style="font-size:13px;font-weight:700">統合・自動化 — AI同士を連携させ業務フローを自動化</div>
+      </div>
+      <div style="background:#0284c7;color:#fff;border-radius:8px;padding:12px 16px;text-align:center">
+        <div style="font-size:11px;opacity:.75;margin-bottom:2px">【第3段】3ヶ月後</div>
+        <div style="font-size:13px;font-weight:700">業務特化GPT — 建設コンサル業務専用AI従業員3体</div>
+      </div>
+      <div style="background:#0ea5e9;color:#fff;border-radius:8px;padding:12px 16px;text-align:center">
+        <div style="font-size:11px;opacity:.75;margin-bottom:2px">【第2段】シゴトAIで構築</div>
+        <div style="font-size:13px;font-weight:700">プロンプター — GPTを作るGPT（Codex設計）</div>
+      </div>
+      <div style="background:#38bdf8;color:#0c4a6e;border-radius:8px;padding:12px 16px;text-align:center">
+        <div style="font-size:11px;opacity:.75;margin-bottom:2px">【第1段】現在地 ✅</div>
+        <div style="font-size:13px;font-weight:700">Claude・Copilot環境（すでに構築済み）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">3体のAI従業員 — 月1体ペースで展開</div>
+  <div class="sec-sub">建設コンサルの文書作成時間が最大なので、効果が最も大きい領域から着手します</div>
+
+  <div class="agents" id="agents">
+
+    <!-- Agent 1 -->
+    <div class="agent" id="a0">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#1e3a5f">1</div>
+        <div class="agent-meta">
+          <div class="agent-name">📝 設計資料作成AI従業員 <span class="priority-badge">★ 1ヶ月目</span></div>
+          <div class="agent-role">報告書・技術資料・提案書・説明資料の高速作成。文書作成の時間を半分に</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#e0f2fe;color:#0c4a6e">Claude</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Copilot</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#1e3a5f;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">調査結果・データを入力→報告書の初稿を即生成</div>
+                <div class="ft-detail">調査結果・測定値・課題点を箇条書きで入力するだけで、建設コンサル報告書の構成と文章を自動生成。「序論→現状分析→課題→提言→まとめ」の型を学習させることで毎回ゼロから書かない</div>
+                <span class="ft-badge" style="background:#e0f2fe;color:#0c4a6e">報告書テンプレ学習済み</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0369a1;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">図面・グラフへの説明文を自動生成</div>
+                <div class="ft-detail">「この断面図の説明文を書いて」「この数値グラフを技術資料向けに解説して」と指示するだけで、技術的に正確な図表説明文を生成。資料に貼り付けるだけの状態まで仕上げる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#0ea5e9;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">文章校正・表現統一・長文要約を自動化</div>
+                <div class="ft-detail">複数人が書いた資料の文体を統一する校正GPT、長い技術報告書を経営層向けに要約する要約GPT、提案書のブラッシュアップを行う提案書GPTが連携して動く</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Drive保存→次案件で流用可</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GPT構成 -->
+      <div class="gpt-list">
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:.04em">▶ 内部GPT構成（5体）</div>
+        <div class="gpt-grid">
+          <div class="gpt-card" style="background:#f0f9ff;border-color:#bae6fd">
+            <div class="gpt-num" style="color:#0369a1">GPT-0</div>
+            <div class="gpt-title">プロンプターGPT</div>
+            <div class="gpt-desc">各GPTの設計・改善を担当</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-1</div>
+            <div class="gpt-title">報告書GPT</div>
+            <div class="gpt-desc">調査結果→報告書作成</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-2</div>
+            <div class="gpt-title">提案書GPT</div>
+            <div class="gpt-desc">提案資料の構成・文章</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-3</div>
+            <div class="gpt-title">文章校正GPT</div>
+            <div class="gpt-desc">表現修正・文体統一</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-4</div>
+            <div class="gpt-title">要約GPT</div>
+            <div class="gpt-desc">長文資料の要約・整理</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-5</div>
+            <div class="gpt-title">図表説明GPT</div>
+            <div class="gpt-desc">図面・グラフの説明文</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-chip">🎯 KPI：<span class="kpi-val">報告書作成時間 50%削減</span></div>
+        <div class="kpi-chip">🎯 <span class="kpi-val">提案資料品質向上</span></div>
+      </div>
+      <div class="saving"><span class="saving-num">文書作成の半日〜1日</span>が数時間に</div>
+    </div>
+
+    <!-- Agent 2 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#0f766e">2</div>
+        <div class="agent-meta">
+          <div class="agent-name">🔍 調査・情報整理AI従業員 <span class="priority-badge">2ヶ月目</span></div>
+          <div class="agent-role">建設関連法令・設計基準・仕様書の検索と整理。複数資料の比較・要約・Q&Aまで対応</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#e0f2fe;color:#0c4a6e">Claude</span>
+          <span class="tool-badge" style="background:#f1f5f9;color:#475569">Web検索</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Drive</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0f766e;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">「この工事で関連する法令を整理して」と指示するだけで一覧化</div>
+                <div class="ft-detail">道路法・建設業法・各種技術基準など、案件ごとに関連する法令・告示・通達を整理した一覧表を生成。毎回ゼロから調べ直す手間をなくす</div>
+                <span class="ft-badge" style="background:#f0fdf4;color:#15803d">法令一覧表を即出力</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#0d9488;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">複数の仕様書・設計案を横並びで比較分析</div>
+                <div class="ft-detail">「案AとBの仕様を比較して違いと推奨案を整理して」と指示するだけで、比較表と考察コメントを自動生成。技術的な判断の根拠づけに活用できる</div>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#14b8a6;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">技術的な質問に回答するQ&A GPTとして機能</div>
+                <div class="ft-detail">「この工法の適用条件は？」「この規格値の根拠法令は？」など、業務中に発生する技術的な疑問を即解消。過去に調べた情報を蓄積して次回から答えが速くなる</div>
+                <span class="ft-badge" style="background:#e0f2fe;color:#0c4a6e">技術Q&Aを蓄積・再利用</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gpt-list">
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:.04em">▶ 内部GPT構成（5体）</div>
+        <div class="gpt-grid">
+          <div class="gpt-card" style="background:#f0fdf4;border-color:#bbf7d0">
+            <div class="gpt-num" style="color:#0f766e">GPT-0</div>
+            <div class="gpt-title">プロンプターGPT</div>
+            <div class="gpt-desc">各GPTの設計・改善</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-1</div>
+            <div class="gpt-title">法令検索GPT</div>
+            <div class="gpt-desc">関連法令の整理・一覧化</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-2</div>
+            <div class="gpt-title">仕様整理GPT</div>
+            <div class="gpt-desc">仕様比較・差分抽出</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-3</div>
+            <div class="gpt-title">調査まとめGPT</div>
+            <div class="gpt-desc">資料要約・論点整理</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-4</div>
+            <div class="gpt-title">Q&A GPT</div>
+            <div class="gpt-desc">技術質問への即回答</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-5</div>
+            <div class="gpt-title">比較分析GPT</div>
+            <div class="gpt-desc">複数案の比較・推奨</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-chip">🎯 KPI：<span class="kpi-val">調査時間 40%削減</span></div>
+        <div class="kpi-chip">🎯 <span class="kpi-val">情報検索漏れ減少</span></div>
+      </div>
+      <div class="saving"><span class="saving-num">法令・仕様書の調査・整理</span>が自動化</div>
+    </div>
+
+    <!-- Agent 3 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-num" style="background:#7c3aed">3</div>
+        <div class="agent-meta">
+          <div class="agent-name">📋 業務管理AI従業員 <span class="priority-badge">3ヶ月目</span></div>
+          <div class="agent-role">議事録作成・タスク進捗整理・メール文面・スケジュール管理まで、日常管理業務を自動化</div>
+        </div>
+        <div class="agent-tools">
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Copilot</span>
+          <span class="tool-badge" style="background:#dcfce7;color:#15803d">Sheets</span>
+          <span class="tool-badge" style="background:#dbeafe;color:#1d4ed8">Gmail</span>
+        </div>
+      </div>
+      <div class="auto-flow">
+        <div class="auto-flow-inner">
+          <div class="auto-flow-title">▶ できること</div>
+          <div class="flow-timeline">
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#7c3aed;animation-delay:.2s">①</div>
+              <div class="ft-content" style="animation-delay:.2s">
+                <div class="ft-name">会議メモを貼り付けるだけで議事録を即清書</div>
+                <div class="ft-detail">会議中のメモ・録音テキストを入力すると「決定事項・課題・次回アクション・担当者・期限」に整理された議事録を自動生成。会議後すぐ送れる状態になる</div>
+                <span class="ft-badge" style="background:#ede9fe;color:#5b21b6">アクションアイテム自動抽出</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-line"></div>
+              <div class="ft-dot" style="background:#8b5cf6;animation-delay:.7s">②</div>
+              <div class="ft-content" style="animation-delay:.7s">
+                <div class="ft-name">複数案件のタスク・進捗状況を一元整理</div>
+                <div class="ft-detail">複数プロジェクトのタスクを入力すると「優先度・期限・担当・ステータス」を整理した進捗管理表を自動作成。抜け漏れを防ぎ、次のアクションが即わかる状態に</div>
+                <span class="ft-badge" style="background:#dcfce7;color:#15803d">Sheets進捗管理表連携</span>
+              </div>
+            </div>
+            <div class="ft-row">
+              <div class="ft-dot" style="background:#a78bfa;animation-delay:1.2s">③</div>
+              <div class="ft-content" style="animation-delay:1.2s">
+                <div class="ft-name">業務改善GPTが現状のボトルネックを定期提案</div>
+                <div class="ft-detail">毎週の業務ログから「この作業はもっとAIに任せられる」「このプロセスに無駄がある」という改善提案を自動生成。AI活用の精度をどんどん上げていく仕組み</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gpt-list">
+        <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:8px;letter-spacing:.04em">▶ 内部GPT構成（5体）</div>
+        <div class="gpt-grid">
+          <div class="gpt-card" style="background:#faf5ff;border-color:#e9d5ff">
+            <div class="gpt-num" style="color:#7c3aed">GPT-0</div>
+            <div class="gpt-title">プロンプターGPT</div>
+            <div class="gpt-desc">各GPTの設計・改善</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-1</div>
+            <div class="gpt-title">議事録GPT</div>
+            <div class="gpt-desc">会議メモ→議事録清書</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-2</div>
+            <div class="gpt-title">タスク管理GPT</div>
+            <div class="gpt-desc">進捗整理・優先度付け</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-3</div>
+            <div class="gpt-title">メール作成GPT</div>
+            <div class="gpt-desc">業務メール文面の作成</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-4</div>
+            <div class="gpt-title">スケジュール整理GPT</div>
+            <div class="gpt-desc">予定・締め切りの整理</div>
+          </div>
+          <div class="gpt-card" style="background:#f8fafc;border-color:#e2e8f0">
+            <div class="gpt-num">GPT-5</div>
+            <div class="gpt-title">業務改善GPT</div>
+            <div class="gpt-desc">ボトルネック発見・改善提案</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-chip">🎯 KPI：<span class="kpi-val">管理業務 30%削減</span></div>
+        <div class="kpi-chip">🎯 <span class="kpi-val">タスク抜け漏れ防止</span></div>
+      </div>
+      <div class="saving"><span class="saving-num">議事録・進捗管理・メール対応</span>が自動化</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- KPIまとめ -->
+<div style="background:#0f172a;padding:44px 0;color:#fff">
+  <div style="max-width:900px;margin:0 auto;padding:0 16px;text-align:center">
+    <div style="font-size:clamp(16px,3vw,22px);font-weight:800;margin-bottom:8px">3ヶ月後の目標KPI</div>
+    <div style="font-size:13px;opacity:.7;margin-bottom:28px">Claude・Copilotの基盤の上に、建設コンサル専用AI従業員を3体積み上げた状態</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px">
+        <div style="font-size:28px;font-weight:900;color:#7dd3fc;margin-bottom:4px">50<span style="font-size:16px">%</span></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">報告書作成時間削減</div>
+        <div style="font-size:11px;opacity:.6">設計資料作成AI従業員</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px">
+        <div style="font-size:28px;font-weight:900;color:#6ee7b7;margin-bottom:4px">40<span style="font-size:16px">%</span></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">調査・検索時間削減</div>
+        <div style="font-size:11px;opacity:.6">調査・情報整理AI従業員</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px">
+        <div style="font-size:28px;font-weight:900;color:#c4b5fd;margin-bottom:4px">30<span style="font-size:16px">%</span></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">管理業務時間削減</div>
+        <div style="font-size:11px;opacity:.6">業務管理AI従業員</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4週間サイクル -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">4ステップでAI従業員を作る</div>
+    <div class="sec-sub">月1体ペースで、毎月4週間サイクルを回しながらAI従業員を育てていきます</div>
+
+    <div style="display:flex;flex-direction:column;gap:0">
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#0369a1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">1</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 1｜初回面談（50分）</div>
+          <div style="font-size:12px;color:#64748b">建設コンサル業務の棚卸し。報告書・調査・管理のどの作業が最も時間を使っているかを整理し、1体目のAI従業員の設計を決定します</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <span style="font-size:11px;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;border-radius:8px;padding:2px 10px;font-weight:600">業務棚卸し</span>
+            <span style="font-size:11px;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;border-radius:8px;padding:2px 10px;font-weight:600">Claude/Copilot連携確認</span>
+            <span style="font-size:11px;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;border-radius:8px;padding:2px 10px;font-weight:600">Codex設計</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#0369a1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">2</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 2｜AI従業員プランナーの作成 <span style="font-size:12px;color:#0369a1;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">建設コンサル業務の入出力パターンを設計。どの情報を入力すればどんな資料が出るかを仕様書化します</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid #f1f5f9">
+        <div style="width:40px;height:40px;border-radius:50%;background:#0369a1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">3</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 3｜AI従業員の作成 <span style="font-size:12px;color:#0369a1;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実際の案件データを使って設計資料作成AI従業員を構築。報告書テンプレートを学習させてすぐ使える状態にします</div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:16px;padding:20px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:#0369a1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">4</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px">STEP 4｜AI従業員の育成 <span style="font-size:12px;color:#0369a1;font-weight:600">| 15分</span></div>
+          <div style="font-size:12px;color:#64748b">実案件で使いながら精度を上げる。「この報告書の構成は違う」「この表現は建設業界向けに調整して」と伝えるたびに、佐々木様専用のAI従業員に育ちます</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">💬</span>
+      <div style="font-size:12px;color:#0c4a6e">不明点があればLINEでコーチに相談できます（回数無制限）。「このプロンプトがうまく機能しない」「Claude・Copilotとの連携を確認してほしい」など気軽に。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3ヶ月ロードマップ -->
+<div style="background:#f0f9ff;border-top:1px solid #bae6fd;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">3ヶ月ロードマップ</div>
+    <div class="sec-sub">月1体ペースで展開。3ヶ月後には建設コンサル業務の主要3領域にAI従業員が配置される</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bae6fd">
+        <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px;letter-spacing:.04em">WEEK 1（1ヶ月目前半）</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">業務棚卸し・GPT①〜③作成</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>業務フロー整理・面談</li>
+          <li>プロンプターGPTを設計</li>
+          <li>報告書GPT・提案書GPT作成</li>
+          <li>実案件で試用開始</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bae6fd">
+        <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px;letter-spacing:.04em">1ヶ月目後半〜2ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">設計資料AI精度向上＋調査AIへ展開</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>GPT④〜⑤追加・精度改善</li>
+          <li>KPI確認・次AI準備</li>
+          <li>法令検索GPT・仕様整理GPTを作成</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:1px solid #bae6fd">
+        <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px;letter-spacing:.04em">2ヶ月目後半〜3ヶ月目</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">調査AI稼働＋業務管理AIへ展開</div>
+        <ul style="font-size:12px;color:#64748b;padding-left:14px;line-height:1.8">
+          <li>Q&A GPT・比較分析GPT完成</li>
+          <li>議事録GPT・タスク管理GPT作成</li>
+          <li>3体のAI従業員が日常稼働</li>
+        </ul>
+      </div>
+
+      <div style="background:#fff;border-radius:10px;padding:18px;border:2px solid #0369a1">
+        <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px;letter-spacing:.04em">3ヶ月目完了時</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#0c4a6e">AI従業員3体が完成</div>
+        <ul style="font-size:12px;color:#0c4a6e;padding-left:14px;line-height:1.8">
+          <li>報告書・資料作成50%削減</li>
+          <li>調査・検索40%削減</li>
+          <li>管理業務30%削減</li>
+          <li>【第4段】統合・自動化へ進む準備完了</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- サポート -->
+<div style="background:#fff;border-top:1px solid #e2e8f0;padding:40px 0">
+  <div class="section" style="padding-top:0;padding-bottom:0">
+    <div class="sec-title">シゴトAI サポート内容</div>
+    <div class="sec-sub">Claude・Copilotをすでに使いこなしている佐々木様の次のステップを、一緒に設計・実装します</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:28px">
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎯</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">初回面談（50分）</div>
+        <div style="font-size:12px;color:#64748b">業務棚卸し・GPT設計・Codexルート確認を1回で完了</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">👨‍💼</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">AI顧問チケット 3枚</div>
+        <div style="font-size:12px;color:#64748b">面談30分×3回。月1体ペースで各AI従業員の設計・精度向上を伴走</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">LINEサポート 3ヶ月無制限</div>
+        <div style="font-size:12px;color:#64748b">GPTが思い通りに動かない時も、すぐコーチに相談できる</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0">
+        <div style="font-size:18px;margin-bottom:8px">🎓</div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">セミナー・講義 永久参加</div>
+        <div style="font-size:12px;color:#64748b">講義動画永久視聴＋最新AI活用セミナーへの永久参加権</div>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px">
+      <div style="font-size:12px;opacity:.8;margin-bottom:6px;letter-spacing:.06em">3ヶ月プログラム 一括</div>
+      <div style="font-size:42px;font-weight:800;margin-bottom:4px">¥298,000</div>
+      <div style="font-size:12px;opacity:.7;margin-bottom:16px">（税込）月額ではなく、3ヶ月間の一括料金です</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:12px">
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">初回面談50分</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">顧問チケット3枚</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">LINE3ヶ月無制限</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">セミナー・講義永久参加</span>
+        <span style="background:rgba(255,255,255,.15);border-radius:8px;padding:4px 12px">8日間効果保証</span>
+      </div>
+    </div>
+
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#0c4a6e;margin-bottom:8px">8日間効果保証</div>
+      <div style="font-size:12px;color:#0369a1;line-height:1.7">申込後8日以内に「実際の建設コンサル業務で報告書AIが使える状態」にならなければ、全額返金します。まず1体動かして判断できます。</div>
+    </div>
+  </div>
+</div>
+
+<!-- フッター -->
+<div style="background:#0f172a;color:#fff;padding:32px 24px;text-align:center">
+  <div style="font-size:16px;font-weight:700;margin-bottom:6px">シゴトAI</div>
+  <div style="font-size:12px;opacity:.6;margin-bottom:16px">建設コンサルタントの非効率業務を、AI従業員3体で段階的に解消する3ヶ月間。</div>
+  <div style="font-size:12px;opacity:.5">© シゴトAI — 本資料は佐々木様専用の提案書です</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
