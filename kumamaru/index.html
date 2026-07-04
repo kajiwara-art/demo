@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>熊丸様 AI活用ロードマップ | シゴトAI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0c1825 0%,#1a2744 45%,#1c1209 100%);padding:72px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(234,88,12,.12),transparent)}
+.badge{display:inline-block;background:rgba(234,88,12,0.15);border:1px solid rgba(234,88,12,0.4);color:#fb923c;font-size:12px;letter-spacing:.1em;padding:5px 16px;border-radius:20px;margin-bottom:20px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:800;color:#fff;line-height:1.3;margin-bottom:16px}
+.hero h1 span{color:#fb923c}
+.hero-lead{color:#94a3b8;font-size:15px;max-width:580px;margin:0 auto 28px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hero-tags span{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);color:#cbd5e1;font-size:12px;padding:4px 14px;border-radius:20px}
+
+/* CONTEXT BAR */
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:20px 24px}
+.context-inner{max-width:860px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.ctx-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#64748b}
+.ctx-icon{width:30px;height:30px;border-radius:8px;background:#fff7ed;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ctx-item strong{display:block;color:#0f172a;font-size:12px;margin-bottom:1px}
+
+/* SECTION */
+.section{padding:64px 24px;max-width:860px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:.15em;color:#ea580c;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(22px,4vw,30px);font-weight:800;color:#0f172a;margin-bottom:10px}
+.sec-sub{color:#64748b;font-size:14px;margin-bottom:40px}
+
+/* MSEL WORKFLOW */
+.workflow-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,.07);margin-bottom:32px}
+.wf-item{padding:20px 16px;text-align:center;border-right:1px solid #f1f5f9;position:relative}
+.wf-item:last-child{border-right:none}
+.wf-item.highlight{background:linear-gradient(180deg,#fff7ed,#fff)}
+.wf-item.highlight::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ea580c,#f97316)}
+.wf-num{font-size:11px;color:#94a3b8;margin-bottom:6px;font-weight:600}
+.wf-icon{font-size:22px;margin-bottom:6px}
+.wf-label{font-size:12px;font-weight:700;color:#0f172a;line-height:1.4}
+.wf-sub{font-size:11px;color:#64748b;margin-top:4px;line-height:1.4}
+
+/* PROBLEM CARDS */
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:8px}
+.prob-card{background:#fff;border:1.5px solid #fca5a5;border-radius:14px;padding:20px;position:relative}
+.prob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#f97316);border-radius:14px 14px 0 0}
+.prob-icon{font-size:24px;margin-bottom:8px}
+.prob-title{font-size:13px;font-weight:700;color:#dc2626;margin-bottom:4px}
+.prob-desc{font-size:12px;color:#64748b;line-height:1.6}
+
+/* AGENT CARDS */
+.agent{background:#fff;border-radius:18px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:32px;overflow:hidden;opacity:0;transform:translateY(20px)}
+.agent-header{padding:24px 24px 0}
+.agent-rank{display:inline-flex;align-items:center;gap:6px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.agent-rank.star{background:linear-gradient(135deg,#fff7ed,#ffedd5);border-color:#fed7aa;color:#9a3412}
+.agent-name{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px}
+.agent-tagline{font-size:13px;color:#64748b;margin-bottom:16px}
+.agent-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.task-tag{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+
+/* FLOW TIMELINE */
+.ft-row{display:flex;gap:0;padding:0 24px 0;margin-bottom:8px}
+.ft-line{width:2px;background:#e2e8f0;margin:0 19px;flex-shrink:0;position:relative}
+.ft-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;position:absolute;left:-4px;flex-shrink:0;opacity:0}
+.ft-content{background:#f8fafc;border-radius:12px;padding:14px 16px;flex:1;margin-bottom:12px;opacity:0;transform:translateX(-8px)}
+.ft-content strong{font-size:13px;color:#0f172a;display:block;margin-bottom:3px}
+.ft-content p{font-size:12px;color:#64748b;line-height:1.6}
+.ft-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px}
+.ft-badge.input{background:#dbeafe;color:#1e40af}
+.ft-badge.output{background:#d1fae5;color:#065f46}
+.ft-badge.auto{background:#ffedd5;color:#9a3412}
+
+/* SAVING */
+.saving{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid #fed7aa;border-radius:12px;padding:16px 20px;margin:0 24px 24px;display:flex;align-items:center;gap:16px;opacity:0}
+.saving-num{font-size:28px;font-weight:900;color:#ea580c}
+.saving-label{font-size:12px;color:#9a3412;font-weight:600}
+
+/* MSEL DEMO BOX */
+.msel-demo{background:#0f172a;border-radius:16px;margin:0 24px 24px;overflow:hidden}
+.msel-demo-header{background:#1e293b;padding:12px 20px;display:flex;align-items:center;gap:8px}
+.msel-demo-header span{font-size:12px;color:#94a3b8;font-weight:600;letter-spacing:.05em}
+.msel-demo-header .dot{width:8px;height:8px;border-radius:50%}
+.msel-table{width:100%;border-collapse:collapse}
+.msel-table th{background:#1e293b;color:#64748b;font-size:11px;padding:10px 14px;text-align:left;font-weight:600;border-bottom:1px solid #334155}
+.msel-table td{padding:10px 14px;font-size:12px;color:#e2e8f0;border-bottom:1px solid #1e293b;vertical-align:top;line-height:1.5}
+.msel-table td:first-child{color:#94a3b8;white-space:nowrap}
+.msel-table tr:last-child td{border-bottom:none}
+.msel-table .event-type{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;margin-bottom:4px}
+.msel-table .evt-inject{background:rgba(239,68,68,.15);color:#fca5a5}
+.msel-table .evt-expect{background:rgba(34,197,94,.12);color:#86efac}
+.msel-table .evt-eval{background:rgba(251,191,36,.12);color:#fde68a}
+
+/* COMPARISON TABLE */
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.comp-table th{padding:14px 18px;font-size:13px;font-weight:700;text-align:left}
+.comp-table th:first-child{background:#f8fafc;color:#475569;width:28%}
+.comp-table th:nth-child(2){background:#fef2f2;color:#dc2626}
+.comp-table th:nth-child(3){background:#fff7ed;color:#ea580c}
+.comp-table td{padding:14px 18px;font-size:13px;border-top:1px solid #f1f5f9;vertical-align:top}
+.comp-table td:first-child{background:#fafafa;font-weight:600;color:#334155}
+.comp-table td:nth-child(2){color:#64748b}
+.comp-table td:nth-child(3){color:#9a3412;font-weight:600}
+
+/* STEPS */
+.steps-wrap{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.step-card{background:#fff;border-radius:14px;padding:18px;text-align:center;border:1px solid #e2e8f0;flex:1;min-width:140px}
+.step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ea580c,#dc2626);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.step-card h4{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.step-card p{font-size:11px;color:#64748b;line-height:1.5}
+.step-arrow{display:flex;align-items:center;color:#94a3b8;font-size:18px;padding-top:16px;flex-shrink:0}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.rm-card{background:#fff;border-radius:14px;padding:20px;border-top:4px solid #ea580c;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rm-card.active{border-top-color:#dc2626;background:linear-gradient(135deg,#fff7ed,#ffedd5)}
+.rm-phase{font-size:11px;font-weight:700;color:#ea580c;letter-spacing:.1em;margin-bottom:6px}
+.rm-card h4{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px}
+.rm-card ul{list-style:none;padding:0}
+.rm-card ul li{font-size:12px;color:#64748b;padding:2px 0;padding-left:14px;position:relative;line-height:1.5}
+.rm-card ul li::before{content:'→';position:absolute;left:0;color:#ea580c;font-size:11px}
+
+/* WEEK1 */
+.week-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.week-card{background:#fff;border-radius:12px;padding:16px;border:1px solid #e2e8f0}
+.week-card.highlight{border-color:#fed7aa;background:#fff7ed}
+.week-day{font-size:11px;font-weight:700;color:#ea580c;margin-bottom:4px;letter-spacing:.05em}
+.week-card h4{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4}
+.week-card p{font-size:11px;color:#64748b;line-height:1.5}
+
+/* SUPPORT */
+.support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+.support-item{background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;display:flex;gap:14px;align-items:flex-start}
+.sup-icon{font-size:24px;flex-shrink:0}
+.sup-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px}
+.sup-desc{font-size:12px;color:#64748b;line-height:1.5}
+
+/* PRICE */
+.price-block{background:linear-gradient(135deg,#0c1825,#1a2744);border-radius:20px;padding:36px;text-align:center;color:#fff}
+.price-label{font-size:12px;color:#fb923c;letter-spacing:.1em;margin-bottom:8px}
+.price-main{font-size:48px;font-weight:900;color:#fb923c;margin-bottom:4px}
+.price-main span{font-size:18px;font-weight:400;color:#94a3b8}
+.price-note{font-size:13px;color:#94a3b8;margin-bottom:24px}
+.price-cta{display:inline-block;background:linear-gradient(135deg,#ea580c,#dc2626);color:#fff;font-size:15px;font-weight:700;padding:14px 40px;border-radius:30px;text-decoration:none;box-shadow:0 4px 20px rgba(234,88,12,.4)}
+.guarantee{margin-top:16px;font-size:12px;color:#fdba74}
+
+footer{background:#0f172a;color:#64748b;text-align:center;padding:32px 24px;font-size:12px}
+footer strong{color:#94a3b8}
+
+@keyframes dot-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes content-in{0%{opacity:0;transform:translateX(-8px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes agent-in{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">防災・危機管理 × AI従業員</div>
+  <h1>MSEL作成を<span>条件入力から自動構築</span>する<br>AI従業員チーム</h1>
+  <p class="hero-lead">防災訓練設計・MSEL作成業務を、AIで再現性高く効率化するご提案。単発プロンプトから、案件ごとに再利用できる業務フローへ。</p>
+  <div class="hero-tags">
+    <span>🛡️ 防災・危機管理</span>
+    <span>📋 MSEL自動構築</span>
+    <span>🏛️ 自治体向け提案書</span>
+    <span>🔍 訓練設計レビュー</span>
+    <span>📊 実施後報告書</span>
+  </div>
+</div>
+
+<!-- CONTEXT BAR -->
+<div class="context">
+  <div class="context-inner">
+    <div class="ctx-item"><div class="ctx-icon">🛡️</div><div><strong>業種</strong>防災訓練企画・運営／自治体向け</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🤖</div><div><strong>AI活用状況</strong>Claude・Claude Code系をすでに活用</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🎯</div><div><strong>主な課題</strong>MSEL作成量が膨大・まだ負担が残る</div></div>
+    <div class="ctx-item"><div class="ctx-icon">⚡</div><div><strong>次のゴール</strong>条件入力→MSEL自動構築の実現</div></div>
+  </div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-label">Current Problems</div>
+  <div class="sec-title">今の課題はここにあります</div>
+  <div class="sec-sub">Claudeで改善しているが、まだこれだけ負担が残っています。</div>
+  <div class="problem-grid">
+    <div class="prob-card">
+      <div class="prob-icon">📋</div>
+      <div class="prob-title">MSEL作成量が膨大</div>
+      <div class="prob-desc">1案件ごとに時系列イベント・注入文・期待行動・評価観点を全て設計。案件数が増えると作成量が比例して増える</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">🔄</div>
+      <div class="prob-title">毎回プロンプトを調整している</div>
+      <div class="prob-desc">Claudeで改善できているが、案件ごとに条件が変わるため都度プロンプトを組み直す必要がある</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">🔍</div>
+      <div class="prob-title">整合性確認に時間がかかる</div>
+      <div class="prob-desc">災害種別・参加機関・訓練目的・安全管理の整合性を全体で確認する作業が重い</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">📝</div>
+      <div class="prob-title">周辺書類も多い</div>
+      <div class="prob-desc">MSEL以外に注入票・評価票・実施後報告書・次年度提案まで作成が必要。それぞれに手間がかかる</div>
+    </div>
+  </div>
+</div>
+
+<!-- MSEL WORKFLOW -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Business Flow</div>
+    <div class="sec-title">防災訓練設計業務の全体像</div>
+    <div class="sec-sub" style="margin-bottom:24px">MSELは単体ではなく、訓練設計全体の中核です。AI化はMSELだけでなく、前後工程まで見ると効果が大きくなります。</div>
+    <div class="workflow-grid">
+      <div class="wf-item">
+        <div class="wf-num">01</div>
+        <div class="wf-icon">🗂️</div>
+        <div class="wf-label">訓練条件整理</div>
+        <div class="wf-sub">災害種別・地域・参加機関・目的・時間軸</div>
+      </div>
+      <div class="wf-item">
+        <div class="wf-num">02</div>
+        <div class="wf-icon">🎬</div>
+        <div class="wf-label">シナリオ設計</div>
+        <div class="wf-sub">訓練の流れ・場面・難易度設定</div>
+      </div>
+      <div class="wf-item highlight">
+        <div class="wf-num">03</div>
+        <div class="wf-icon">📋</div>
+        <div class="wf-label">MSEL作成</div>
+        <div class="wf-sub">時系列・注入文・期待行動・評価観点</div>
+      </div>
+      <div class="wf-item">
+        <div class="wf-num">04</div>
+        <div class="wf-icon">💬</div>
+        <div class="wf-label">注入文作成</div>
+        <div class="wf-sub">各プレイヤーへの具体的な注入内容</div>
+      </div>
+      <div class="wf-item">
+        <div class="wf-num">05</div>
+        <div class="wf-icon">✅</div>
+        <div class="wf-label">評価表作成</div>
+        <div class="wf-sub">評価観点・チェック項目の整備</div>
+      </div>
+      <div class="wf-item">
+        <div class="wf-num">06</div>
+        <div class="wf-icon">📊</div>
+        <div class="wf-label">実施後報告書</div>
+        <div class="wf-sub">実施記録・課題・改善提案・次年度提案</div>
+      </div>
+    </div>
+    <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:14px 18px;font-size:13px;color:#9a3412">
+      <strong>AI化のポイント：</strong>03〜06の工程は、条件さえ揃えばAI従業員が草案を自動生成できます。専門判断は熊丸様が持ち、下準備・展開・整合性確認をAIが担う設計です。
+    </div>
+  </div>
+</div>
+
+<!-- AI AGENTS -->
+<div class="section">
+  <div class="sec-label">AI Employees</div>
+  <div class="sec-title">防災訓練業務のAI従業員チーム</div>
+  <div class="sec-sub">専門判断は熊丸様が持ち、草案・展開・整合性確認をAIが担います。</div>
+
+  <!-- AGENT 1 -->
+  <div class="agent" id="a1">
+    <div class="agent-header">
+      <div class="agent-rank star">★ 第1優先 — まずここから</div>
+      <div class="agent-name">MSEL自動構築AI従業員</div>
+      <div class="agent-tagline">条件入力から時系列イベント・注入文・期待行動・評価観点まで草案を一気に生成</div>
+      <div class="agent-tasks">
+        <span class="task-tag">条件→MSEL草案</span>
+        <span class="task-tag">時系列イベント展開</span>
+        <span class="task-tag">注入文草案</span>
+        <span class="task-tag">期待行動整理</span>
+        <span class="task-tag">評価観点生成</span>
+      </div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-line" style="height:240px">
+        <div class="ft-dot" style="top:10px;background:#ea580c;animation-delay:.1s"></div>
+        <div class="ft-dot" style="top:90px;background:#ea580c;animation-delay:.4s"></div>
+        <div class="ft-dot" style="top:170px;background:#ea580c;animation-delay:.7s"></div>
+      </div>
+      <div style="flex:1">
+        <div class="ft-content" style="animation-delay:.2s">
+          <span class="ft-badge input">INPUT</span>
+          <strong>訓練条件を入力する</strong>
+          <p>災害種別 / 地域 / 参加機関 / 訓練目的 / 時間軸 / 難易度 を入力フォームに記入</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.5s">
+          <span class="ft-badge auto">AI処理</span>
+          <strong>MSELの全構成を自動展開</strong>
+          <p>時系列に沿ってイベントを配置し、各コマに注入文・プレイヤー期待行動・評価観点を紐づけた草案を生成</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.8s">
+          <span class="ft-badge output">OUTPUT</span>
+          <strong>MSELの草案が完成・熊丸様が監修</strong>
+          <p>Excel / Word形式で出力。専門的な修正・判断は熊丸様が加えて完成版に</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MSEL DEMO -->
+    <div class="msel-demo">
+      <div class="msel-demo-header">
+        <div class="dot" style="background:#ef4444"></div>
+        <div class="dot" style="background:#f59e0b;margin:0 4px"></div>
+        <div class="dot" style="background:#22c55e"></div>
+        <span style="margin-left:8px">MSEL草案サンプル — 大規模地震対応訓練（市役所×消防×医療機関）</span>
+      </div>
+      <table class="msel-table">
+        <thead>
+          <tr>
+            <th>時刻</th>
+            <th>イベント概要</th>
+            <th>注入文（例）</th>
+            <th>期待行動</th>
+            <th>評価観点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>T+0:00</td>
+            <td><span class="event-type evt-inject">注入</span><br>震度6強発生の情報が入電</td>
+            <td>「消防本部より入電：市内全域で震度6強を観測。負傷者多数の報告あり」</td>
+            <td>災害対策本部の設置を判断・指示する</td>
+            <td>3分以内に本部設置の意思決定ができているか</td>
+          </tr>
+          <tr>
+            <td>T+0:15</td>
+            <td><span class="event-type evt-inject">注入</span><br>建物被害・孤立集落の報告</td>
+            <td>「○○地区で建物倒壊多数。住民約200名が孤立の可能性」</td>
+            <td>情報収集班を現地派遣し、関係機関へ初期情報を共有</td>
+            <td>情報共有のルートと速度が適切か</td>
+          </tr>
+          <tr>
+            <td>T+0:30</td>
+            <td><span class="event-type evt-expect">期待</span><br>医療機関との連携開始</td>
+            <td>（参加機関からの情報待ち）</td>
+            <td>受け入れ可能病院数・ベッド数を確認し、搬送優先順位を策定</td>
+            <td>DMAT・医療機関との連携プロトコルが機能しているか</td>
+          </tr>
+          <tr>
+            <td>T+1:00</td>
+            <td><span class="event-type evt-eval">評価</span><br>第1回情報集約</td>
+            <td>「1時間経過。被害状況・対応状況の第1次集約を実施」</td>
+            <td>情報を整理し、対応方針を更新・関係者に周知</td>
+            <td>情報の精度・共有速度・意思決定の質</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="saving">
+      <div>
+        <div class="saving-num">50%以上</div>
+        <div class="saving-label">MSEL草案作成時間削減</div>
+      </div>
+      <div style="font-size:13px;color:#9a3412;line-height:1.7">
+        条件入力から草案生成までAIが担当。<br>熊丸様は<strong>監修・専門的判断に集中</strong>できる体制に
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT 2 -->
+  <div class="agent" id="a2">
+    <div class="agent-header">
+      <div class="agent-rank star">★ 第2優先</div>
+      <div class="agent-name">訓練設計レビューAI従業員</div>
+      <div class="agent-tagline">目的・想定・参加機関・安全管理・難易度の整合性を自動チェック</div>
+      <div class="agent-tasks">
+        <span class="task-tag">整合性チェック</span>
+        <span class="task-tag">抜け漏れ確認</span>
+        <span class="task-tag">安全管理レビュー</span>
+        <span class="task-tag">難易度バランス確認</span>
+      </div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-line" style="height:240px">
+        <div class="ft-dot" style="top:10px;background:#ea580c;animation-delay:.1s"></div>
+        <div class="ft-dot" style="top:90px;background:#ea580c;animation-delay:.4s"></div>
+        <div class="ft-dot" style="top:170px;background:#ea580c;animation-delay:.7s"></div>
+      </div>
+      <div style="flex:1">
+        <div class="ft-content" style="animation-delay:.2s">
+          <span class="ft-badge input">INPUT</span>
+          <strong>MSEL草案・訓練設計書を渡す</strong>
+          <p>作成したMSELと訓練設計書をそのまま貼り付けるだけ</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.5s">
+          <span class="ft-badge auto">AI処理</span>
+          <strong>多角的な整合性チェックを実行</strong>
+          <p>訓練目的とシナリオの一貫性・参加機関の役割の明確さ・安全管理上のリスク・難易度のばらつきを自動確認</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.8s">
+          <span class="ft-badge output">OUTPUT</span>
+          <strong>レビューレポートと修正案を出力</strong>
+          <p>「〇〇のイベントで△△機関の役割が不明確」など、具体的な指摘と修正案をリスト化</p>
+        </div>
+      </div>
+    </div>
+    <div class="saving">
+      <div>
+        <div class="saving-num">見落とし防止</div>
+        <div class="saving-label">整合性確認を自動化</div>
+      </div>
+      <div style="font-size:13px;color:#9a3412;line-height:1.7">
+        複数機関・長時間訓練でも抜け漏れを自動検出。<br><strong>品質ばらつきを案件をまたいで均一化</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT 3 -->
+  <div class="agent" id="a3">
+    <div class="agent-header">
+      <div class="agent-rank">第3優先</div>
+      <div class="agent-name">注入文・評価観点作成AI従業員</div>
+      <div class="agent-tagline">各プレイヤーへの注入文と、評価票・チェックリストを一括生成</div>
+      <div class="agent-tasks">
+        <span class="task-tag">プレイヤー別注入文</span>
+        <span class="task-tag">評価票作成</span>
+        <span class="task-tag">チェックリスト生成</span>
+        <span class="task-tag">難易度調整</span>
+      </div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-line" style="height:200px">
+        <div class="ft-dot" style="top:10px;background:#ea580c;animation-delay:.1s"></div>
+        <div class="ft-dot" style="top:80px;background:#ea580c;animation-delay:.4s"></div>
+        <div class="ft-dot" style="top:150px;background:#ea580c;animation-delay:.7s"></div>
+      </div>
+      <div style="flex:1">
+        <div class="ft-content" style="animation-delay:.2s">
+          <span class="ft-badge input">INPUT</span>
+          <strong>MSELと参加機関リストを渡す</strong>
+          <p>訓練で使うMSELと、参加機関・役割分担を入力</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.5s">
+          <span class="ft-badge auto">AI処理</span>
+          <strong>参加機関別に注入文を自動展開</strong>
+          <p>各プレイヤーが受け取る注入内容・タイミング・伝達方法を自動生成。評価観点もセットで出力</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.8s">
+          <span class="ft-badge output">OUTPUT</span>
+          <strong>注入票・評価票が完成</strong>
+          <p>そのまま訓練当日に使える形式で出力</p>
+        </div>
+      </div>
+    </div>
+    <div class="saving">
+      <div>
+        <div class="saving-num">一括生成</div>
+        <div class="saving-label">注入票・評価票を自動化</div>
+      </div>
+      <div style="font-size:13px;color:#9a3412;line-height:1.7">
+        参加機関が増えても作業量は変わらない。<br><strong>スケーラブルな訓練運営を実現</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT 4 -->
+  <div class="agent" id="a4">
+    <div class="agent-header">
+      <div class="agent-rank">第4優先</div>
+      <div class="agent-name">報告書・次年度提案AI従業員</div>
+      <div class="agent-tagline">実施記録から課題整理・改善提案・自治体向け次年度提案書まで自動生成</div>
+      <div class="agent-tasks">
+        <span class="task-tag">実施後報告書</span>
+        <span class="task-tag">課題・改善提案</span>
+        <span class="task-tag">自治体提案書</span>
+        <span class="task-tag">見積補足資料</span>
+      </div>
+    </div>
+    <div class="ft-row">
+      <div class="ft-line" style="height:200px">
+        <div class="ft-dot" style="top:10px;background:#ea580c;animation-delay:.1s"></div>
+        <div class="ft-dot" style="top:80px;background:#ea580c;animation-delay:.4s"></div>
+        <div class="ft-dot" style="top:150px;background:#ea580c;animation-delay:.7s"></div>
+      </div>
+      <div style="flex:1">
+        <div class="ft-content" style="animation-delay:.2s">
+          <span class="ft-badge input">INPUT</span>
+          <strong>訓練実施記録・評価結果を渡す</strong>
+          <p>当日のメモ・評価票・観察記録をそのまま貼り付ける</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.5s">
+          <span class="ft-badge auto">AI処理</span>
+          <strong>課題整理・改善提案・次年度企画を生成</strong>
+          <p>実施記録から課題を抽出し、改善提案と次年度訓練の提案骨子を自動作成。自治体向けの文体に変換</p>
+        </div>
+        <div class="ft-content" style="animation-delay:.8s">
+          <span class="ft-badge output">OUTPUT</span>
+          <strong>報告書＋次年度提案書が完成</strong>
+          <p>自治体担当者に提出できるクオリティで出力。継続受注につながる提案に</p>
+        </div>
+      </div>
+    </div>
+    <div class="saving">
+      <div>
+        <div class="saving-num">継続受注</div>
+        <div class="saving-label">次年度提案まで自動化</div>
+      </div>
+      <div style="font-size:13px;color:#9a3412;line-height:1.7">
+        報告書作成の手間を削減しながら、<br><strong>次年度受注につながる提案書まで同時に完成</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Why ShigotoAI</div>
+    <div class="sec-title">単発プロンプト vs 業務フロー設計</div>
+    <div class="sec-sub" style="margin-bottom:24px">すでにAIを使えている方ほど、次は業務フロー化が差になります。</div>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th>❌ 毎回プロンプトで対応</th>
+          <th>✅ シゴトAI（業務フロー設計）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>MSEL作成</td>
+          <td>案件ごとにプロンプトを調整。品質がばらつく</td>
+          <td>条件入力→MSEL草案の型ができ、毎回再利用できる</td>
+        </tr>
+        <tr>
+          <td>整合性確認</td>
+          <td>自分で全体を読み直して確認。抜け漏れリスクあり</td>
+          <td>レビューAI従業員が自動チェック。指摘一覧で確認のみ</td>
+        </tr>
+        <tr>
+          <td>周辺書類</td>
+          <td>注入票・評価票・報告書は別途手作業</td>
+          <td>MSEL連動で周辺書類まで自動展開</td>
+        </tr>
+        <tr>
+          <td>案件品質の均一化</td>
+          <td>担当者・案件ごとにばらつきが残る</td>
+          <td>型化により案件間の品質を均一に保てる</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 4 STEPS -->
+<div class="section">
+  <div class="sec-label">Coaching Steps</div>
+  <div class="sec-title">4ステップでAI従業員を設計</div>
+  <div class="sec-sub" style="margin-bottom:24px">専任のAI顧問がMSEL業務の構造を一緒に分解しながら、使える型を作ります。</div>
+  <div class="steps-wrap">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h4>初回面談<br>50分</h4>
+      <p>MSEL作成フロー・入力条件・出力形式をヒアリングして設計方針を決定</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h4>プランナー<br>15分</h4>
+      <p>最初のAI従業員の設計・ゴール・評価基準を明確化</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h4>AI従業員<br>15分</h4>
+      <p>MSEL自動構築の型を一緒に設計・試作・調整</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h4>育成<br>15分</h4>
+      <p>実案件で試用してフィードバック。精度を上げながら定着させる</p>
+    </div>
+  </div>
+</div>
+
+<!-- WEEK 1 -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">First Week Plan</div>
+    <div class="sec-title">最初の1週間でMSEL自動構築AI従業員を形にします</div>
+    <div class="sec-sub" style="margin-bottom:24px">8日以内に「これは使える」という実感を作ります。守秘に配慮し、仮想・匿名化ケースで進めることも可能です。</div>
+    <div class="week-grid">
+      <div class="week-card highlight">
+        <div class="week-day">DAY 0</div>
+        <h4>申込・対象業務決定</h4>
+        <p>最初に作るAI従業員を決定</p>
+      </div>
+      <div class="week-card highlight">
+        <div class="week-day">DAY 1</div>
+        <h4>AI顧問面談 1回目</h4>
+        <p>MSEL入力条件・出力形式の設計方針を決定</p>
+      </div>
+      <div class="week-card">
+        <div class="week-day">DAY 2〜3</div>
+        <h4>入力条件と出力形式を設計</h4>
+        <p>条件フォームの項目・MSELの出力フォーマットを構築</p>
+      </div>
+      <div class="week-card">
+        <div class="week-day">DAY 4〜6</div>
+        <h4>過去案件で試作・修正</h4>
+        <p>実際のケースまたは仮想案件でMSEL自動構築をテスト</p>
+      </div>
+      <div class="week-card highlight">
+        <div class="week-day">DAY 7</div>
+        <h4>AI顧問面談 2回目</h4>
+        <p>精度確認・改善方針決定・次の展開を設計</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="section">
+  <div class="sec-label">3-Month Roadmap</div>
+  <div class="sec-title">3ヶ月でMSEL作成を"毎回使える業務フロー"にします</div>
+  <div class="sec-sub" style="margin-bottom:24px">3ヶ月後の姿は「作業者」から「設計・監修者」へ。</div>
+  <div class="roadmap">
+    <div class="rm-card active">
+      <div class="rm-phase">1週目</div>
+      <h4>MSEL自動構築AI<br>初期版</h4>
+      <ul>
+        <li>条件入力フォームの設計</li>
+        <li>時系列展開の型を作成</li>
+        <li>1案件で実感を確認</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">1ヶ月目</div>
+      <h4>案件条件別<br>テンプレート化</h4>
+      <ul>
+        <li>災害種別ごとの型を整備</li>
+        <li>参加機関パターンの追加</li>
+        <li>再利用できる形に定着</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">2ヶ月目</div>
+      <h4>レビュー・注入文・<br>評価観点まで拡張</h4>
+      <ul>
+        <li>訓練設計レビューAI導入</li>
+        <li>注入文・評価票の自動化</li>
+        <li>整合性チェック自動化</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">3ヶ月目</div>
+      <h4>防災訓練AI<br>従業員チーム完成</h4>
+      <ul>
+        <li>報告書・次年度提案AI</li>
+        <li>自治体提案書の自動化</li>
+        <li>全工程をAI従業員で完結</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT + PRICE -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Support</div>
+    <div class="sec-title">シゴトAIのサポート体制</div>
+    <div class="sec-sub" style="margin-bottom:24px">3ヶ月間、使いながら一緒に精度を上げます。</div>
+    <div class="support-grid">
+      <div class="support-item">
+        <div class="sup-icon">🎯</div>
+        <div>
+          <div class="sup-title">初回面談50分</div>
+          <div class="sup-desc">MSEL業務をヒアリングしてAI従業員の入力・出力設計まで方針決定</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">🎫</div>
+        <div>
+          <div class="sup-title">顧問チケット3枚（30分×3回）</div>
+          <div class="sup-desc">専任AI顧問との個別面談。精度向上・周辺業務への展開を設計</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">💬</div>
+        <div>
+          <div class="sup-title">LINE3ヶ月無制限</div>
+          <div class="sup-desc">実案件で詰まったときにすぐ相談。試行錯誤の時間を最小化</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">🎓</div>
+        <div>
+          <div class="sup-title">セミナー・講義 永久参加</div>
+          <div class="sup-desc">最新AI活用事例・新ツール情報をキャッチアップし続けられる</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-block">
+      <div class="price-label">3ヶ月 一括プログラム料金</div>
+      <div class="price-main">¥298,000<span>（税込 ¥327,800）</span></div>
+      <div class="price-note">月換算 約99,000円 ｜ 分割払い対応可</div>
+      <a href="#" class="price-cta">まずは無料相談で話を聞く</a>
+      <div class="guarantee">🛡️ 8日間効果保証 — 実務で使えないと感じたら全額返金</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>シゴトAI</strong> — あなたの業務に合わせたAI従業員を設計・配置する3ヶ月プログラム<br>
+  <span style="margin-top:8px;display:block">© 2024 ShigotoAI. All rights reserved.</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.style.animation = 'agent-in .4s ease forwards';
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
