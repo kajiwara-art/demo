@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>里道様 宿泊業 AI活用ロードマップ | シゴトAI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}
+
+.hero{background:linear-gradient(135deg,#0a1628 0%,#0f2d40 50%,#0a2030 100%);padding:72px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(14,165,233,.12),transparent)}
+.badge{display:inline-block;background:rgba(14,165,233,0.15);border:1px solid rgba(14,165,233,0.35);color:#7dd3fc;font-size:12px;letter-spacing:.1em;padding:5px 16px;border-radius:20px;margin-bottom:20px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:800;color:#fff;line-height:1.3;margin-bottom:16px}
+.hero h1 span{color:#38bdf8}
+.hero-lead{color:#94a3b8;font-size:15px;max-width:580px;margin:0 auto 28px;line-height:1.8}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hero-tags span{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);color:#cbd5e1;font-size:12px;padding:4px 14px;border-radius:20px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:20px 24px}
+.context-inner{max-width:860px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.ctx-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#64748b}
+.ctx-icon{width:30px;height:30px;border-radius:8px;background:#f0f9ff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ctx-item strong{display:block;color:#0f172a;font-size:12px;margin-bottom:1px}
+
+.section{padding:64px 24px;max-width:860px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:.15em;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(22px,4vw,30px);font-weight:800;color:#0f172a;margin-bottom:10px}
+.sec-sub{color:#64748b;font-size:14px;margin-bottom:40px}
+
+/* OVERVIEW GRID */
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.ov-card{background:#fff;border-radius:14px;padding:18px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ov-card.highlight{border-color:#bae6fd;background:linear-gradient(180deg,#f0f9ff,#fff)}
+.ov-card.highlight::after{content:'★ 優先';font-size:10px;font-weight:700;color:#0284c7;display:block;margin-top:6px}
+.ov-icon{font-size:22px;margin-bottom:8px}
+.ov-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.ov-items{font-size:11px;color:#64748b;line-height:1.7}
+
+/* AGENT CARDS */
+.agent{background:#fff;border-radius:18px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:32px;overflow:hidden;opacity:0;transform:translateY(20px)}
+.agent-header{padding:24px 24px 0}
+.agent-rank{display:inline-flex;align-items:center;gap:6px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.agent-rank.star{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-color:#7dd3fc;color:#075985}
+.agent-name{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px}
+.agent-tagline{font-size:13px;color:#64748b;margin-bottom:16px}
+.agent-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.task-tag{background:#f0f9ff;border:1px solid #bae6fd;color:#075985;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+
+.ft-row{display:flex;gap:0;padding:0 24px 0;margin-bottom:8px}
+.ft-line{width:2px;background:#e2e8f0;margin:0 19px;flex-shrink:0;position:relative}
+.ft-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;position:absolute;left:-4px;flex-shrink:0;opacity:0}
+.ft-content{background:#f8fafc;border-radius:12px;padding:14px 16px;flex:1;margin-bottom:12px;opacity:0;transform:translateX(-8px)}
+.ft-content strong{font-size:13px;color:#0f172a;display:block;margin-bottom:3px}
+.ft-content p{font-size:12px;color:#64748b;line-height:1.6}
+.ft-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px}
+.ft-badge.input{background:#dbeafe;color:#1e40af}
+.ft-badge.output{background:#d1fae5;color:#065f46}
+.ft-badge.auto{background:#e0f2fe;color:#075985}
+
+.saving{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1.5px solid #7dd3fc;border-radius:12px;padding:16px 20px;margin:0 24px 24px;display:flex;align-items:center;gap:16px;opacity:0}
+.saving-num{font-size:28px;font-weight:900;color:#0284c7}
+.saving-label{font-size:12px;color:#075985;font-weight:600}
+
+/* EXAMPLE BOX */
+.example-box{background:#0f172a;border-radius:14px;margin:0 24px 24px;overflow:hidden}
+.example-header{background:#1e293b;padding:10px 18px;font-size:11px;color:#94a3b8;font-weight:600;display:flex;align-items:center;gap:8px}
+.example-body{padding:16px 18px}
+.ex-label{font-size:10px;font-weight:700;padding:2px 10px;border-radius:8px;margin-bottom:6px;display:inline-block}
+.ex-label.before{background:rgba(239,68,68,.15);color:#fca5a5}
+.ex-label.after{background:rgba(34,197,94,.12);color:#86efac}
+.ex-text{font-size:12px;color:#e2e8f0;line-height:1.8;margin-bottom:14px}
+
+/* COMPARISON */
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.comp-table th{padding:14px 18px;font-size:13px;font-weight:700;text-align:left}
+.comp-table th:first-child{background:#f8fafc;color:#475569;width:28%}
+.comp-table th:nth-child(2){background:#fef2f2;color:#dc2626}
+.comp-table th:nth-child(3){background:#f0f9ff;color:#0284c7}
+.comp-table td{padding:14px 18px;font-size:13px;border-top:1px solid #f1f5f9;vertical-align:top}
+.comp-table td:first-child{background:#fafafa;font-weight:600;color:#334155}
+.comp-table td:nth-child(2){color:#64748b}
+.comp-table td:nth-child(3){color:#075985;font-weight:600}
+
+/* STEPS */
+.steps-wrap{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.step-card{background:#fff;border-radius:14px;padding:18px;text-align:center;border:1px solid #e2e8f0;flex:1;min-width:140px}
+.step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.step-card h4{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.step-card p{font-size:11px;color:#64748b;line-height:1.5}
+.step-arrow{display:flex;align-items:center;color:#94a3b8;font-size:18px;padding-top:16px;flex-shrink:0}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.rm-card{background:#fff;border-radius:14px;padding:20px;border-top:4px solid #0284c7;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rm-card.active{border-top-color:#0369a1;background:linear-gradient(135deg,#f0f9ff,#e0f2fe)}
+.rm-phase{font-size:11px;font-weight:700;color:#0284c7;letter-spacing:.1em;margin-bottom:6px}
+.rm-card h4{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px}
+.rm-card ul{list-style:none;padding:0}
+.rm-card ul li{font-size:12px;color:#64748b;padding:2px 0;padding-left:14px;position:relative;line-height:1.5}
+.rm-card ul li::before{content:'→';position:absolute;left:0;color:#0284c7;font-size:11px}
+
+/* SUPPORT */
+.support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+.support-item{background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;display:flex;gap:14px;align-items:flex-start}
+.sup-icon{font-size:24px;flex-shrink:0}
+.sup-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px}
+.sup-desc{font-size:12px;color:#64748b;line-height:1.5}
+
+.price-block{background:linear-gradient(135deg,#0a1628,#0f2d40);border-radius:20px;padding:36px;text-align:center;color:#fff}
+.price-label{font-size:12px;color:#7dd3fc;letter-spacing:.1em;margin-bottom:8px}
+.price-main{font-size:48px;font-weight:900;color:#38bdf8;margin-bottom:4px}
+.price-note{font-size:13px;color:#94a3b8;margin-bottom:24px}
+.price-cta{display:inline-block;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;font-size:15px;font-weight:700;padding:14px 40px;border-radius:30px;text-decoration:none;box-shadow:0 4px 20px rgba(2,132,199,.4)}
+.guarantee{margin-top:16px;font-size:12px;color:#7dd3fc}
+
+footer{background:#0a1628;color:#64748b;text-align:center;padding:32px 24px;font-size:12px}
+footer strong{color:#94a3b8}
+
+@keyframes dot-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes content-in{0%{opacity:0;transform:translateX(-8px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes agent-in{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">宿泊業 × AI活用</div>
+  <h1>宿泊業の<span>文章・対応・確認業務</span>を<br>AIアシスタントが担当する</h1>
+  <p class="hero-lead">予約・問い合わせ、口コミ返信、外国語対応、清掃引継ぎ——毎日発生する「書く・確認する・伝える」仕事をAIが下準備します。</p>
+  <div class="hero-tags">
+    <span>🏨 宿泊業</span>
+    <span>📨 予約・問い合わせ対応</span>
+    <span>⭐ 口コミ返信</span>
+    <span>🌏 外国語案内</span>
+    <span>📊 運営改善</span>
+  </div>
+</div>
+
+<!-- CONTEXT BAR -->
+<div class="context">
+  <div class="context-inner">
+    <div class="ctx-item"><div class="ctx-icon">🏨</div><div><strong>業種</strong>宿泊業</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🤖</div><div><strong>AI活用状況</strong>Gemini利用経験あり</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🎯</div><div><strong>知りたいこと</strong>宿泊業でAIをどう使えるか</div></div>
+    <div class="ctx-item"><div class="ctx-icon">⚡</div><div><strong>おすすめ開始点</strong>予約・問い合わせAIアシスタント</div></div>
+  </div>
+</div>
+
+<!-- 業務全体像 -->
+<div class="section">
+  <div class="sec-label">Business Overview</div>
+  <div class="sec-title">宿泊業務の全体像とAI活用余地</div>
+  <div class="sec-sub">宿泊業は、現場対応だけでなく文章・調整・確認業務が多い業種です。特に文章系・確認系からAIを入れると効果が出やすいです。</div>
+  <div class="ov-grid">
+    <div class="ov-card highlight">
+      <div class="ov-icon">📨</div>
+      <div class="ov-title">予約・問い合わせ</div>
+      <div class="ov-items">返信文・日程確認・案内文・FAQ対応</div>
+    </div>
+    <div class="ov-card highlight">
+      <div class="ov-icon">⭐</div>
+      <div class="ov-title">口コミ・接客文面</div>
+      <div class="ov-items">Google口コミ返信・じゃらん・楽天トラベル返信</div>
+    </div>
+    <div class="ov-card highlight">
+      <div class="ov-icon">🌏</div>
+      <div class="ov-title">外国語対応</div>
+      <div class="ov-items">英語・中国語・韓国語の案内文・返信文</div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">🧹</div>
+      <div class="ov-title">清掃・引継ぎ</div>
+      <div class="ov-items">清掃指示・引継ぎメモ・チェックリスト整備</div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">📊</div>
+      <div class="ov-title">売上・稼働率確認</div>
+      <div class="ov-items">日別稼働率・客単価・季節傾向の振り返り</div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">👥</div>
+      <div class="ov-title">スタッフ連絡</div>
+      <div class="ov-items">シフト調整連絡・業務連絡文・マニュアル整備</div>
+    </div>
+  </div>
+  <div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:14px 18px;font-size:13px;color:#075985">
+    <strong>ポイント：</strong>まずは文章・確認・整理系から着手すると、すぐに効果を実感しやすく、Geminiの利用経験も活かせます。
+  </div>
+</div>
+
+<!-- AI AGENTS -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">AI Assistants</div>
+    <div class="sec-title">宿泊業務に置けるAIアシスタント</div>
+    <div class="sec-sub" style="margin-bottom:40px">難易度が低く、毎日使える業務から順番に始めます。</div>
+
+    <!-- AGENT 1 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-rank star">★ おすすめ開始点</div>
+        <div class="agent-name">予約・問い合わせAIアシスタント</div>
+        <div class="agent-tagline">問い合わせへの返信文・案内文・FAQ対応文を下書きして時間を削る</div>
+        <div class="agent-tasks">
+          <span class="task-tag">返信文の下書き</span>
+          <span class="task-tag">日程・空室案内</span>
+          <span class="task-tag">FAQ自動対応</span>
+          <span class="task-tag">確認メールの雛形</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:240px">
+          <div class="ft-dot" style="top:10px;background:#0284c7;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:90px;background:#0284c7;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:170px;background:#0284c7;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>届いた問い合わせ内容を貼り付ける</strong>
+            <p>「〇月〇日に2名で泊まれますか？」「チェックインは何時からですか？」など、そのままコピー&ペーストするだけ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>お宿のトーンに合わせた返信文を生成</strong>
+            <p>丁寧・簡潔・親しみやすいなど、施設の雰囲気に合わせた文体で複数パターンを出力</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>確認・送るだけの状態で完成</strong>
+            <p>下書きを確認して微修正するだけ。毎日の返信作業が大幅に短縮される</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXAMPLE -->
+      <div class="example-box">
+        <div class="example-header">
+          <span>✉️</span>
+          <span>返信文の変化イメージ（サンプル）</span>
+        </div>
+        <div class="example-body">
+          <div class="ex-label before">BEFORE — 毎回ゼロから書く</div>
+          <div class="ex-text">「〇〇様、この度はお問い合わせをいただきありがとうございます。〇月〇日の空室状況でございますが……」と毎回ゼロから考えて入力</div>
+          <div class="ex-label after">AFTER — AIが下書きを用意</div>
+          <div class="ex-text">「〇〇様、ご連絡いただきありがとうございます。〇月〇日（〇）のご予約ですが、現在〇室空きがございます。ご希望のお部屋タイプや人数をお知らせいただけますでしょうか。皆様のお越しをお待ちしております。」<br>→ 確認して送るだけ</div>
+        </div>
+      </div>
+
+      <div class="saving">
+        <div>
+          <div class="saving-num">毎日短縮</div>
+          <div class="saving-label">返信作業の時間</div>
+        </div>
+        <div style="font-size:13px;color:#075985;line-height:1.7">
+          1件あたりの返信作成時間が大幅に短縮。<br><strong>繁忙期の問い合わせが多い時期ほど効果を実感しやすい</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 2 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-rank star">★ 第2優先</div>
+        <div class="agent-name">口コミ・接客文面AIアシスタント</div>
+        <div class="agent-tagline">Googleや予約サイトの口コミ返信文・接客案内文を素早く仕上げる</div>
+        <div class="agent-tasks">
+          <span class="task-tag">口コミ返信文</span>
+          <span class="task-tag">ネガティブ対応文</span>
+          <span class="task-tag">宿泊前案内文</span>
+          <span class="task-tag">チェックアウト後フォロー</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:240px">
+          <div class="ft-dot" style="top:10px;background:#0284c7;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:90px;background:#0284c7;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:170px;background:#0284c7;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>口コミ内容・評価をそのまま貼る</strong>
+            <p>高評価・低評価どちらも対応。「この口コミへの返信文を作って」と伝えるだけ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>印象の良い返信文を自動生成</strong>
+            <p>感謝・共感・改善意欲を適切に盛り込んだ文章を出力。ネガティブ口コミも誠実に対応できる形に</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>返信文が完成・投稿するだけ</strong>
+            <p>口コミへの対応スピードが上がり、ゲストからの信頼感・予約率の向上につながる</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">印象向上</div>
+          <div class="saving-label">返信品質と速度</div>
+        </div>
+        <div style="font-size:13px;color:#075985;line-height:1.7">
+          口コミ返信は予約検討者も見ている。<br><strong>品質の高い返信が次の予約獲得につながる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 3 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-rank">第3優先</div>
+        <div class="agent-name">外国語案内AIアシスタント</div>
+        <div class="agent-tagline">英語・中国語・韓国語の問い合わせ返信・案内文を自動で翻訳・生成</div>
+        <div class="agent-tasks">
+          <span class="task-tag">英語返信文</span>
+          <span class="task-tag">中国語・韓国語対応</span>
+          <span class="task-tag">多言語案内文</span>
+          <span class="task-tag">館内掲示の翻訳</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:200px">
+          <div class="ft-dot" style="top:10px;background:#0284c7;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:80px;background:#0284c7;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:150px;background:#0284c7;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>外国語の問い合わせ or 日本語の案内文を入力</strong>
+            <p>外国語で届いた問い合わせの翻訳、または日本語の案内文を多言語化。どちらも対応</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>自然で丁寧な多言語テキストを生成</strong>
+            <p>直訳ではなく、文化的なニュアンスに配慮した自然な表現で出力</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>インバウンド対応の負担が大幅に減る</strong>
+            <p>語学力に関係なく、高品質な多言語対応が実現。外国人ゲストの満足度向上に</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">言語の壁</div>
+          <div class="saving-label">を解消</div>
+        </div>
+        <div style="font-size:13px;color:#075985;line-height:1.7">
+          インバウンド需要の増加に対応。<br><strong>語学不要で高品質な外国語対応が可能に</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 4 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-rank">第4優先</div>
+        <div class="agent-name">清掃・引継ぎAIアシスタント</div>
+        <div class="agent-tagline">清掃指示・スタッフ引継ぎ・チェックリストを素早く整理</div>
+        <div class="agent-tasks">
+          <span class="task-tag">清掃指示文</span>
+          <span class="task-tag">引継ぎメモ整理</span>
+          <span class="task-tag">チェックリスト</span>
+          <span class="task-tag">スタッフ連絡文</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:200px">
+          <div class="ft-dot" style="top:10px;background:#0284c7;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:80px;background:#0284c7;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:150px;background:#0284c7;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>「今日の清掃指示を作って」と伝える</strong>
+            <p>チェックイン・チェックアウト情報や特記事項を入力するだけ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>清掃順・注意点・引継ぎ事項を整理</strong>
+            <p>部屋ごとの対応事項・特別配慮・次のスタッフへの引継ぎポイントをまとめて出力</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>スタッフに渡せる指示書が完成</strong>
+            <p>属人化していた引継ぎを標準化。誰でも同じ品質で対応できる状態に</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">標準化</div>
+          <div class="saving-label">引継ぎの属人化解消</div>
+        </div>
+        <div style="font-size:13px;color:#075985;line-height:1.7">
+          口頭伝達・記憶頼りの引継ぎをなくす。<br><strong>スタッフが変わっても同品質のサービスを維持</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 5 -->
+    <div class="agent" id="a5">
+      <div class="agent-header">
+        <div class="agent-rank">第5優先</div>
+        <div class="agent-name">運営改善・売上振り返りAIアシスタント</div>
+        <div class="agent-tagline">稼働率・客単価・季節傾向を整理して、次の改善策の叩き台を作る</div>
+        <div class="agent-tasks">
+          <span class="task-tag">稼働率の振り返り</span>
+          <span class="task-tag">客単価分析</span>
+          <span class="task-tag">季節・曜日傾向</span>
+          <span class="task-tag">改善案の叩き台</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:200px">
+          <div class="ft-dot" style="top:10px;background:#0284c7;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:80px;background:#0284c7;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:150px;background:#0284c7;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>月次・週次の稼働データを貼り付ける</strong>
+            <p>Excelや予約システムのデータをそのまま入力。まとめ方は問わない</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>傾向・課題・改善ポイントを整理</strong>
+            <p>「平日の稼働率が週末の半分以下」「先月と比べて客単価が下がっている」など気づきを自動抽出</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>改善策の叩き台が完成</strong>
+            <p>「次に試せること」の候補リストまで出力。数字を見て判断する時間を確保</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">経営改善</div>
+          <div class="saving-label">数字から打ち手へ</div>
+        </div>
+        <div style="font-size:13px;color:#075985;line-height:1.7">
+          「感覚」から「根拠のある判断」へ。<br><strong>稼働率改善・客単価向上の施策が具体化できる</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section" style="padding-top:64px">
+  <div class="sec-label">Why ShigotoAI</div>
+  <div class="sec-title">AIは使い方よりも、自分の業務への<br>当てはめ方で差が出ます</div>
+  <div class="sec-sub" style="margin-bottom:24px">Geminiを使えているからこそ、次は宿泊業務に合わせた型を作ることが効果的です。</div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>比較項目</th>
+        <th>❌ 独学・動画学習</th>
+        <th>✅ シゴトAI（業務設計）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>返信文の型化</td>
+        <td>毎回プロンプトを考える。品質がばらつく</td>
+        <td>施設のトーンに合わせた返信の型を一緒に作る</td>
+      </tr>
+      <tr>
+        <td>口コミ対応</td>
+        <td>どう返信すればよいか都度迷う</td>
+        <td>高評価・低評価それぞれの型が手元に残る</td>
+      </tr>
+      <tr>
+        <td>Gemini活用の広げ方</td>
+        <td>今の使い方から広げ方が分からない</td>
+        <td>宿泊業務ごとの活用パターンを設計して定着</td>
+      </tr>
+      <tr>
+        <td>詰まったときの対応</td>
+        <td>自分で調べ直す。時間がかかる</td>
+        <td>LINEサポートで実務中の疑問をすぐ解決</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4 STEPS -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Coaching Steps</div>
+    <div class="sec-title">4ステップでAIアシスタントを設計</div>
+    <div class="sec-sub" style="margin-bottom:24px">専任のAI顧問が宿泊業務の流れを聞きながら、使える型を一緒に作ります。</div>
+    <div class="steps-wrap">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>初回面談<br>50分</h4>
+        <p>業務の流れ・担当範囲・課題をヒアリングして優先順位を決定</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>プランナー<br>15分</h4>
+        <p>最初のAIアシスタントの設計・ゴール・評価基準を明確化</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>AI設計<br>15分</h4>
+        <p>返信文や口コミ対応の型を施設に合わせて設計・試作</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h4>育成<br>15分</h4>
+        <p>実際の問い合わせで試用してフィードバック。使える状態に定着</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="section">
+  <div class="sec-label">3-Month Roadmap</div>
+  <div class="sec-title">3ヶ月で、宿泊業務に使える<br>自分専属AIアシスタントチームを作る</div>
+  <div class="sec-sub" style="margin-bottom:24px">最初の1体が使えると確認してから、次のアシスタントへ順番に展開します。</div>
+  <div class="roadmap">
+    <div class="rm-card active">
+      <div class="rm-phase">1週目〜</div>
+      <h4>★予約・問い合わせAI</h4>
+      <ul>
+        <li>返信文の型を設計</li>
+        <li>施設のトーンを反映</li>
+        <li>毎日の返信作業を短縮</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">1ヶ月目</div>
+      <h4>口コミ・接客文面AI</h4>
+      <ul>
+        <li>Google・予約サイト返信の型化</li>
+        <li>ネガティブ口コミ対応を設計</li>
+        <li>宿泊前後の案内文を整備</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">2ヶ月目</div>
+      <h4>外国語・案内文AI</h4>
+      <ul>
+        <li>英語・中国語返信の型化</li>
+        <li>多言語の館内掲示を整備</li>
+        <li>インバウンド対応を標準化</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">3ヶ月目</div>
+      <h4>運営改善・売上AI</h4>
+      <ul>
+        <li>稼働率・客単価の振り返り</li>
+        <li>清掃・引継ぎの標準化</li>
+        <li>宿泊業務全体をAIで補助</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT + PRICE -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Support</div>
+    <div class="sec-title">シゴトAIのサポート体制</div>
+    <div class="sec-sub" style="margin-bottom:24px">3ヶ月間、実務で使いながら一緒に改善します。</div>
+    <div class="support-grid">
+      <div class="support-item">
+        <div class="sup-icon">🎯</div>
+        <div>
+          <div class="sup-title">初回面談50分</div>
+          <div class="sup-desc">宿泊業務の流れをヒアリングして、最初のAIアシスタントを設計</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">🎫</div>
+        <div>
+          <div class="sup-title">顧問チケット3枚（30分×3回）</div>
+          <div class="sup-desc">専任AI顧問との個別面談で設計・改善・次の展開を実施</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">💬</div>
+        <div>
+          <div class="sup-title">LINEサポート 3ヶ月無制限</div>
+          <div class="sup-desc">実務で詰まったときにすぐ相談。繁忙期でも安心して使い続けられる</div>
+        </div>
+      </div>
+      <div class="support-item">
+        <div class="sup-icon">🎓</div>
+        <div>
+          <div class="sup-title">セミナー・講義 永久参加</div>
+          <div class="sup-desc">最新のAI活用事例・宿泊業での実践例をキャッチアップ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-block">
+      <div class="price-label">3ヶ月 一括プログラム料金</div>
+      <div class="price-main">¥298,000</div>
+      <div class="price-note">サポート3ヶ月 ／ セミナー・講義 永久参加</div>
+      <a href="#" class="price-cta">まずは無料相談で話を聞く</a>
+      <div class="guarantee">🛡️ 8日間効果保証 — 実務で使えないと感じたら全額返金</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>シゴトAI</strong> — あなたの業務に合わせたAI活用を設計・定着させる3ヶ月プログラム<br>
+  <span style="margin-top:8px;display:block">© 2024 ShigotoAI. All rights reserved.</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.style.animation = 'agent-in .4s ease forwards';
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
