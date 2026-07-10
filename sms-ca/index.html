@@ -472,6 +472,36 @@ footer strong{color:#99f6e4}
         <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Copilot → エージェント</div>
         <div style="font-size:12px;color:#94a3b8;line-height:1.8">会社支給がMicrosoft環境ならこれ。社内データを外に出さずに使える可能性が高く、業務利用の本命。社内のAI利用ルールを最初に確認</div>
       </div>
+      <div style="background:rgba(45,212,191,.1);border:1.5px solid rgba(45,212,191,.4);border-radius:14px;padding:20px">
+        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Claude → プロジェクト / Claude Code サブエージェント</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8">Claudeの「プロジェクト」はカスタムGPTと同じ感覚で作成可能。さらに<strong style="color:#5eead4">Claude Code</strong>なら複数のサブエージェントをチーム化でき、「一つの指示で複数AIが分担して動く」上級の使い方ができる（下記参照）</div>
+      </div>
+    </div>
+
+    <!-- CLAUDE CODE -->
+    <div style="background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.25);border-radius:16px;padding:24px 26px;margin-bottom:36px">
+      <div style="font-size:15px;font-weight:800;color:#5eead4;margin-bottom:10px">🚀 上級編：Claude Codeでのエージェント作成</div>
+      <div style="font-size:12.5px;color:#cbd5e1;line-height:1.9;margin-bottom:16px">Claude Codeでは、プロジェクトフォルダに設定ファイルを置くだけでAI従業員（サブエージェント）を定義できます。単体のカスタムGPTと違い、<strong style="color:#5eead4">複数のエージェントを連携させて「面談メモ整理→求人マッチング案→推薦文下書き」を一つの指示で流す</strong>ことも可能です。</div>
+      <div style="display:grid;gap:8px;margin-bottom:16px">
+        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">①</span><span><strong>CLAUDE.md を作る</strong>——プロジェクトフォルダ直下に置くメモ。あなたの業務前提（リハ職CA・両面型・個人情報ルール）を書いておくと、毎回説明せずに全エージェントが前提を共有する</span></div>
+        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">②</span><span><strong>.claude/agents/ にエージェント定義を置く</strong>——「面談メモ整理.md」「推薦文作成.md」のように1ファイル1エージェント。中身は上のテンプレと同じ（役割・手順・ルール）</span></div>
+        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">③</span><span><strong>「/agents」コマンドで対話的に作成も可能</strong>——Claude Codeに「面談メモを整理するエージェントを作って」と頼めば、定義ファイル自体をClaudeが書いてくれる</span></div>
+        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">④</span><span><strong>ファイルを直接読み書きできるのが最大の強み</strong>——面談メモのテキストファイルを置いたフォルダを渡せば、複数件をまとめて整理・比較表作成・週次振り返りまで一括処理できる</span></div>
+      </div>
+      <div class="prompt-box" style="margin-top:0">
+        <div class="prompt-label">AGENT FILE EXAMPLE — .claude/agents/mendan-seiri.md</div>
+        <div class="prompt-text">---
+name: mendan-seiri
+description: 面談メモを構造化サマリーに整理する。面談メモの整理を頼まれたら必ずこのエージェントを使う。
+---
+
+あなたはリハビリ職専門・両面型CAのアシスタント。
+渡された面談メモを以下の形式で整理する：
+1. 転職理由（本音/建前） 2. 希望条件（MUST/WANT）
+3. 懸念 4. 温度感（5段階） 5. 次アクション 6. 200字サマリー
+ルール：推測で補わない。個人名は「候補者」に置換。</div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.8">💡 使い分けの目安：<strong style="color:#5eead4">日常の1件ずつの処理はカスタムGPT/Gemで十分</strong>。複数件の一括処理・ファイル管理・エージェント連携をしたくなったらClaude Codeへ。</div>
     </div>
 
     <!-- 5 STEPS -->
