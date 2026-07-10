@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>リハビリ職 両面型CA AI活用マップ | 梶原様専用</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.75}
+
+.hero{background:linear-gradient(135deg,#042f2e 0%,#0f4c4a 50%,#134e4a 100%);padding:64px 24px 72px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(45,212,191,.12),transparent)}
+.badge{display:inline-block;background:rgba(45,212,191,.15);border:1px solid rgba(45,212,191,.4);color:#5eead4;font-size:12px;letter-spacing:.1em;padding:5px 16px;border-radius:20px;margin-bottom:18px}
+.hero h1{font-size:clamp(23px,4.5vw,36px);font-weight:800;color:#fff;line-height:1.4;margin-bottom:14px}
+.hero h1 span{color:#2dd4bf}
+.hero-lead{color:#94a3b8;font-size:14px;max-width:640px;margin:0 auto 24px;line-height:1.9}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hero-tags span{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:#cbd5e1;font-size:12px;padding:4px 14px;border-radius:20px}
+
+.section{padding:56px 24px;max-width:900px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:.15em;color:#0d9488;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(21px,4vw,28px);font-weight:800;color:#0f172a;margin-bottom:10px}
+.sec-sub{color:#64748b;font-size:14px;margin-bottom:36px}
+
+/* MARKET CARDS */
+.market-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.mk-card{background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04);text-align:center}
+.mk-num{font-size:26px;font-weight:900;color:#0d9488;margin-bottom:4px}
+.mk-label{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.mk-note{font-size:11px;color:#64748b;line-height:1.6}
+.mk-src{font-size:10px;color:#94a3b8;margin-top:6px}
+
+/* WORKFLOW MAP */
+.flow-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.fm-item{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:14px 10px;text-align:center;position:relative}
+.fm-item.ca{border-top:3px solid #0d9488}
+.fm-item.ra{border-top:3px solid #f59e0b}
+.fm-item.both{border-top:3px solid #6366f1}
+.fm-num{font-size:10px;color:#94a3b8;font-weight:700;margin-bottom:4px}
+.fm-icon{font-size:20px;margin-bottom:4px}
+.fm-label{font-size:11px;font-weight:700;color:#0f172a;line-height:1.4}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:#64748b}
+.legend span{display:flex;align-items:center;gap:6px}
+.lg-dot{width:10px;height:10px;border-radius:3px}
+
+/* STAGE BLOCKS */
+.stage{background:#fff;border-radius:18px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:28px;overflow:hidden}
+.stage-head{padding:22px 26px 14px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid #f1f5f9}
+.stage-num{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stage-num.ra{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.stage-num.both{background:linear-gradient(135deg,#6366f1,#4f46e5)}
+.stage-title{font-size:17px;font-weight:800;color:#0f172a}
+.stage-side{font-size:11px;font-weight:700;margin-top:2px}
+.stage-side.ca{color:#0d9488}
+.stage-side.ra{color:#d97706}
+.stage-side.both{color:#4f46e5}
+.stage-body{padding:20px 26px 24px}
+.use-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed #e2e8f0}
+.use-item:last-of-type{border-bottom:none}
+.use-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.use-title{font-size:13.5px;font-weight:700;color:#0f172a;margin-bottom:2px}
+.use-desc{font-size:12.5px;color:#64748b;line-height:1.8}
+.prompt-box{background:#0f172a;border-radius:12px;padding:14px 18px;margin-top:14px}
+.prompt-label{font-size:10px;font-weight:700;color:#5eead4;letter-spacing:.1em;margin-bottom:6px}
+.prompt-text{font-size:12px;color:#e2e8f0;line-height:1.9;font-family:'Hiragino Sans',sans-serif}
+
+/* CAUTION */
+.caution{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:14px;padding:20px 24px;margin-bottom:8px}
+.caution h3{font-size:14px;font-weight:800;color:#92400e;margin-bottom:8px}
+.caution ul{list-style:none;padding:0}
+.caution li{font-size:13px;color:#78350f;padding:3px 0;padding-left:18px;position:relative;line-height:1.8}
+.caution li::before{content:'⚠';position:absolute;left:0;font-size:11px}
+
+footer{background:#042f2e;color:#5eead4;text-align:center;padding:28px 24px;font-size:12px;opacity:.9}
+footer strong{color:#99f6e4}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">エスエムエス｜コメディカル領域（リハビリ職）</div>
+  <h1>両面型キャリアアドバイザーの<br><span>AI活用マップ</span></h1>
+  <p class="hero-lead">PT（理学療法士）・OT（作業療法士）・ST（言語聴覚士）領域で、求職者と事業所の両面を担当するあなたのための、業務工程別AI活用リファレンス。いつでも見返して「今の業務のどこにAIを差し込めるか」を確認できます。</p>
+  <div class="hero-tags">
+    <span>🧑‍⚕️ CA：求職者対応</span>
+    <span>🏥 RA：事業所対応</span>
+    <span>🔁 両面ならではの活用</span>
+    <span>📚 業界知識のキャッチアップ</span>
+  </div>
+</div>
+
+<!-- MARKET -->
+<div class="section">
+  <div class="sec-label">Market Cheat Sheet</div>
+  <div class="sec-title">まず押さえる、リハビリ職転職市場の基礎数字</div>
+  <div class="sec-sub">面談でも事業所折衝でも使う前提知識。数字は目安として、最新データはAIに定期更新させるのがおすすめです。</div>
+  <div class="market-grid">
+    <div class="mk-card">
+      <div class="mk-num">3〜4倍</div>
+      <div class="mk-label">PTの有効求人倍率</div>
+      <div class="mk-note">全産業平均1.3倍に対し高水準。売り手市場だが職場の質の見極めが重要</div>
+    </div>
+    <div class="mk-card">
+      <div class="mk-num">約443万</div>
+      <div class="mk-label">PT平均年収</div>
+      <div class="mk-note">月収30.9万＋賞与71.7万が目安。OTは約374万円と差がある</div>
+    </div>
+    <div class="mk-card">
+      <div class="mk-num">訪問系が高給</div>
+      <div class="mk-label">職場別給与の傾向</div>
+      <div class="mk-note">訪問看護ST・訪問リハが上位。1訪問単価＋インセンティブ構造</div>
+    </div>
+    <div class="mk-card">
+      <div class="mk-num">+45%</div>
+      <div class="mk-label">外来・在宅医療の需要</div>
+      <div class="mk-note">2025→2040年推計。介護・在宅サービスも約20%増でリハ職需要は拡大</div>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#94a3b8">※地域差が大きい点にも注意（都道府県間で年収に100万円超の開きがあるデータもあり）</div>
+</div>
+
+<!-- WORKFLOW MAP -->
+<div style="background:#fff;padding:56px 24px">
+  <div style="max-width:900px;margin:0 auto">
+    <div class="sec-label">Workflow Map</div>
+    <div class="sec-title">両面型CAの業務全体像 — AIを差し込める8つの工程</div>
+    <div class="sec-sub">下の8工程それぞれに、具体的なAI活用をまとめています。困ったらこのマップに戻ってください。</div>
+    <div class="flow-map">
+      <div class="fm-item ca"><div class="fm-num">01</div><div class="fm-icon">📞</div><div class="fm-label">初回接触・面談準備</div></div>
+      <div class="fm-item ca"><div class="fm-num">02</div><div class="fm-icon">🗣️</div><div class="fm-label">キャリア面談</div></div>
+      <div class="fm-item both"><div class="fm-num">03</div><div class="fm-icon">🎯</div><div class="fm-label">マッチング・求人提案</div></div>
+      <div class="fm-item ca"><div class="fm-num">04</div><div class="fm-icon">📄</div><div class="fm-label">書類添削・面接対策</div></div>
+      <div class="fm-item ra"><div class="fm-num">05</div><div class="fm-icon">🏥</div><div class="fm-label">事業所開拓・求人ヒアリング</div></div>
+      <div class="fm-item both"><div class="fm-num">06</div><div class="fm-icon">🤝</div><div class="fm-label">推薦・条件調整</div></div>
+      <div class="fm-item ca"><div class="fm-num">07</div><div class="fm-icon">🌱</div><div class="fm-label">入職後フォロー</div></div>
+      <div class="fm-item both"><div class="fm-num">08</div><div class="fm-icon">📚</div><div class="fm-label">自己管理・学習</div></div>
+    </div>
+    <div class="legend">
+      <span><span class="lg-dot" style="background:#0d9488"></span>CA業務（求職者側）</span>
+      <span><span class="lg-dot" style="background:#f59e0b"></span>RA業務（事業所側）</span>
+      <span><span class="lg-dot" style="background:#6366f1"></span>両面が活きる工程</span>
+    </div>
+  </div>
+</div>
+
+<!-- STAGES -->
+<div class="section">
+  <div class="sec-label">Stage by Stage</div>
+  <div class="sec-title">工程別 AI活用リファレンス</div>
+  <div class="sec-sub">各工程の「AIに任せられること」と、そのまま使えるプロンプト例。</div>
+
+  <!-- STAGE 1 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num">01</div>
+      <div>
+        <div class="stage-title">初回接触・面談準備</div>
+        <div class="stage-side ca">CA業務｜登録者への最初のアプローチ</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">✉️</div>
+        <div>
+          <div class="use-title">初回連絡文・SMS・メールの型作成</div>
+          <div class="use-desc">登録経路（サイト登録/スカウト返信）や職種（PT/OT/ST）別に、返信率の高い初回連絡文の型を作っておく。時間帯・トーン別のバリエーションも一括生成</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🔍</div>
+        <div>
+          <div class="use-title">面談前の仮説メモ生成</div>
+          <div class="use-desc">登録情報（経験年数・現職場の種別・希望エリア）から「この人が転職を考える背景の仮説」「聞くべき質問リスト」を面談前に3分で用意</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">📅</div>
+        <div>
+          <div class="use-title">日程調整文・リマインド文の自動化</div>
+          <div class="use-desc">面談前日のリマインド、キャンセル時の再設定文など、定型コミュニケーションをすべて型化</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">回復期病院で5年目のPT、28歳、訪問リハ希望で登録。この方が転職を考えている背景として考えられる仮説を5つ、面談で確認すべき質問を10個、優先順に出して。給与・キャリア・働き方・人間関係・スキルの観点を網羅して。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 2 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num">02</div>
+      <div>
+        <div class="stage-title">キャリア面談</div>
+        <div class="stage-side ca">CA業務｜ヒアリングと信頼構築</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">📝</div>
+        <div>
+          <div class="use-title">面談メモ→構造化サマリーの自動変換</div>
+          <div class="use-desc">面談中の走り書きメモを「転職理由/希望条件(MUST・WANT)/懸念/温度感/次アクション」に自動整理。システム入力用の要約も同時生成</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🧭</div>
+        <div>
+          <div class="use-title">キャリアパスの選択肢提示資料</div>
+          <div class="use-desc">「回復期→訪問」「病院→通所」など、リハ職特有のキャリアチェンジで変わること（給与構造・働き方・スキル・算定単位）を比較表で作成し、面談中にそのまま見せられる形に</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">💬</div>
+        <div>
+          <div class="use-title">難しい相談への回答準備</div>
+          <div class="use-desc">「ブランク3年あるが復帰できるか」「管理職経験なしで年収を上げたい」など、答えにくい相談パターンへの回答骨子を事前にストック化</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">以下の面談メモを整理して。①転職理由（本音と建前を区別）②希望条件をMUST/WANTに分類 ③懸念・リスク ④温度感（5段階）⑤次回までのアクション。最後にシステム登録用の200字サマリーも。［メモ貼り付け］</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 3 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num both">03</div>
+      <div>
+        <div class="stage-title">マッチング・求人提案</div>
+        <div class="stage-side both">両面の強みが最も活きる工程</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">🎯</div>
+        <div>
+          <div class="use-title">求人票→求職者別「刺さる紹介文」変換</div>
+          <div class="use-desc">同じ求人でも、Aさんには「教育体制」、Bさんには「残業の少なさ」を軸に紹介文を書き分け。求職者プロフィールと求人票を渡せば個別最適化された提案文が完成</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">⚖️</div>
+        <div>
+          <div class="use-title">複数求人の比較表を面談用に自動生成</div>
+          <div class="use-desc">候補3件の「給与/通勤/症例/教育/昇給イメージ/職場の雰囲気」比較表を数分で作成。求職者の意思決定を早める</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🔁</div>
+        <div>
+          <div class="use-title">ミスマッチの事前検知</div>
+          <div class="use-desc">両面担当だからこそ知っている事業所側の実情（教育体制の実態・退職者の傾向）と求職者の希望を突き合わせ、「この組み合わせの懸念点」をAIに洗い出させてから提案</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">この求人票を、次の求職者向けの紹介メッセージに変換して。求職者：回復期5年目PT・訪問未経験・年収up希望・運転苦手ではない・教育体制を気にしている。不安を先回りでケアする一文を必ず入れて。300字以内。［求人票貼り付け］</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 4 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num">04</div>
+      <div>
+        <div class="stage-title">書類添削・面接対策</div>
+        <div class="stage-side ca">CA業務｜選考通過率を上げる</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">📄</div>
+        <div>
+          <div class="use-title">職務経歴書の添削・リライト</div>
+          <div class="use-desc">リハ職の経歴書にありがちな「業務の羅列」を、症例数・介入の工夫・多職種連携・実習指導などの成果ベースに書き換え。応募先の種別（回復期/訪問/通所）に合わせた強調点の調整も</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🎤</div>
+        <div>
+          <div class="use-title">面接想定問答の個別生成</div>
+          <div class="use-desc">応募先の種別×求職者の経歴から「聞かれそうな質問と回答骨子」を生成。転職回数が多い・ブランクありなどの懸念への切り返しも準備</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">📨</div>
+        <div>
+          <div class="use-title">推薦文の品質向上</div>
+          <div class="use-desc">事業所に送る推薦文を、面談メモから自動起草。「なぜこの人がこの職場に合うか」を事業所の採用観点で書けるのは両面型の強み</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">訪問リハ事業所への応募面接を想定して。候補者：回復期5年目PT、訪問未経験。「なぜ訪問か」「一人で判断できるか」「利用者家族との関係構築」を軸に想定質問8個と、経歴を踏まえた回答例を作って。未経験の不安を強みに変換する言い回しで。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 5 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num ra">05</div>
+      <div>
+        <div class="stage-title">事業所開拓・求人ヒアリング</div>
+        <div class="stage-side ra">RA業務｜求人の質が成約を決める</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">🔎</div>
+        <div>
+          <div class="use-title">訪問前の事業所リサーチ自動化</div>
+          <div class="use-desc">法人HP・介護事業所情報公表システム・求人履歴から「事業所の特徴・採用に苦戦していそうな点・提案の切り口」を訪問前に整理。初回訪問の質が変わる</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">📋</div>
+        <div>
+          <div class="use-title">求人ヒアリングシートの深掘り質問生成</div>
+          <div class="use-desc">「PT募集・年収400万」で終わらせず、教育体制・症例構成・残業実態・前任者の退職理由など、求職者が本当に知りたい情報を引き出す質問リストを準備</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">✍️</div>
+        <div>
+          <div class="use-title">「選ばれる求人票」へのリライト</div>
+          <div class="use-desc">事業所からもらった情報を、求職者目線で魅力が伝わる求人票に変換。曖昧な「アットホームな職場」を具体的な事実（歓迎会の頻度・院内勉強会・有給消化率）に置き換える提案も</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">明日訪問する訪問看護ステーションの初回商談準備をしたい。この事業所HP情報から、①事業所の強み・特徴 ②リハ職採用で苦戦していそうな仮説 ③ヒアリングすべき質問10個 ④他社エージェントと差別化できる提案の切り口を整理して。［HP情報貼り付け］</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 6 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num both">06</div>
+      <div>
+        <div class="stage-title">推薦・条件調整・クロージング</div>
+        <div class="stage-side both">両面の情報を持つあなたが最も価値を出せる工程</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">🤝</div>
+        <div>
+          <div class="use-title">条件交渉のシナリオ準備</div>
+          <div class="use-desc">「求職者は年収420万希望・事業所の提示は390万」のような場面で、双方の落とし所・代替条件（賞与/手当/昇給テーブル/研修費）・交渉の順番をAIと壁打ちしてから臨む</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">💭</div>
+        <div>
+          <div class="use-title">迷っている求職者への後押し整理</div>
+          <div class="use-desc">「決めきれない」求職者の迷いポイントを言語化し、意思決定を助ける比較材料・不安への回答を準備。無理押しではなく「判断材料を揃える」型</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">📄</div>
+        <div>
+          <div class="use-title">内定条件の確認・すり合わせ文書</div>
+          <div class="use-desc">口頭で決まった条件（給与・勤務地・オンコール有無・訪問件数ノルマ）を漏れなく文書化し、入職後トラブルを予防</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">条件交渉の壁打ち相手になって。求職者：希望年収420万・現職380万・訪問未経験。事業所：提示390万・インセンティブ制度あり・人手不足で採用意欲高。双方が納得できる着地シナリオを3パターン、交渉の切り出し方の実際のセリフ付きで。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 7 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num">07</div>
+      <div>
+        <div class="stage-title">入職後フォロー・リピート獲得</div>
+        <div class="stage-side ca">CA業務｜定着支援と紹介の連鎖</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">🌱</div>
+        <div>
+          <div class="use-title">フォロー連絡の仕組み化</div>
+          <div class="use-desc">入職1週間・1ヶ月・3ヶ月のタイミング別フォロー文を型化。回答から「早期離職リスクの兆候」をAIに判定させ、優先フォロー対象を絞る</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🔗</div>
+        <div>
+          <div class="use-title">紹介依頼(リファラル)の自然な打診文</div>
+          <div class="use-desc">満足度の高い入職者への「同僚・後輩の紹介」打診を、押し付けがましくないトーンで型化</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🏥</div>
+        <div>
+          <div class="use-title">事業所への定着レポート</div>
+          <div class="use-desc">入職者の定着状況を事業所に共有する文書を型化。次の求人依頼につながる信頼構築ツールとして</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAGE 8 -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num both">08</div>
+      <div>
+        <div class="stage-title">自己管理・KPI・業界学習</div>
+        <div class="stage-side both">両面型の膨大なタスクを回す土台</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div class="use-item">
+        <div class="use-icon">📊</div>
+        <div>
+          <div class="use-title">週次の数字振り返り</div>
+          <div class="use-desc">面談数・提案数・推薦数・内定数・成約数のファネルをAIに渡し、「どこで詰まっているか」「来週何を増やすべきか」の分析を毎週5分で</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">🗂️</div>
+        <div>
+          <div class="use-title">タスク・案件の優先順位整理</div>
+          <div class="use-desc">両面型は同時進行案件が多い。毎朝、進行中案件リストから「今日絶対動かすべき3件」をAIに整理させる朝会習慣</div>
+        </div>
+      </div>
+      <div class="use-item">
+        <div class="use-icon">📚</div>
+        <div>
+          <div class="use-title">業界知識のキャッチアップ</div>
+          <div class="use-desc">診療報酬・介護報酬の改定、リハ職の算定単位、訪問リハと訪問看護Ⅰ5の違いなど、CAとしての信頼を左右する専門知識をAIに「新人CA向けに解説させる」学習法。面談で聞かれて答えられなかったことをその日のうちに潰す</div>
+        </div>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">PROMPT EXAMPLE</div>
+        <div class="prompt-text">リハビリ職専門のキャリアアドバイザー新人だと思って教えて。「訪問リハビリ」と「訪問看護ステーションからのリハ職訪問」の違いを、制度・報酬・働き方・求職者へ説明するときの言い方の順で。面談でそのまま使える説明トークも付けて。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAUTION -->
+<div style="background:#fff;padding:56px 24px">
+  <div style="max-width:900px;margin:0 auto">
+    <div class="sec-label">Ground Rules</div>
+    <div class="sec-title">AI活用の絶対ルール</div>
+    <div class="sec-sub" style="margin-bottom:24px">人材紹介は個人情報のかたまり。守りを固めてこそ攻められます。</div>
+    <div class="caution">
+      <h3>運用上の注意</h3>
+      <ul>
+        <li>求職者の氏名・連絡先・生年月日など個人を特定できる情報はAIに入力しない（「回復期5年目PT・28歳」のような属性化で十分機能する）</li>
+        <li>事業所の非公開情報・条件は社内ルールを確認してから。会社が認めたAIツール（Copilot等の法人契約）が何かを最初に確認する</li>
+        <li>AIの出力する制度・報酬の情報は改定で古くなる。制度説明は必ず一次情報（厚労省資料）で裏取りしてから求職者に伝える</li>
+        <li>推薦文・交渉文など「あなたの名前で出るもの」は必ず自分の目で最終確認。AIは下書き担当、判断と責任はあなた</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>両面型CA AI活用マップ</strong> — 迷ったらこのページに戻る。<br>
+  <span style="margin-top:6px;display:block;opacity:.7">新しい業務パターンを見つけたら、このマップに工程を追加していく</span>
+</footer>
+
+</body>
+</html>
