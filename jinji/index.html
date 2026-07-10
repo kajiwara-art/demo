@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>人事プロフェッショナル × AI従業員 | シゴトAI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}
+
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#172554 100%);padding:72px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(99,102,241,.15),transparent)}
+.badge{display:inline-block;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);color:#a5b4fc;font-size:12px;letter-spacing:.1em;padding:5px 16px;border-radius:20px;margin-bottom:20px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:800;color:#fff;line-height:1.35;margin-bottom:16px}
+.hero h1 span{color:#818cf8}
+.hero-lead{color:#94a3b8;font-size:15px;max-width:620px;margin:0 auto 28px;line-height:1.9}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hero-tags span{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.13);color:#cbd5e1;font-size:12px;padding:4px 14px;border-radius:20px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:20px 24px}
+.context-inner{max-width:880px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.ctx-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#64748b}
+.ctx-icon{width:30px;height:30px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ctx-item strong{display:block;color:#0f172a;font-size:12px;margin-bottom:1px}
+
+.section{padding:64px 24px;max-width:880px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:.15em;color:#4f46e5;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(22px,4vw,30px);font-weight:800;color:#0f172a;margin-bottom:10px}
+.sec-sub{color:#64748b;font-size:14px;margin-bottom:40px}
+
+/* INSIGHT BOX */
+.insight{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1.5px solid #c7d2fe;border-radius:16px;padding:24px 28px;margin-bottom:40px}
+.insight h3{font-size:15px;font-weight:800;color:#3730a3;margin-bottom:8px}
+.insight p{font-size:13px;color:#4338ca;line-height:1.9}
+
+/* PROBLEM CARDS */
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.prob-card{background:#fff;border:1.5px solid #fca5a5;border-radius:14px;padding:20px;position:relative}
+.prob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#f97316);border-radius:14px 14px 0 0}
+.prob-icon{font-size:24px;margin-bottom:8px}
+.prob-title{font-size:13px;font-weight:700;color:#dc2626;margin-bottom:4px}
+.prob-desc{font-size:12px;color:#64748b;line-height:1.7}
+
+/* AGENT CARDS */
+.agent{background:#fff;border-radius:18px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:32px;overflow:hidden;opacity:0;transform:translateY(20px)}
+.agent-header{padding:24px 24px 0}
+.agent-rank{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.agent-rank.star{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-color:#a5b4fc;color:#3730a3}
+.agent-name{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px}
+.agent-tagline{font-size:13px;color:#64748b;margin-bottom:16px}
+.agent-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.task-tag{background:#eef2ff;border:1px solid #c7d2fe;color:#4338ca;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+
+.ft-row{display:flex;gap:0;padding:0 24px 0;margin-bottom:8px}
+.ft-line{width:2px;background:#e2e8f0;margin:0 19px;flex-shrink:0;position:relative}
+.ft-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;position:absolute;left:-4px;flex-shrink:0;opacity:0}
+.ft-content{background:#f8fafc;border-radius:12px;padding:14px 16px;flex:1;margin-bottom:12px;opacity:0;transform:translateX(-8px)}
+.ft-content strong{font-size:13px;color:#0f172a;display:block;margin-bottom:3px}
+.ft-content p{font-size:12px;color:#64748b;line-height:1.7}
+.ft-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px}
+.ft-badge.input{background:#dbeafe;color:#1e40af}
+.ft-badge.output{background:#d1fae5;color:#065f46}
+.ft-badge.auto{background:#e0e7ff;color:#3730a3}
+
+.saving{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border:1.5px solid #a5b4fc;border-radius:12px;padding:16px 20px;margin:0 24px 24px;display:flex;align-items:center;gap:16px;opacity:0}
+.saving-num{font-size:24px;font-weight:900;color:#4f46e5;white-space:nowrap}
+.saving-label{font-size:12px;color:#3730a3;font-weight:600}
+
+/* SAMPLE BOX (dark) */
+.sample-box{background:#0f172a;border-radius:14px;margin:0 24px 24px;overflow:hidden}
+.sample-header{background:#1e293b;padding:10px 18px;font-size:11px;color:#94a3b8;font-weight:600;display:flex;align-items:center;gap:8px}
+.sample-body{padding:18px}
+.sample-table{width:100%;border-collapse:collapse}
+.sample-table th{color:#64748b;font-size:11px;padding:8px 12px;text-align:left;font-weight:600;border-bottom:1px solid #334155}
+.sample-table td{padding:9px 12px;font-size:12px;color:#e2e8f0;border-bottom:1px solid #1e293b;vertical-align:top;line-height:1.6}
+.sample-table tr:last-child td{border-bottom:none}
+.grade-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:rgba(129,140,248,.15);color:#a5b4fc}
+
+/* COMPARISON */
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.comp-table th{padding:14px 18px;font-size:13px;font-weight:700;text-align:left}
+.comp-table th:first-child{background:#f8fafc;color:#475569;width:26%}
+.comp-table th:nth-child(2){background:#fef2f2;color:#dc2626}
+.comp-table th:nth-child(3){background:#eef2ff;color:#4f46e5}
+.comp-table td{padding:14px 18px;font-size:13px;border-top:1px solid #f1f5f9;vertical-align:top;line-height:1.7}
+.comp-table td:first-child{background:#fafafa;font-weight:600;color:#334155}
+.comp-table td:nth-child(2){color:#64748b}
+.comp-table td:nth-child(3){color:#3730a3;font-weight:600}
+
+/* JOB HUNT SECTION (dark) */
+.dark-section{background:linear-gradient(135deg,#0f172a,#1e1b4b);padding:64px 24px;color:#fff}
+.dark-inner{max-width:880px;margin:0 auto}
+.dark-section .sec-label{color:#a5b4fc}
+.dark-section .sec-title{color:#fff}
+.dark-section .sec-sub{color:#94a3b8}
+.jh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.jh-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px}
+.jh-icon{font-size:24px;margin-bottom:10px}
+.jh-title{font-size:14px;font-weight:700;color:#e0e7ff;margin-bottom:6px}
+.jh-desc{font-size:12px;color:#94a3b8;line-height:1.8}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.rm-card{background:#fff;border-radius:14px;padding:20px;border-top:4px solid #4f46e5;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rm-card.active{border-top-color:#4338ca;background:linear-gradient(135deg,#eef2ff,#e0e7ff)}
+.rm-phase{font-size:11px;font-weight:700;color:#4f46e5;letter-spacing:.1em;margin-bottom:6px}
+.rm-card h4{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px}
+.rm-card ul{list-style:none;padding:0}
+.rm-card ul li{font-size:12px;color:#64748b;padding:2px 0;padding-left:14px;position:relative;line-height:1.6}
+.rm-card ul li::before{content:'→';position:absolute;left:0;color:#4f46e5;font-size:11px}
+
+footer{background:#0f172a;color:#64748b;text-align:center;padding:32px 24px;font-size:12px}
+footer strong{color:#94a3b8}
+
+@keyframes dot-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes content-in{0%{opacity:0;transform:translateX(-8px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes agent-in{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">人事プロフェッショナル × AI従業員</div>
+  <h1>「壁打ち」で終わらせない。<br><span>人事の専門業務</span>を任せられる<br>AI従業員チームへ</h1>
+  <p class="hero-lead">評価制度の設計・定着、給与・賃金テーブル、就業規則、人事総括——「人事ならでは」の専門業務にAIをどう組み込むか。ChatGPT・Gemini・Copilotの壁打ち活用から、一段上の使い方をご提案します。</p>
+  <div class="hero-tags">
+    <span>📐 人事制度設計</span>
+    <span>📊 評価制度の定着</span>
+    <span>💰 給与・賃金制度</span>
+    <span>📜 規定・就業規則</span>
+    <span>📈 人事総括</span>
+  </div>
+</div>
+
+<!-- CONTEXT BAR -->
+<div class="context">
+  <div class="context-inner">
+    <div class="ctx-item"><div class="ctx-icon">👤</div><div><strong>専門領域</strong>人事制度・評価制度・給与・規定</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🤖</div><div><strong>AI活用状況</strong>ChatGPT（有料）・Gemini・Copilot を壁打ちで活用中</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🎯</div><div><strong>知りたいこと</strong>人事の専門業務にAIをどう組み込み、どんな効果が出るか</div></div>
+  </div>
+</div>
+
+<!-- INSIGHT -->
+<div class="section" style="padding-bottom:0">
+  <div class="insight">
+    <h3>💡 「壁打ち」と「AI従業員」の違い</h3>
+    <p>壁打ちは<strong>その場限りの相談相手</strong>。AI従業員は、あなたの人事哲学・制度設計の考え方・過去の成果物を教え込んだ<strong>再利用できる専門部下</strong>です。等級定義の書き方、評価基準の粒度、賃金カーブの設計方針——一度型を作れば、次の案件でも同じ品質で草案が出てきます。転職先でも、独立しても、この「型」はあなたの資産として持ち運べます。</p>
+  </div>
+</div>
+
+<!-- 課題 -->
+<div class="section" style="padding-top:40px">
+  <div class="sec-label">HR-Specific Problems</div>
+  <div class="sec-title">人事「ならでは」の業務は、なぜAI化が難しいと感じるのか</div>
+  <div class="sec-sub">議事録やメール作成のような汎用業務と違い、人事の専門業務には固有の壁があります。だからこそ、設計すれば差がつきます。</div>
+  <div class="problem-grid">
+    <div class="prob-card">
+      <div class="prob-icon">📐</div>
+      <div class="prob-title">制度設計は「文脈」が命</div>
+      <div class="prob-desc">等級制度・評価制度は会社の事業フェーズ・組織文化・経営方針に依存する。汎用プロンプトでは「教科書的な答え」しか返ってこない</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">🔄</div>
+      <div class="prob-title">評価制度は「作った後」が本番</div>
+      <div class="prob-desc">制度は作れても、評価者研修・目標設定支援・評価コメントの品質管理・甘辛調整まで回し切れず、形骸化する</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">💰</div>
+      <div class="prob-title">給与・規定は正確性が絶対</div>
+      <div class="prob-desc">賃金テーブル・就業規則は法令(労基法・同一労働同一賃金)との整合が必要。AIの出力をそのまま使えず、検証の仕方が分からない</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">📈</div>
+      <div class="prob-title">人事総括は集計に忙殺される</div>
+      <div class="prob-desc">離職率・昇格率・評価分布・研修効果……データはあるのに、集計とパワポ化に時間を取られ、示唆出しまで辿り着けない</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI AGENTS -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:880px;margin:0 auto">
+    <div class="sec-label">AI Employees</div>
+    <div class="sec-title">人事専門業務のAI従業員チーム 5体</div>
+    <div class="sec-sub" style="margin-bottom:40px">判断はあなたが持ち、草案・展開・整合性チェック・集計をAIが担う設計です。</div>
+
+    <!-- AGENT 1 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-rank star">★ 1体目 — 専門性が最も活きる領域</div>
+        <div class="agent-name">評価制度設計AI従業員</div>
+        <div class="agent-tagline">等級定義・評価基準・行動評価項目の草案を、あなたの設計思想に沿って自動展開</div>
+        <div class="agent-tasks">
+          <span class="task-tag">等級定義の草案</span>
+          <span class="task-tag">職種別評価基準</span>
+          <span class="task-tag">コンピテンシー展開</span>
+          <span class="task-tag">目標設定ガイド</span>
+          <span class="task-tag">制度説明資料</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#4f46e5;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#4f46e5;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#4f46e5;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>会社の文脈と設計方針を入力</strong>
+            <p>事業フェーズ / 組織規模 / 職種構成 / 等級数 / 評価の目的（育成型か処遇型か）/ あなたの設計上のこだわり</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>等級×職種のマトリクスで評価基準を一括展開</strong>
+            <p>「主体性」「課題解決」等の評価軸を、等級ごとに行動レベルで書き分け。職種別(営業・開発・管理)の期待行動にも変換</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>制度ドキュメント一式の草案が完成</strong>
+            <p>等級定義書・評価シート・目標設定ガイド・従業員向け説明資料まで。あなたは監修と経営との擦り合わせに集中</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAMPLE -->
+      <div class="sample-box">
+        <div class="sample-header">
+          <span>📋</span>
+          <span>出力サンプル — 評価軸「課題解決力」の等級別行動定義（草案）</span>
+        </div>
+        <div class="sample-body">
+          <table class="sample-table">
+            <thead>
+              <tr><th>等級</th><th>期待レベル</th><th>行動定義（例）</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="grade-tag">G1 担当</span></td>
+                <td>指示のもと遂行</td>
+                <td>指示された業務の課題に気づき、上長に報告・相談したうえで対処できる</td>
+              </tr>
+              <tr>
+                <td><span class="grade-tag">G2 主任</span></td>
+                <td>自律的に解決</td>
+                <td>担当範囲の課題を自ら特定し、原因を分析して解決策を立案・実行できる</td>
+              </tr>
+              <tr>
+                <td><span class="grade-tag">G3 課長</span></td>
+                <td>組織課題を解決</td>
+                <td>チームを横断する構造的な課題を発見し、関係者を巻き込んで解決を主導できる</td>
+              </tr>
+              <tr>
+                <td><span class="grade-tag">G4 部長</span></td>
+                <td>事業課題を解決</td>
+                <td>事業方針と結びつけて中期的な組織課題を定義し、制度・体制の変更まで含めて解決できる</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="saving">
+        <div>
+          <div class="saving-num">数週間→数日</div>
+          <div class="saving-label">制度ドキュメント作成</div>
+        </div>
+        <div style="font-size:13px;color:#3730a3;line-height:1.8">
+          等級×評価軸×職種の掛け算で膨大になる記述作業をAIが展開。<br><strong>あなたの時間は「設計判断」と「経営との合意形成」へ</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 2 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-rank star">★ 2体目 — 形骸化を防ぐ「運用」の要</div>
+        <div class="agent-name">評価制度定着・運用AI従業員</div>
+        <div class="agent-tagline">評価者研修・評価コメントの品質チェック・甘辛分析まで、「回る制度」にする運用を支援</div>
+        <div class="agent-tasks">
+          <span class="task-tag">評価者研修資料</span>
+          <span class="task-tag">評価コメント添削</span>
+          <span class="task-tag">甘辛・分布分析</span>
+          <span class="task-tag">1on1ガイド</span>
+          <span class="task-tag">FAQ整備</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#4f46e5;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#4f46e5;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#4f46e5;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>評価シート・評価コメントを渡す（匿名化でOK）</strong>
+            <p>「この評価コメントは基準に沿っているか見て」「今期の評価分布を分析して」と指示</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>評価品質を多角的にチェック</strong>
+            <p>事実と印象の混同 / 行動事実の不足 / ハロー効果・中心化傾向の兆候 / 等級基準とのズレを検出。部署間の甘辛傾向も分析</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>評価者へのフィードバックと研修素材が完成</strong>
+            <p>「どう書き直すべきか」の改善例つき。評価者研修のケース教材も実データの傾向から自動生成</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">形骸化防止</div>
+          <div class="saving-label">制度を「回る」状態に</div>
+        </div>
+        <div style="font-size:13px;color:#3730a3;line-height:1.8">
+          制度導入後に人事が最も消耗する「評価品質の管理」を型化。<br><strong>評価者ごとのばらつきを構造的に減らせる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 3 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-rank">3体目</div>
+        <div class="agent-name">給与・賃金制度AI従業員</div>
+        <div class="agent-tagline">賃金テーブルの設計案・昇給シミュレーション・手当の整理を数字で支援</div>
+        <div class="agent-tasks">
+          <span class="task-tag">賃金テーブル草案</span>
+          <span class="task-tag">昇給・原資シミュレーション</span>
+          <span class="task-tag">手当体系の整理</span>
+          <span class="task-tag">同一労働同一賃金チェック</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#4f46e5;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#4f46e5;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#4f46e5;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>現行の等級・レンジ・昇給方針を入力（匿名データで設計）</strong>
+            <p>「G2のレンジを広げたい」「昇給原資3%で分布シミュレーションして」と指示。個人給与データは投入せず、テーブル構造で扱う</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>レンジ重なり率・昇給カーブ・原資影響を試算</strong>
+            <p>等級間のレンジ設計（重なり型/接続型/開差型）ごとの比較表、昇給パターン別の人件費影響を整理</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>経営に出せる賃金制度の比較資料が完成</strong>
+            <p>複数案のメリット・デメリット・移行時の激変緩和措置まで整理された状態で出力</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">意思決定支援</div>
+          <div class="saving-label">数字の根拠を高速に</div>
+        </div>
+        <div style="font-size:13px;color:#3730a3;line-height:1.8">
+          Excelで何日もかけていた複数案のシミュレーション比較が短時間で。<br><strong>経営への提案が「1案」から「比較3案」に変わる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 4 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-rank">4体目</div>
+        <div class="agent-name">規定・就業規則AI従業員</div>
+        <div class="agent-tagline">規定の新設・改定草案、規定間の矛盾チェック、法改正対応の洗い出しを支援</div>
+        <div class="agent-tasks">
+          <span class="task-tag">規定改定の草案</span>
+          <span class="task-tag">規定間の矛盾チェック</span>
+          <span class="task-tag">法改正の影響整理</span>
+          <span class="task-tag">従業員向けQ&A作成</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#4f46e5;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#4f46e5;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#4f46e5;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>現行規定と改定の目的を渡す</strong>
+            <p>「在宅勤務規程を新設したい」「育児介護規程を最新の法改正に合わせたい」と指示</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>条文草案の作成と、既存規定との整合チェック</strong>
+            <p>就業規則本則・賃金規程・育介規程の間の矛盾（用語の不統一・手続きの重複・引用条番号のズレ）を横断検出</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>改定新旧対照表＋従業員向けQ&Aが完成</strong>
+            <p>社労士レビューに出せる粒度の草案。最終的な法的確認は専門家が行う前提の、下準備の完全自動化</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">抜け漏れ防止</div>
+          <div class="saving-label">規定横断の整合性</div>
+        </div>
+        <div style="font-size:13px;color:#3730a3;line-height:1.8">
+          人力では見落としがちな規定間の矛盾を機械的に検出。<br><strong>社労士との協業も「確認だけ」の状態で渡せる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 5 -->
+    <div class="agent" id="a5">
+      <div class="agent-header">
+        <div class="agent-rank">5体目</div>
+        <div class="agent-name">人事総括・経営報告AI従業員</div>
+        <div class="agent-tagline">人事データの集計・示唆出し・経営会議資料への落とし込みまで一気通貫</div>
+        <div class="agent-tasks">
+          <span class="task-tag">評価分布・昇格率分析</span>
+          <span class="task-tag">離職傾向の整理</span>
+          <span class="task-tag">経営会議資料の構成</span>
+          <span class="task-tag">次年度施策の叩き台</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#4f46e5;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#4f46e5;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#4f46e5;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>集計済みの人事データを渡す（匿名・集計値で）</strong>
+            <p>評価分布 / 部署別離職率 / 昇格者数 / 研修受講状況などのサマリーデータ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>数字から「経営が知りたい示唆」を抽出</strong>
+            <p>「高評価者の離職が増えている」「特定部署で評価と昇格が連動していない」など、施策につながる論点を整理</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>経営会議用の総括資料の構成・グラフ・提言が完成</strong>
+            <p>「現状→課題→打ち手→必要な意思決定」のストーリーで整理。パワポ化前の骨子が数分で</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">集計→示唆へ</div>
+          <div class="saving-label">人事総括の質が変わる</div>
+        </div>
+        <div style="font-size:13px;color:#3730a3;line-height:1.8">
+          集計・資料化に消えていた時間を「何を提言するか」に転換。<br><strong>経営に対する人事のプレゼンスが上がる</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section">
+  <div class="sec-label">Wall-hitting vs AI Employees</div>
+  <div class="sec-title">「壁打ち」から「AI従業員」へ——何が変わるか</div>
+  <div class="sec-sub" style="margin-bottom:24px">ChatGPT・Gemini・Copilotをすでに使えているからこそ、次の一段が効きます。</div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th>場面</th>
+        <th>❌ 壁打ち（現在）</th>
+        <th>✅ AI従業員（設計後）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>評価基準づくり</td>
+        <td>毎回ゼロから相談。回答が一般論になりがち</td>
+        <td>あなたの設計思想を記憶した型が、等級×職種で一括展開</td>
+      </tr>
+      <tr>
+        <td>評価コメント確認</td>
+        <td>1件ずつ貼り付けて聞く。基準がぶれる</td>
+        <td>自社の評価基準を組み込んだチェックリストで一貫した品質判定</td>
+      </tr>
+      <tr>
+        <td>規定改定</td>
+        <td>条文の相談はできるが、既存規定との整合は自分で確認</td>
+        <td>規程集全体を文脈に持たせ、矛盾を横断チェック</td>
+      </tr>
+      <tr>
+        <td>人事総括</td>
+        <td>分析の切り口をその都度考える</td>
+        <td>毎期同じ観点で自動分析し、変化点だけ深掘りできる</td>
+      </tr>
+      <tr>
+        <td>成果物の再利用</td>
+        <td>チャット履歴に埋もれて消える</td>
+        <td>型として蓄積され、転職先・独立後も持ち運べる資産になる</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- JOB HUNT -->
+<div class="dark-section">
+  <div class="dark-inner">
+    <div class="sec-label">Career Advantage</div>
+    <div class="sec-title">この経験は、就職活動の武器にもなります</div>
+    <div class="sec-sub" style="margin-bottom:32px">「AIを活用できる人事」は、いま採用市場で最も希少性が上がっているプロフィールの一つです。</div>
+    <div class="jh-grid">
+      <div class="jh-card">
+        <div class="jh-icon">📁</div>
+        <div class="jh-title">ポートフォリオになる</div>
+        <div class="jh-desc">「評価制度設計をAIで半自動化する仕組みを自作した」という具体的な実績は、面接で語れる強力な差別化材料になります</div>
+      </div>
+      <div class="jh-card">
+        <div class="jh-icon">🎯</div>
+        <div class="jh-title">応募書類・面接対策にも使える</div>
+        <div class="jh-desc">職務経歴書のブラッシュアップ、想定問答の準備、企業研究の整理——就職活動そのものもAI従業員で効率化できます</div>
+      </div>
+      <div class="jh-card">
+        <div class="jh-icon">🚀</div>
+        <div class="jh-title">入社後の立ち上がりが速い</div>
+        <div class="jh-desc">持ち運べる「型」があるため、新しい会社でも制度の現状分析から改善提案までを短期間で形にできます</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="section">
+  <div class="sec-label">3-Month Roadmap</div>
+  <div class="sec-title">3ヶ月ロードマップ</div>
+  <div class="sec-sub" style="margin-bottom:24px">1体ずつ動く状態を確認しながら積み上げます。就職活動と並行して進められる設計です。</div>
+  <div class="roadmap">
+    <div class="rm-card active">
+      <div class="rm-phase">1週目〜</div>
+      <h4>★評価制度設計AI</h4>
+      <ul>
+        <li>設計思想・型のヒアリング</li>
+        <li>等級×評価軸の展開型を構築</li>
+        <li>サンプル制度で品質確認</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">1ヶ月目</div>
+      <h4>評価運用AI＋<br>就活支援</h4>
+      <ul>
+        <li>評価コメント品質チェック型</li>
+        <li>評価者研修素材の自動生成</li>
+        <li>職務経歴書・面接準備にも活用</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">2ヶ月目</div>
+      <h4>給与・規定AI</h4>
+      <ul>
+        <li>賃金テーブル比較の型</li>
+        <li>規定横断チェックの仕組み</li>
+        <li>新旧対照表の自動生成</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">3ヶ月目</div>
+      <h4>人事総括AI＋<br>チーム化</h4>
+      <ul>
+        <li>経営報告の分析・構成の型</li>
+        <li>5体を連携させた業務フロー</li>
+        <li>持ち運べる資産として完成</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>シゴトAI</strong> — あなたの業務に合わせたAI従業員を設計・配置する3ヶ月プログラム<br>
+  <span style="margin-top:8px;display:block">© 2024 ShigotoAI. All rights reserved.</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.style.animation = 'agent-in .4s ease forwards';
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
