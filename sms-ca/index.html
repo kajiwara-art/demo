@@ -451,6 +451,82 @@ footer strong{color:#99f6e4}
   </div>
 </div>
 
+<!-- HOW TO BUILD -->
+<div style="background:linear-gradient(135deg,#042f2e,#0f4c4a);padding:56px 24px;color:#fff">
+  <div style="max-width:900px;margin:0 auto">
+    <div class="sec-label" style="color:#5eead4">How to Build</div>
+    <div class="sec-title" style="color:#fff">AI従業員の作り方 — 「毎回頼む」から「一度作って使い回す」へ</div>
+    <div class="sec-sub" style="color:#94a3b8;margin-bottom:32px">上のプロンプトを毎回打つのは「壁打ち」。同じ指示を記憶させた専用AIを一度作れば、以降は素材を渡すだけになります。</div>
+
+    <!-- TOOLS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:36px">
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
+        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">ChatGPT → カスタムGPT / プロジェクト</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8">画面左の「GPTを探す」→「作成する」。指示文と参考ファイルを登録すれば専用AIが完成。有料プランで利用可。手軽さNo.1で最初はこれがおすすめ</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
+        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Gemini → Gem</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8">「Gemマネージャー」から作成。仕組みはカスタムGPTと同じ。Googleカレンダー・Gmailと連携した日程調整系に強い</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
+        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Copilot → エージェント</div>
+        <div style="font-size:12px;color:#94a3b8;line-height:1.8">会社支給がMicrosoft環境ならこれ。社内データを外に出さずに使える可能性が高く、業務利用の本命。社内のAI利用ルールを最初に確認</div>
+      </div>
+    </div>
+
+    <!-- 5 STEPS -->
+    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:16px">作成の5ステップ（1体あたり30分〜1時間）</div>
+    <div style="display:grid;gap:10px;margin-bottom:36px">
+      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
+        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">1</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>任せる仕事を1つに絞る</strong>——「面談メモ整理だけ」「推薦文だけ」。欲張って何でも屋にすると精度が落ちる。1体1業務が原則</div>
+      </div>
+      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
+        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">2</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>お手本を2〜3個集める</strong>——自分が「これは良い」と思う推薦文・面談サマリー・求人紹介文の実例（個人情報は伏せる）。お手本の質がAI従業員の質を決める</div>
+      </div>
+      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
+        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">3</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>指示文（役割・手順・出力形式・禁止事項）を書く</strong>——下のテンプレをコピーして穴埋め。指示文自体をAIに下書きさせてもOK</div>
+      </div>
+      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
+        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">4</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>過去の実案件3件でテスト</strong>——結果が自分の書いたものと比べてどうか採点。ズレた部分を指示文に追記（「〜はしない」「〜の順で書く」）</div>
+      </div>
+      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
+        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">5</div>
+        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>実務で使いながら育てる</strong>——違和感があったらその場で指示文を1行直す。2週間使えば「自分の分身」の精度になる</div>
+      </div>
+    </div>
+
+    <!-- TEMPLATE -->
+    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:12px">指示文テンプレート（例：面談メモ整理AI従業員）</div>
+    <div class="prompt-box" style="margin-top:0">
+      <div class="prompt-label">INSTRUCTION TEMPLATE — そのままカスタムGPT/Gemの指示欄に貼って穴埋め</div>
+      <div class="prompt-text"># 役割
+あなたはリハビリ職（PT/OT/ST）専門人材紹介の両面型キャリアアドバイザーのアシスタントです。私の面談メモを構造化するのが仕事です。
+
+# 手順
+渡された面談メモを読み、以下の形式で整理する。
+1. 転職理由（本音と建前を区別する）
+2. 希望条件（MUST / WANT に分類）
+3. 懸念・リスク（選考や定着に影響しそうな点）
+4. 温度感（5段階＋根拠）
+5. 次アクション（期限つき）
+6. システム登録用200字サマリー
+
+# ルール
+- メモにない情報を推測で補わない。不明点は「要確認」として列挙する
+- 求職者を否定的に描写しない（事実ベースで書く）
+- 個人名が含まれていたら「候補者」に置換して出力する
+
+# 口調
+簡潔なビジネス文体。箇条書き中心。</div>
+    </div>
+    <div style="font-size:12px;color:#94a3b8;margin-top:14px;line-height:1.8">💡 このテンプレの「役割」「手順」「ルール」を差し替えれば、推薦文AI・求人票リライトAI・想定問答AIも同じ型で作れます。まずは工程02の面談メモ整理から作るのがおすすめ（毎日使う×効果が分かりやすい）。</div>
+  </div>
+</div>
+
 <!-- CAUTION -->
 <div style="background:#fff;padding:56px 24px">
   <div style="max-width:900px;margin:0 auto">
