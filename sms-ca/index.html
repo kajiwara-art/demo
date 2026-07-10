@@ -452,108 +452,160 @@ footer strong{color:#99f6e4}
 </div>
 
 <!-- HOW TO BUILD -->
-<div style="background:linear-gradient(135deg,#042f2e,#0f4c4a);padding:56px 24px;color:#fff">
+<div style="background:linear-gradient(135deg,#042f2e,#0f4c4a);padding:64px 24px;color:#fff">
   <div style="max-width:900px;margin:0 auto">
-    <div class="sec-label" style="color:#5eead4">How to Build</div>
-    <div class="sec-title" style="color:#fff">AI従業員の作り方 — 「毎回頼む」から「一度作って使い回す」へ</div>
-    <div class="sec-sub" style="color:#94a3b8;margin-bottom:32px">上のプロンプトを毎回打つのは「壁打ち」。同じ指示を記憶させた専用AIを一度作れば、以降は素材を渡すだけになります。</div>
+    <div class="sec-label" style="color:#5eead4">How to Build — 取扱説明書</div>
+    <div class="sec-title" style="color:#fff">AI従業員の作り方 完全ガイド</div>
+    <div class="sec-sub" style="color:#94a3b8;margin-bottom:12px">AI従業員には2種類あります。<strong style="color:#5eead4">この違いを知るだけで、明日からの作り方が全部決まります。</strong></div>
 
-    <!-- TOOLS -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:36px">
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
-        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">ChatGPT → カスタムGPT / プロジェクト</div>
-        <div style="font-size:12px;color:#94a3b8;line-height:1.8">画面左の「GPTを探す」→「作成する」。指示文と参考ファイルを登録すれば専用AIが完成。有料プランで利用可。手軽さNo.1で最初はこれがおすすめ</div>
+    <!-- 2 TYPES OVERVIEW -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin:28px 0 40px">
+      <div style="background:rgba(255,255,255,.07);border:2px solid rgba(94,234,212,.5);border-radius:18px;padding:26px;position:relative">
+        <div style="position:absolute;top:-13px;left:20px;background:#0d9488;color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:12px">タイプ①</div>
+        <div style="font-size:18px;font-weight:900;color:#5eead4;margin-bottom:6px">GPTs / Gem 型</div>
+        <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:10px">＝ 窓口が決まっている専門スタッフ</div>
+        <div style="font-size:12.5px;color:#94a3b8;line-height:1.9">「これを渡すと、これが返ってくる」が固定された1業務専属のAI。<strong style="color:#e2e8f0">1件ずつ、その場で、チャットで使う</strong>仕事に向く。作成は30分・ノーコード</div>
       </div>
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
-        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Gemini → Gem</div>
-        <div style="font-size:12px;color:#94a3b8;line-height:1.8">「Gemマネージャー」から作成。仕組みはカスタムGPTと同じ。Googleカレンダー・Gmailと連携した日程調整系に強い</div>
-      </div>
-      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px">
-        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Copilot → エージェント</div>
-        <div style="font-size:12px;color:#94a3b8;line-height:1.8">会社支給がMicrosoft環境ならこれ。社内データを外に出さずに使える可能性が高く、業務利用の本命。社内のAI利用ルールを最初に確認</div>
-      </div>
-      <div style="background:rgba(45,212,191,.1);border:1.5px solid rgba(45,212,191,.4);border-radius:14px;padding:20px">
-        <div style="font-size:14px;font-weight:800;color:#5eead4;margin-bottom:6px">Claude → プロジェクト / Claude Code サブエージェント</div>
-        <div style="font-size:12px;color:#94a3b8;line-height:1.8">Claudeの「プロジェクト」はカスタムGPTと同じ感覚で作成可能。さらに<strong style="color:#5eead4">Claude Code</strong>なら複数のサブエージェントをチーム化でき、「一つの指示で複数AIが分担して動く」上級の使い方ができる（下記参照）</div>
+      <div style="background:rgba(255,255,255,.07);border:2px solid rgba(251,191,36,.5);border-radius:18px;padding:26px;position:relative">
+        <div style="position:absolute;top:-13px;left:20px;background:#d97706;color:#fff;font-size:11px;font-weight:800;padding:4px 14px;border-radius:12px">タイプ②</div>
+        <div style="font-size:18px;font-weight:900;color:#fcd34d;margin-bottom:6px">エージェント型（Claude Code）</div>
+        <div style="font-size:13px;font-weight:700;color:#e2e8f0;margin-bottom:10px">＝ 指示すると自分で動き回る部下</div>
+        <div style="font-size:12.5px;color:#94a3b8;line-height:1.9">ファイルを読み書きし、複数の仕事を順番にこなし、必要なら他のAIに仕事を振る。<strong style="color:#e2e8f0">「まとめて」「毎週」「一括で」</strong>系の仕事に向く</div>
       </div>
     </div>
 
-    <!-- CLAUDE CODE -->
-    <div style="background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.25);border-radius:16px;padding:24px 26px;margin-bottom:36px">
-      <div style="font-size:15px;font-weight:800;color:#5eead4;margin-bottom:10px">🚀 上級編：Claude Codeでのエージェント作成</div>
-      <div style="font-size:12.5px;color:#cbd5e1;line-height:1.9;margin-bottom:16px">Claude Codeでは、プロジェクトフォルダに設定ファイルを置くだけでAI従業員（サブエージェント）を定義できます。単体のカスタムGPTと違い、<strong style="color:#5eead4">複数のエージェントを連携させて「面談メモ整理→求人マッチング案→推薦文下書き」を一つの指示で流す</strong>ことも可能です。</div>
-      <div style="display:grid;gap:8px;margin-bottom:16px">
-        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">①</span><span><strong>CLAUDE.md を作る</strong>——プロジェクトフォルダ直下に置くメモ。あなたの業務前提（リハ職CA・両面型・個人情報ルール）を書いておくと、毎回説明せずに全エージェントが前提を共有する</span></div>
-        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">②</span><span><strong>.claude/agents/ にエージェント定義を置く</strong>——「面談メモ整理.md」「推薦文作成.md」のように1ファイル1エージェント。中身は上のテンプレと同じ（役割・手順・ルール）</span></div>
-        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">③</span><span><strong>「/agents」コマンドで対話的に作成も可能</strong>——Claude Codeに「面談メモを整理するエージェントを作って」と頼めば、定義ファイル自体をClaudeが書いてくれる</span></div>
-        <div style="display:flex;gap:12px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><span style="color:#2dd4bf;font-weight:900;flex-shrink:0">④</span><span><strong>ファイルを直接読み書きできるのが最大の強み</strong>——面談メモのテキストファイルを置いたフォルダを渡せば、複数件をまとめて整理・比較表作成・週次振り返りまで一括処理できる</span></div>
+    <!-- ============ TYPE 1 ============ -->
+    <div style="background:rgba(13,148,136,.12);border:1px solid rgba(94,234,212,.3);border-radius:20px;padding:30px 28px;margin-bottom:32px">
+      <div style="font-size:20px;font-weight:900;color:#5eead4;margin-bottom:4px">① GPTs / Gemで作るAI従業員</div>
+      <div style="font-size:13px;color:#94a3b8;margin-bottom:22px">担当できる業務 → こうやって作る、の順で。</div>
+
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:10px">📌 担当できる業務（＝1件ずつチャットで完結する仕事）</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-bottom:26px">
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">🗣️ <strong>面談メモ整理</strong>（工程02）— メモを貼る→構造化サマリーが返る</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">✉️ <strong>初回連絡文・リマインド作成</strong>（工程01）— 属性を伝える→連絡文が返る</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">🎯 <strong>求人紹介文の個別変換</strong>（工程03）— 求人票＋求職者属性→刺さる紹介文</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">📄 <strong>職務経歴書添削・想定問答</strong>（工程04）— 経歴書を貼る→添削と面接対策が返る</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">📨 <strong>推薦文の下書き</strong>（工程06）— 面談サマリー→事業所向け推薦文</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">📚 <strong>制度・専門知識の先生</strong>（工程08）— 質問する→CA向けに解説が返る</div>
       </div>
+
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">🔧 作り方（ChatGPTの場合・所要30分）</div>
+      <div style="display:grid;gap:8px;margin-bottom:20px">
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#2dd4bf;flex-shrink:0">STEP 1</strong><span>ChatGPT左メニュー「GPT」→ 右上「＋作成する」をクリック（Geminiなら「Gemマネージャー」→「Gemを作成」）</span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#2dd4bf;flex-shrink:0">STEP 2</strong><span>「構成」タブの指示欄に、下のテンプレを貼って穴埋め（役割・手順・ルールの3点セット）</span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#2dd4bf;flex-shrink:0">STEP 3</strong><span>「知識」にお手本ファイルを2〜3個アップ（過去の良い推薦文・サマリー例。個人情報は伏せる）。<strong style="color:#5eead4">これが品質を決める最重要ポイント</strong></span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#2dd4bf;flex-shrink:0">STEP 4</strong><span>右側のプレビューで過去案件3件を流してテスト→ズレたら指示欄に「〜はしない」「〜の順で」を1行ずつ追記</span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#2dd4bf;flex-shrink:0">STEP 5</strong><span>「自分だけ」で保存。以降は毎朝このGPTを開いて素材を貼るだけ。<strong style="color:#5eead4">指示文はもう二度と書かない</strong></span></div>
+      </div>
+
       <div class="prompt-box" style="margin-top:0">
-        <div class="prompt-label">AGENT FILE EXAMPLE — .claude/agents/mendan-seiri.md</div>
-        <div class="prompt-text">---
-name: mendan-seiri
-description: 面談メモを構造化サマリーに整理する。面談メモの整理を頼まれたら必ずこのエージェントを使う。
----
+        <div class="prompt-label">STEP 2 で貼るテンプレ（例：面談メモ整理GPT）</div>
+        <div class="prompt-text"># 役割
+あなたはリハビリ職（PT/OT/ST）専門人材紹介・両面型CAのアシスタント。私の面談メモを構造化するのが唯一の仕事。
 
-あなたはリハビリ職専門・両面型CAのアシスタント。
-渡された面談メモを以下の形式で整理する：
-1. 転職理由（本音/建前） 2. 希望条件（MUST/WANT）
-3. 懸念 4. 温度感（5段階） 5. 次アクション 6. 200字サマリー
-ルール：推測で補わない。個人名は「候補者」に置換。</div>
-      </div>
-      <div style="font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.8">💡 使い分けの目安：<strong style="color:#5eead4">日常の1件ずつの処理はカスタムGPT/Gemで十分</strong>。複数件の一括処理・ファイル管理・エージェント連携をしたくなったらClaude Codeへ。</div>
-    </div>
-
-    <!-- 5 STEPS -->
-    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:16px">作成の5ステップ（1体あたり30分〜1時間）</div>
-    <div style="display:grid;gap:10px;margin-bottom:36px">
-      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
-        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">1</div>
-        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>任せる仕事を1つに絞る</strong>——「面談メモ整理だけ」「推薦文だけ」。欲張って何でも屋にすると精度が落ちる。1体1業務が原則</div>
-      </div>
-      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
-        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">2</div>
-        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>お手本を2〜3個集める</strong>——自分が「これは良い」と思う推薦文・面談サマリー・求人紹介文の実例（個人情報は伏せる）。お手本の質がAI従業員の質を決める</div>
-      </div>
-      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
-        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">3</div>
-        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>指示文（役割・手順・出力形式・禁止事項）を書く</strong>——下のテンプレをコピーして穴埋め。指示文自体をAIに下書きさせてもOK</div>
-      </div>
-      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
-        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">4</div>
-        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>過去の実案件3件でテスト</strong>——結果が自分の書いたものと比べてどうか採点。ズレた部分を指示文に追記（「〜はしない」「〜の順で書く」）</div>
-      </div>
-      <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:12px;padding:14px 18px">
-        <div style="font-size:15px;font-weight:900;color:#2dd4bf;flex-shrink:0">5</div>
-        <div style="font-size:13px;color:#e2e8f0;line-height:1.8"><strong>実務で使いながら育てる</strong>——違和感があったらその場で指示文を1行直す。2週間使えば「自分の分身」の精度になる</div>
-      </div>
-    </div>
-
-    <!-- TEMPLATE -->
-    <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:12px">指示文テンプレート（例：面談メモ整理AI従業員）</div>
-    <div class="prompt-box" style="margin-top:0">
-      <div class="prompt-label">INSTRUCTION TEMPLATE — そのままカスタムGPT/Gemの指示欄に貼って穴埋め</div>
-      <div class="prompt-text"># 役割
-あなたはリハビリ職（PT/OT/ST）専門人材紹介の両面型キャリアアドバイザーのアシスタントです。私の面談メモを構造化するのが仕事です。
-
-# 手順
-渡された面談メモを読み、以下の形式で整理する。
-1. 転職理由（本音と建前を区別する）
+# 手順（この形式で必ず出力）
+1. 転職理由（本音と建前を区別）
 2. 希望条件（MUST / WANT に分類）
-3. 懸念・リスク（選考や定着に影響しそうな点）
+3. 懸念・リスク
 4. 温度感（5段階＋根拠）
 5. 次アクション（期限つき）
 6. システム登録用200字サマリー
 
 # ルール
-- メモにない情報を推測で補わない。不明点は「要確認」として列挙する
-- 求職者を否定的に描写しない（事実ベースで書く）
-- 個人名が含まれていたら「候補者」に置換して出力する
-
-# 口調
-簡潔なビジネス文体。箇条書き中心。</div>
+- メモにない情報を推測で補わない。不明点は「要確認」として列挙
+- 個人名が含まれていたら「候補者」に置換して出力
+- 求職者を否定的に描写しない</div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.8">💡 <strong style="color:#5eead4">この「役割・手順・ルール」を差し替えるだけで、上の6業務ぜんぶ同じ型で量産できます。</strong>週1体ペースで作れば1ヶ月半でフル体制。</div>
     </div>
-    <div style="font-size:12px;color:#94a3b8;margin-top:14px;line-height:1.8">💡 このテンプレの「役割」「手順」「ルール」を差し替えれば、推薦文AI・求人票リライトAI・想定問答AIも同じ型で作れます。まずは工程02の面談メモ整理から作るのがおすすめ（毎日使う×効果が分かりやすい）。</div>
+
+    <!-- ============ TYPE 2 ============ -->
+    <div style="background:rgba(217,119,6,.12);border:1px solid rgba(251,191,36,.35);border-radius:20px;padding:30px 28px;margin-bottom:32px">
+      <div style="font-size:20px;font-weight:900;color:#fcd34d;margin-bottom:4px">② Claude Codeで作るエージェント</div>
+      <div style="font-size:13px;color:#94a3b8;margin-bottom:22px">GPTsとの決定的な違い：<strong style="color:#fcd34d">ファイルを直接読み書きして、複数の仕事を自分で順番に進める。</strong>「1件ずつ貼り付ける」作業自体が消えます。</div>
+
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:10px">📌 担当できる業務（＝まとめて・毎週・一括で、の仕事）</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-bottom:26px">
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">📂 <strong>面談メモ10件の一括整理</strong> — フォルダに入れて「全部整理して」の一言で完了</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">📊 <strong>週次KPI振り返りの自動生成</strong>（工程08）— 案件データから詰まり分析レポート作成</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">⚖️ <strong>複数求人×複数候補者の突合</strong>（工程03）— 手持ち求人全件と候補者リストのマッチ度表</div>
+        <div style="background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.7">🔁 <strong>連携パイプライン</strong> — 「メモ整理→マッチ候補出し→推薦文下書き」を1指示で連続実行</div>
+      </div>
+
+      <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:12px">🔧 作り方（所要1時間・一度作れば毎日使える）</div>
+      <div style="display:grid;gap:8px;margin-bottom:20px">
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#fcd34d;flex-shrink:0">STEP 1</strong><span>仕事用フォルダを作る（例：<code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">CA業務/</code> の中に <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">面談メモ/ 求人票/ 出力/</code>）。ここがエージェントの職場になる</span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#fcd34d;flex-shrink:0">STEP 2</strong><span>フォルダ直下に <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">CLAUDE.md</code> を作り、業務の前提を書く（下の例①）。ここに書いたことは<strong style="color:#fcd34d">毎回説明しなくても全エージェントが覚えている</strong></span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#fcd34d;flex-shrink:0">STEP 3</strong><span>Claude Codeを開いて「面談メモを整理するサブエージェントを作って。ルールは〜」と頼む。<strong style="color:#fcd34d">定義ファイル自体をClaudeが書いてくれる</strong>（自分で書くなら下の例②を <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">.claude/agents/</code> に保存）</span></div>
+        <div style="display:flex;gap:14px;background:rgba(255,255,255,.05);border-radius:10px;padding:12px 16px;font-size:12.5px;color:#e2e8f0;line-height:1.8"><strong style="color:#fcd34d;flex-shrink:0">STEP 4</strong><span>使う：面談メモを「面談メモ/」に放り込んで、Claude Codeに一言。<strong style="color:#fcd34d">「今日のメモを全部整理して、出力フォルダにまとめて」</strong>——これだけ</span></div>
+      </div>
+
+      <div class="prompt-box" style="margin-top:0;margin-bottom:14px">
+        <div class="prompt-label">例① CLAUDE.md — 職場の前提（フォルダ直下に置く）</div>
+        <div class="prompt-text"># この職場について
+- 私はリハビリ職（PT/OT/ST）専門・両面型キャリアアドバイザー
+- 面談メモ/ に面談記録、求人票/ に求人情報が入る
+- 成果物はすべて 出力/ に日付つきで保存する
+
+# 絶対ルール
+- 個人名を見つけたら「候補者A」等に置換してから処理する
+- 制度・報酬の記述には「要一次情報確認」のラベルをつける</div>
+      </div>
+
+      <div class="prompt-box" style="margin-top:0">
+        <div class="prompt-label">例② .claude/agents/mendan-seiri.md — エージェント定義（1ファイル1従業員）</div>
+        <div class="prompt-text">---
+name: mendan-seiri
+description: 面談メモを構造化サマリーに整理する。面談メモの整理を頼まれたら必ずこのエージェントを使う。
+---
+
+渡された面談メモを以下の形式で整理する：
+1. 転職理由（本音/建前） 2. 希望条件（MUST/WANT）
+3. 懸念 4. 温度感（5段階） 5. 次アクション 6. 200字サマリー
+ルール：推測で補わない。個人名は「候補者」に置換。</div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:12px;line-height:1.8">💡 同じ要領で <code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">suisen-bun.md</code>（推薦文）、<code style="background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">kpi-review.md</code>（週次振り返り）を追加していけば、<strong style="color:#fcd34d">「メモ整理→マッチング→推薦文」を一つの指示で流れるチーム</strong>になります。</div>
+    </div>
+
+    <!-- DECISION TABLE -->
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:24px 26px">
+      <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:14px">🤔 迷ったらこれ — どっちで作る？の判断基準</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <tr style="border-bottom:1px solid rgba(255,255,255,.15)">
+            <td style="padding:10px 12px;color:#94a3b8;font-weight:700">やりたいこと</td>
+            <td style="padding:10px 12px;color:#5eead4;font-weight:700">GPTs / Gem</td>
+            <td style="padding:10px 12px;color:#fcd34d;font-weight:700">Claude Code</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+            <td style="padding:10px 12px;color:#e2e8f0">1件をその場で処理（面談直後のメモ整理）</td>
+            <td style="padding:10px 12px;color:#5eead4;font-weight:800">◎ こっち</td>
+            <td style="padding:10px 12px;color:#94a3b8">○</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+            <td style="padding:10px 12px;color:#e2e8f0">スマホからも使いたい</td>
+            <td style="padding:10px 12px;color:#5eead4;font-weight:800">◎ こっち</td>
+            <td style="padding:10px 12px;color:#94a3b8">△</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+            <td style="padding:10px 12px;color:#e2e8f0">複数ファイルをまとめて処理</td>
+            <td style="padding:10px 12px;color:#94a3b8">✕ 1件ずつ貼る必要</td>
+            <td style="padding:10px 12px;color:#fcd34d;font-weight:800">◎ こっち</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,.08)">
+            <td style="padding:10px 12px;color:#e2e8f0">毎週決まったレポートを生成</td>
+            <td style="padding:10px 12px;color:#94a3b8">△</td>
+            <td style="padding:10px 12px;color:#fcd34d;font-weight:800">◎ こっち</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;color:#e2e8f0">複数の仕事を連続で流したい</td>
+            <td style="padding:10px 12px;color:#94a3b8">✕ 不可</td>
+            <td style="padding:10px 12px;color:#fcd34d;font-weight:800">◎ こっち</td>
+          </tr>
+        </table>
+      </div>
+      <div style="font-size:12.5px;color:#94a3b8;margin-top:14px;line-height:1.9">🗺️ <strong style="color:#fff">おすすめの進め方：</strong>最初の2週間はGPTs/Gemで「面談メモ整理」と「推薦文」の2体を作って毎日使う → 効果を体感したら、3週目にClaude Codeで一括処理・週次KPIに進出。この順番なら挫折しません。</div>
+    </div>
   </div>
 </div>
 
