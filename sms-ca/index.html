@@ -764,6 +764,102 @@ footer strong{color:#99f6e4}
     </div>
   </div>
 
+  <!-- C2: FUNNEL -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num both">C+1</div>
+      <div>
+        <div class="stage-title">目標からの逆算ファネル — 戦略レイヤーの背骨</div>
+        <div class="stage-side both">「どう戦うか」の前に「どれだけやれば勝ちか」を数字で定義する</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div style="font-size:12.5px;color:#64748b;line-height:1.9;margin-bottom:14px">半期目標から今週の行動量まで一本の数式でつなぐ。<strong style="color:#0f766e">歩留まり率は最初は業界の目安で仮置きし、自分のJ（案件ログ）が貯まったら実測値に置き換える</strong>——ここでもJが燃料になります。</div>
+      <div style="overflow-x:auto;margin-bottom:14px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff">
+          <tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0">
+            <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700">段階</th>
+            <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700">数式（例：半期3成約が目標の場合）</th>
+            <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700">仮置き歩留まり</th>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:9px 12px;font-weight:700;color:#0f172a">成約</td><td style="padding:9px 12px;color:#64748b">半期3件（＝月0.5件）</td><td style="padding:9px 12px;color:#94a3b8">—</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:9px 12px;font-weight:700;color:#0f172a">内定</td><td style="padding:9px 12px;color:#64748b">成約3 ÷ 承諾率 → 内定5件必要</td><td style="padding:9px 12px;color:#94a3b8">承諾率 60%</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:9px 12px;font-weight:700;color:#0f172a">推薦（書類）</td><td style="padding:9px 12px;color:#64748b">内定5 ÷ 内定率 → 推薦25件必要</td><td style="padding:9px 12px;color:#94a3b8">内定率 20%</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:9px 12px;font-weight:700;color:#0f172a">提案（求人紹介）</td><td style="padding:9px 12px;color:#64748b">推薦25 ÷ 応諾率 → 提案80件前後</td><td style="padding:9px 12px;color:#94a3b8">応諾率 30%</td></tr>
+          <tr><td style="padding:9px 12px;font-weight:700;color:#0f172a">面談</td><td style="padding:9px 12px;color:#64748b">＝ 週の面談・フォロー件数に換算 → <strong style="color:#0f766e">これが今週のノルマ</strong></td><td style="padding:9px 12px;color:#94a3b8">面談→提案 70%</td></tr>
+        </table>
+      </div>
+      <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:#78350f;line-height:1.8"><strong>使い方：</strong>①入社後、上司に「半期の目標成約数」と「社内の平均歩留まり」を確認（Kの Day1-30 の確認事項に追加）②下のプロンプトで自分のファネル表を作る ③毎週金曜、実績を入れて再計算。<strong>詰まっている段階が、来週注力すべき工程（①〜⑧）を教えてくれる。</strong></div>
+      <div class="prompt-box"><div class="prompt-label">PROMPT — ファネル逆算＋ボトルネック診断</div><div class="prompt-text">私の半期目標は成約◯件。歩留まりは承諾率◯%・内定率◯%・応諾率◯%（不明な項目は業界目安で仮置きし、仮置きと明記して）。
+①必要な面談数まで逆算した表を作って、週次の行動量に換算して
+②現在の実績：面談◯件/提案◯件/推薦◯件/内定◯件 — どの段階がボトルネックか特定して
+③そのボトルネックを改善する打ち手を、工程①〜⑧のどのAI活用で解決できるか対応づけて提案して
+④最後に「そもそも目標と行動量が物理的に整合しているか」を判定して。無理な計画なら正直に言って。</div></div>
+    </div>
+  </div>
+
+  <!-- C3: WIN ANALYSIS -->
+  <div class="stage">
+    <div class="stage-head">
+      <div class="stage-num both">C+2</div>
+      <div>
+        <div class="stage-title">Win分析 — 失注分析の対になる片翼</div>
+        <div class="stage-side both">失注だけ分析すると「負けない」は上手くなるが「勝ちの再現」が育たない</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div style="font-size:12.5px;color:#64748b;line-height:1.9;margin-bottom:14px">成約のたびに5分だけ、「なぜ他社でも直接応募でもなく、<strong style="color:#0f766e">自分経由で</strong>決まったのか」を両面から言語化する。3件貯まると自分の勝ちパターンの輪郭が見え、10件でBのセグメント仮説を自分仕様に書き換えられます。</div>
+      <div class="prompt-box" style="margin-top:0"><div class="prompt-label">PROMPT — 成約直後のWin分析（Jの案件ログとセットで）</div><div class="prompt-text">成約案件のWin分析をして。【経緯】［時系列で貼る。個人名は置換済み］
+①候補者はなぜ「私経由」で決めたのか — 求人の力/条件の力/私の介在価値を切り分けて。私の介在価値は「他のCAでも提供できたか？」で厳しく判定して
+②事業所はなぜこの候補者で決めたのか — 推薦文・事前情報共有のどれが効いたか
+③再現可能な要素を1行の「型」にして（例：「訪問未経験者には初回面談で同行研修の有無を必ず確認してから提案する」）→ Jのログの「学び」欄に転記
+④逆に、今回は運だった要素も正直に指摘して。実力と運を混ぜると型が歪む。</div></div>
+    </div>
+  </div>
+
+  <!-- C4: AREA (PENDING) -->
+  <div class="stage" style="border:1.5px dashed #cbd5e1;background:#fafafa">
+    <div class="stage-head">
+      <div class="stage-num both" style="background:#94a3b8">C+3</div>
+      <div>
+        <div class="stage-title">エリア・商圏戦略 —（担当エリア確定後に作成）</div>
+        <div class="stage-side" style="color:#94a3b8">今作ると机上の空論になるため、着手条件だけ定義しておく</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:10px">✅ これが分かったら作れる（入社後に集める情報リスト）</div>
+      <ul style="list-style:none;padding:0;margin-bottom:14px">
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>担当エリアの範囲</strong> — 都道府県・市区町村単位でどこを持つのか（両面型は担当エリア制が多い）</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>エリア内の事業所リスト</strong> — 社内DBにある取引実績（アクティブ/休眠/未開拓の別）。休眠掘り起こしが新人の定石のため特に重要</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>エリア内の求職者登録数と属性の偏り</strong> — 供給側の実態（若手が多い/訪問希望が多い等）</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>競合の営業実態</strong> — 商談・面談で「他にどこのエージェントから連絡が来ますか」と聞いて回るだけで1ヶ月で地図ができる</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>エリアの医療圏事情</strong> — 大病院の新設・閉鎖予定、訪問STの開設ラッシュ等（地域医療構想・行政資料で調べられる）</li>
+      </ul>
+      <div style="background:#f1f5f9;border-radius:10px;padding:12px 16px;font-size:12px;color:#475569;line-height:1.8">📌 <strong>5項目のうち上3つが埋まった時点で着手可能。</strong>その時に「エリア内の事業所を魅力度×開拓難易度でマッピングして攻略順を決めるプロンプト」を作ります。逆に、この3つがないまま作ると「一般論のエリア営業論」にしかなりません。</div>
+    </div>
+  </div>
+
+  <!-- C5: SEASONALITY (PENDING) -->
+  <div class="stage" style="border:1.5px dashed #cbd5e1;background:#fafafa">
+    <div class="stage-head">
+      <div class="stage-num both" style="background:#94a3b8">C+4</div>
+      <div>
+        <div class="stage-title">タイミング戦略・年間カレンダー —（1〜2四半期の実測後に作成）</div>
+        <div class="stage-side" style="color:#94a3b8">一般的な季節性は分かっているが、「自分の市場」の波は実測が必要</div>
+      </div>
+    </div>
+    <div class="stage-body">
+      <div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:10px">✅ これが分かったら作れる</div>
+      <ul style="list-style:none;padding:0;margin-bottom:14px">
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>社内の月別実績データ</strong> — 登録数・成約数の月別推移（先輩や上司に「忙しい月・暇な月」を聞くだけでも近似できる）</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>自分のエリアの賞与支給月の分布</strong> — 転職着火は賞与後。病院とクリニックで支給月がズレることがある</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>事業所側の採用予算サイクル</strong> — 年度予算がいつ決まり、いつ採用枠が開くのか（4月入職逆算で何月に動くか）</li>
+        <li style="font-size:12.5px;color:#334155;padding:4px 0 4px 20px;position:relative;line-height:1.8"><span style="position:absolute;left:0;color:#0d9488">□</span><strong>国家試験合格発表〜新卒4月の社内の動き方</strong> — 新卒・第二新卒市場に自分がどこまで関わるのか（担当外なら計画から外す）</li>
+      </ul>
+      <div style="background:#f1f5f9;border-radius:10px;padding:12px 16px;font-size:12px;color:#475569;line-height:1.8">📌 <strong>一般論の仮説（賞与後の6-7月/12-1月に着火・年度末退職の波・4月入職逆算）は既に持っている</strong>ので、上のデータで検証できた時点で「月別×セグメント別の仕掛けカレンダー」を作ります。目安は入社後1〜2四半期。それまでは仮説として頭に置き、面談で「なぜ今転職を？」の回答を貯めておくのが仕込みになります。</div>
+    </div>
+  </div>
+
   <!-- STRATEGY AI EMPLOYEE -->
   <div class="stage">
     <div class="stage-head">
