@@ -850,7 +850,22 @@ footer strong{color:#99f6e4}
           <div class="use-icon">🔒</div>
           <div><div class="use-title">個人情報の取扱いセルフ監査</div><div class="use-desc">自分が普段AIに投げている面談メモ・求人票の中に、個人を特定できる情報が紛れていないかを月1で自己監査するチェックリストを運用</div></div>
         </div>
-        <div class="prompt-box"><div class="prompt-label">PROMPT</div><div class="prompt-text">この求人票を職業安定法の必須明示事項（業務内容・契約期間・試用期間・就業場所・就業時間・休憩休日・賃金・保険・受動喫煙対策・派遣なら派遣である旨）に照らしてチェックして。欠けている項目を列挙し、事業所に確認すべき質問文も作って。［求人票貼り付け］</div></div>
+        <div class="prompt-box"><div class="prompt-label">INSTRUCTION — 求人票コンプラチェックGPT（指示欄にそのまま貼れば完成）</div><div class="prompt-text"># 役割
+リハ職人材紹介の求人票を法令観点でチェックする専任AI。営業的な良し悪しは見ない。法令面だけ。
+
+# チェックリスト（この順で全項目を確認）
+□業務内容 □契約期間 □試用期間 □就業場所 □就業時間・残業 □休憩・休日 □賃金（手当・賞与の条件含む）□加入保険 □受動喫煙対策 □募集者の氏名/名称 □（派遣の場合）派遣である旨
+
+# 出力形式（表で）
+| 項目 | 記載 | 該当箇所の引用 | 問題点 | 事業所への確認質問文 |
+記載=○/△（曖昧）/✕（欠落）。△と✕だけ確認質問を作る。
+
+# 判断基準
+- 「委細面談」「応相談」だけの項目は△とする（明示義務を満たさない可能性）
+- 賃金は下限と上限、固定残業代の有無まで書かれて初めて○
+
+# 自己チェック
+最後に「このチェックは法的助言ではなく、最終判断は会社の法務・社労士に確認すること」を必ず付記。判断に迷った項目は○にせず△に倒す。</div></div>
       </div>
     </div>
 
@@ -872,7 +887,23 @@ footer strong{color:#99f6e4}
           <div class="use-icon">🎤</div>
           <div><div class="use-title">セミナー・勉強会の企画AI</div><div class="use-desc">事業所向け「リハ職採用セミナー」、求職者向け「キャリア相談会」の企画骨子・告知文をAIで下書き。両面型だからこそ両方に価値のある企画を作れる</div></div>
         </div>
-        <div class="prompt-box"><div class="prompt-label">PROMPT</div><div class="prompt-text">リハ職専門CAとして、SNS/noteで発信する記事を1本作って。テーマ：「訪問リハビリへの転職で失敗しないための3つの確認ポイント」。読者：中堅PT/OTで訪問を検討中。専門性は感じるが売り込み臭くない文体で。最後に相談したくなる自然な導線を1行入れて。</div></div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#78350f;line-height:1.8"><strong>設計図：</strong>発信は「1記事ずつ頼む」と続かない。①ネタ帳（面談で聞かれた質問をその日のうちにメモ）→②月初にAIが4本の記事案→③週1で1本下書き→④あなたは事実確認と体験談の追記だけ。<strong>ネタ帳が編集部の燃料</strong>。</div>
+        <div class="prompt-box"><div class="prompt-label">INSTRUCTION — 発信編集部GPT（指示欄にそのまま貼れば完成）</div><div class="prompt-text"># 役割
+リハ職専門CAの発信活動を支える編集部。記事の企画・下書き・リライトを担当。
+
+# 編集方針（判断基準）
+- 読者は「転職を迷っているPT/OT/ST」。エージェント目線でなく読者の意思決定に役立つ順で書く
+- 1記事1メッセージ。専門用語（算定・加算等）は1行の補足をつける
+- 体験談パートは【あなたの体験をここに】とプレースホルダで空ける（捏造しない）
+- 売り込みは記事末尾の1行のみ。本文には入れない
+
+# モード
+【#ネタ会議】面談で聞かれた質問リストを貼る→記事案4本（タイトル・想定読者・検索意図・構成見出し）
+【#執筆】記事案を1つ指定→1,500字の下書き。構成：結論→理由→具体例→読者が今日できる1歩
+【#リライト】既存記事を貼る→タイトル案3つ＋導入文の改善＋読みにくい箇所の指摘
+
+# 自己チェック（毎回最後に）
+「この記事は検索してきた読者の疑問に最初の3行で答えているか？」— 答えていなければ導入を書き直してから出力。</div></div>
       </div>
     </div>
 
@@ -894,7 +925,24 @@ footer strong{color:#99f6e4}
           <div class="use-icon">📉</div>
           <div><div class="use-title">早期離職リスクの逆算分析</div><div class="use-desc">過去の早期離職ケースを匿名化して蓄積し、「どんな面談の兆候が離職に繋がったか」のパターンをAIに定期的に洗い出させる。工程07のフォロー精度が上がる</div></div>
         </div>
-        <div class="prompt-box"><div class="prompt-label">PROMPT</div><div class="prompt-text">過去6ヶ月の成約案件と失注案件のデータ（属性・温度感・条件合致度）を渡すので、内定承諾に至った案件の共通パターンを分析して。今後、初回面談時点で承諾可能性を見立てるための簡易チェックリストを作って。［データ貼り付け・個人情報は属性化済み］</div></div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#78350f;line-height:1.8"><strong>設計図：</strong>分析AIは<strong>記録がなければ動かない</strong>。まず下のJ（案件ログの型）を先に運用開始。ログが10件貯まった時点でこの分析AIが使える。順番を逆にすると「分析したいけどデータがない」で止まる。</div>
+        <div class="prompt-box"><div class="prompt-label">INSTRUCTION — 案件分析GPT（Jの案件ログとセットで使う）</div><div class="prompt-text"># 役割
+両面型CAの案件ログを分析し、優先順位づけと勝ちパターン抽出を行う専任アナリスト。
+
+# 入力
+J形式の案件ログ（結果=成約/失注/進行中を含む）を複数件貼り付け
+
+# モード
+【#スコア】進行中案件を貼る→承諾可能性を高/中/低で判定。判定根拠は過去ログの類似案件を引用して示す（「なんとなく」禁止）
+【#パターン】10件以上のログを貼る→成約案件の共通項/失注案件の共通項を各3つ。ただしサンプル数が少ない項目は「偶然の可能性あり」と明記
+【#今週】進行中の全案件を貼る→工数を割くべきTOP3と、深追いをやめるべき案件を提案。理由つき
+
+# 判断基準
+- 相関と因果を区別する。「訪問系は決まりやすい」が出ても「私が訪問系に強いだけ」の可能性を必ず添える
+- 判定は仮説。次の面談での検証方法をセットで出す
+
+# 自己チェック
+出力前に「この分析はログに書かれていない情報を勝手に想像していないか？」を確認。想像した部分は【推測】タグをつける。</div></div>
       </div>
     </div>
 
@@ -916,7 +964,26 @@ footer strong{color:#99f6e4}
           <div class="use-icon">🏥</div>
           <div><div class="use-title">事業所コミュニティの形成</div><div class="use-desc">付き合いの長い事業所同士を（守秘の範囲で）緩やかに繋げる勉強会等を企画し、「単なる紹介業者」から「業界のハブ」への昇格を狙う</div></div>
         </div>
-        <div class="prompt-box"><div class="prompt-label">PROMPT</div><div class="prompt-text">入職後1年が経つ候補者への年次フォロー文を作って。売り込み色を出さず、近況を伺いつつ「もし周りで転職を考えている方がいたら」を自然に添えるトーン。3パターンのバリエーションで。</div></div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#78350f;line-height:1.8"><strong>設計図：</strong>関係資産は台帳がすべて。1人1行の「関係台帳」を作る：<code style="background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px">候補者ID／入職先の種別／入職日／最終接触日／温度（紹介してくれそうか◎○△）／次回接触予定／メモ</code>。毎月1日に台帳をAIに貼れば「今月声をかけるべき5人と文面」が出てくる運用。</div>
+        <div class="prompt-box"><div class="prompt-label">INSTRUCTION — 関係資産マネージャーGPT（指示欄にそのまま貼れば完成）</div><div class="prompt-text"># 役割
+両面型CAの「入職者・事業所との長期関係」を管理する専任AI。目的は紹介連鎖と再取引。売り込みは絶対にしない。
+
+# 入力
+毎月1日に関係台帳（1人1行形式）を貼る
+
+# 手順
+1. 最終接触日から6ヶ月以上空いている人を抽出
+2. 各人の状況（入職何ヶ月目か・入職先種別）に合わせた接触理由を提案（例：入職1年→年次のお祝い/昇給時期の相談、3ヶ月→定着確認）
+3. 今月接触すべきTOP5を選び、それぞれの文面を作成
+4. 台帳の「次回接触予定」更新案を出す
+
+# 文面の判断基準
+- 開封して嫌な気持ちにならないこと最優先。用件は近況伺いと情報提供のみ
+- 紹介依頼は◎の人だけ、しかも文末に1行だけ
+- 「何かあればいつでも」で締めない（返信率が下がる）。具体的な話題で締める
+
+# 自己チェック
+「この文面を自分が受け取ったら営業だと感じるか？」— 感じるなら書き直してから出力。</div></div>
       </div>
     </div>
 
@@ -938,12 +1005,96 @@ footer strong{color:#99f6e4}
           <div class="use-icon">🧭</div>
           <div><div class="use-title">半期スキルギャップ分析</div><div class="use-desc">自分の成約データ・苦手セグメントをAIに分析させ、次の半期で伸ばすべきスキル（例：法人折衝・高年収帯の求職者対応）を特定</div></div>
         </div>
-        <div class="prompt-box"><div class="prompt-label">PROMPT</div><div class="prompt-text">直近半年の案件傾向（得意セグメント・苦手セグメント・成約率）を渡すので、次の半期で伸ばすべきスキルを3つ、優先順位と理由付きで提案して。学習方法も1つずつ添えて。［データ貼り付け］</div></div>
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#78350f;line-height:1.8"><strong>設計図：</strong>これもJの案件ログが燃料。追加で必要なのは<strong>半期に1回・2時間のカレンダーブロック</strong>だけ（棚卸しは仕組みにしないと絶対にやらない）。ログ→棚卸しGPT→来期の重点、が半期の儀式になる。</div>
+        <div class="prompt-box"><div class="prompt-label">INSTRUCTION — 半期棚卸しGPT（指示欄にそのまま貼れば完成）</div><div class="prompt-text"># 役割
+両面型CAの半期振り返りを担当するキャリアコーチ兼アナリスト。年2回だけ起動される。
+
+# 入力
+半期分の案件ログ（J形式）＋前回の棚卸し結果（2回目以降）
+
+# 手順（この順で対話しながら進める）
+1. 数字の事実確認：面談数→提案→推薦→内定→承諾のファネルを整理し、前期比を出す
+2. 勝ちパターン抽出：成約案件から「私だから決まった」要素を3つ言語化（プレイブックに追記する形式で）
+3. 苦手の特定：失注・回避しているセグメントを指摘。ただし「捨てていい苦手」と「克服すべき苦手」を分ける（判断基準：市場規模と両面型の強みが活きるか）
+4. 来期の重点3つ：スキル・セグメント・仕組みの3観点で1つずつ。各々に最初の一歩（今週できるレベル）を添える
+
+# 判断基準
+- 前回の棚卸しで立てた重点が達成されていない場合、精神論でなく「仕組みの問題」として原因を探す
+- 数字が良くても慢心させない。市場要因と実力を切り分ける
+
+# 自己チェック
+「この振り返りは、読み終えた本人の来週の行動を1つでも変えるか？」— 変えないなら要点を絞り直す。</div></div>
+      </div>
+    </div>
+
+    <!-- J: CASE LOG -->
+    <div class="stage" style="border:2px solid #0d9488">
+      <div class="stage-head">
+        <div class="stage-num">J</div>
+        <div>
+          <div class="stage-title">案件ログの型 — すべての分析AIの燃料（最重要）</div>
+          <div class="stage-side ca">G・I・Dはこれがないと動かない。1案件5分の記録が半年後の武器になる</div>
+        </div>
+      </div>
+      <div class="stage-body">
+        <div style="font-size:12.5px;color:#64748b;line-height:1.9;margin-bottom:14px">案件が終わる（成約でも失注でも）たびに、下のテンプレを埋めて1ファイルに追記していくだけ。<strong style="color:#0f766e">手で書くのは5分。それも面談メモ整理GPTに「案件ログ形式にして」と頼めば1分。</strong>これが貯まるほどG（分析）・I（棚卸し）・D（戦略参謀）の精度が上がる、全AI活用の土台です。</div>
+        <div class="prompt-box" style="margin-top:0">
+          <div class="prompt-label">TEMPLATE — 案件ログ（1案件1ブロック。Notion/Excel/テキスト何でもOK）</div>
+          <div class="prompt-text">## 案件ID：2026-07-001
+- 結果：成約 / 失注 / 消滅（どれか）
+- 候補者属性：職種／経験年数／現職種別／年齢帯（個人名は書かない）
+- セグメント：若手・中堅・子育て・稼ぎたい・消耗（Bの5分類）
+- 初回温度感：1〜5 ／ 最終温度感：1〜5
+- 事業所：種別（病院/訪問/介護/クリニック）／セグメント（Bの4分類）
+- 提案数：◯件 ／ 面接数：◯件 ／ 期間：初回面談〜結果まで◯日
+- 決め手 or 失注理由（一言）：
+- 兆候（振り返って気づくサイン）：
+- 学び（次に活かす1行）：</div>
+        </div>
+        <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:12px;color:#0f766e;line-height:1.8">💡 <strong>Claude Code版が最強：</strong>ログを <code style="background:rgba(13,148,136,.1);padding:1px 5px;border-radius:3px">案件ログ/2026-07.md</code> のようにフォルダ管理すれば、「今月のログ全部読んで#パターン分析して」の一言で終わる。GPTsだと毎回貼り付けが必要。</div>
+      </div>
+    </div>
+
+    <!-- K: 90 DAYS -->
+    <div class="stage" style="border:2px solid #6366f1">
+      <div class="stage-head">
+        <div class="stage-num both">K</div>
+        <div>
+          <div class="stage-title">入社90日AI活用プラン — 今のあなたに一番必要な視点</div>
+          <div class="stage-side both">全部を初日からやらない。立ち上がりフェーズごとに使うAIを絞る</div>
+        </div>
+      </div>
+      <div class="stage-body">
+        <div style="overflow-x:auto;margin-bottom:14px">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff">
+            <tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0">
+              <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700;width:18%">フェーズ</th>
+              <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700">ゴール</th>
+              <th style="padding:9px 12px;text-align:left;color:#475569;font-weight:700">使うAI（これだけ）</th>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9">
+              <td style="padding:9px 12px;font-weight:700;color:#0f172a">Day 1-30<br><span style="font-weight:400;color:#94a3b8;font-size:11px">学ぶ期</span></td>
+              <td style="padding:9px 12px;color:#64748b">業界知識と社内の型を吸収。トップCAの真似から入る</td>
+              <td style="padding:9px 12px;color:#4338ca">工程⑧の学習AI（毎日15分、答えられなかった質問を潰す）＋会社のAI利用ルール確認。<strong>案件ログJだけは初日から記録開始</strong></td>
+            </tr>
+            <tr style="border-bottom:1px solid #f1f5f9">
+              <td style="padding:9px 12px;font-weight:700;color:#0f172a">Day 31-60<br><span style="font-weight:400;color:#94a3b8;font-size:11px">型を作る期</span></td>
+              <td style="padding:9px 12px;color:#64748b">自分の担当案件が回り始める。作業をAIに移管開始</td>
+              <td style="padding:9px 12px;color:#4338ca">面談メモ整理GPT＋推薦文GPTの2体を作成・毎日運用（作り方①参照）。社内の型と擦り合わせて指示文を調整</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 12px;font-weight:700;color:#0f172a">Day 61-90<br><span style="font-weight:400;color:#94a3b8;font-size:11px">数字で回す期</span></td>
+              <td style="padding:9px 12px;color:#64748b">ログが20件前後貯まる。勘でなく数字で優先順位を決め始める</td>
+              <td style="padding:9px 12px;color:#4338ca">戦略参謀AI（D）＋案件分析GPT（G）を起動。#朝会モードを毎朝の習慣に。90日目に初回のミニ棚卸し（I）</td>
+            </tr>
+          </table>
+        </div>
+        <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:12px 16px;font-size:12px;color:#4338ca;line-height:1.8">⚠️ <strong>新人期の注意：</strong>AIの出力を鵜呑みにして先輩の指導と食い違うのが一番危険。Day1-60は「AIの下書き→社内の型と比較→違いを先輩に質問」のサイクル自体を学習に使う。AIと社内の型が違ったら、<strong>社内の型が正</strong>。</div>
       </div>
     </div>
 
     <div style="background:#f0fdfa;border:1.5px solid #99f6e4;border-radius:12px;padding:16px 20px;margin-top:8px;font-size:12.5px;color:#0f766e;line-height:1.9">
-      <strong>🗺️ 全体地図：</strong>①〜⑧＝日々の実務／A〜D＝勝つための戦略／E〜I＝実務と戦略の外側にある「土台」（法務・ブランド・データ・関係資産・自己成長）。<strong>E〜Iは今すぐ効果が出るものではありませんが、半年後の差を作るのはここです。</strong>まずはFの発信を月1本、Iの棚卸しを半期に1回から始めるのが現実的です。
+      <strong>🗺️ 全体地図：</strong>①〜⑧＝日々の実務／A〜D＝勝つための戦略／E〜I＝半年後の差を作る土台／<strong>J＝全AIの燃料となる記録の型／K＝どの順で始めるかの時間軸</strong>。迷ったらKを見る：今日が入社何日目かで、開くべきセクションが決まります。
     </div>
   </div>
 </div>
