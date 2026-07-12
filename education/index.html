@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>教育現場 × AI従業員 | シゴトAI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hiragino Sans','Noto Sans JP',sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}
+
+.hero{background:linear-gradient(135deg,#0f2027 0%,#14532d 55%,#166534 100%);padding:72px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(74,222,128,.12),transparent)}
+.badge{display:inline-block;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);color:#86efac;font-size:12px;letter-spacing:.1em;padding:5px 16px;border-radius:20px;margin-bottom:20px}
+.hero h1{font-size:clamp(24px,5vw,40px);font-weight:800;color:#fff;line-height:1.35;margin-bottom:16px}
+.hero h1 span{color:#4ade80}
+.hero-lead{color:#94a3b8;font-size:15px;max-width:600px;margin:0 auto 28px;line-height:1.9}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.hero-tags span{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:#cbd5e1;font-size:12px;padding:4px 14px;border-radius:20px}
+
+.context{background:#fff;border-bottom:1px solid #e2e8f0;padding:20px 24px}
+.context-inner{max-width:860px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.ctx-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#64748b}
+.ctx-icon{width:30px;height:30px;border-radius:8px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ctx-item strong{display:block;color:#0f172a;font-size:12px;margin-bottom:1px}
+
+.section{padding:64px 24px;max-width:860px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:.15em;color:#16a34a;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-size:clamp(22px,4vw,30px);font-weight:800;color:#0f172a;margin-bottom:10px}
+.sec-sub{color:#64748b;font-size:14px;margin-bottom:40px}
+
+.problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.prob-card{background:#fff;border:1.5px solid #fca5a5;border-radius:14px;padding:20px;position:relative}
+.prob-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#f97316);border-radius:14px 14px 0 0}
+.prob-icon{font-size:24px;margin-bottom:8px}
+.prob-title{font-size:13px;font-weight:700;color:#dc2626;margin-bottom:4px}
+.prob-desc{font-size:12px;color:#64748b;line-height:1.6}
+
+.agent{background:#fff;border-radius:18px;box-shadow:0 2px 20px rgba(0,0,0,.06);margin-bottom:32px;overflow:hidden;opacity:0;transform:translateY(20px)}
+.agent-header{padding:24px 24px 0}
+.agent-rank{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px}
+.agent-rank.star{background:linear-gradient(135deg,#fefce8,#fef9c3);border-color:#fde047;color:#854d0e}
+.agent-name{font-size:20px;font-weight:800;color:#0f172a;margin-bottom:4px}
+.agent-tagline{font-size:13px;color:#64748b;margin-bottom:16px}
+.agent-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.task-tag{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:12px;padding:4px 12px;border-radius:20px;font-weight:600}
+
+.ft-row{display:flex;gap:0;padding:0 24px 0;margin-bottom:8px}
+.ft-line{width:2px;background:#e2e8f0;margin:0 19px;flex-shrink:0;position:relative}
+.ft-dot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;position:absolute;left:-4px;flex-shrink:0;opacity:0}
+.ft-content{background:#f8fafc;border-radius:12px;padding:14px 16px;flex:1;margin-bottom:12px;opacity:0;transform:translateX(-8px)}
+.ft-content strong{font-size:13px;color:#0f172a;display:block;margin-bottom:3px}
+.ft-content p{font-size:12px;color:#64748b;line-height:1.6}
+.ft-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;margin-bottom:6px}
+.ft-badge.input{background:#dbeafe;color:#1e40af}
+.ft-badge.output{background:#d1fae5;color:#065f46}
+.ft-badge.auto{background:#dcfce7;color:#166534}
+
+.saving{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:16px 20px;margin:0 24px 24px;display:flex;align-items:center;gap:16px;opacity:0}
+.saving-num{font-size:26px;font-weight:900;color:#16a34a;white-space:nowrap}
+.saving-label{font-size:12px;color:#166534;font-weight:600}
+
+.sample-box{background:#0f172a;border-radius:14px;margin:0 24px 24px;overflow:hidden}
+.sample-header{background:#1e293b;padding:10px 18px;font-size:11px;color:#94a3b8;font-weight:600;display:flex;align-items:center;gap:8px}
+.sample-body{padding:16px 18px}
+.sample-table{width:100%;border-collapse:collapse}
+.sample-table th{color:#64748b;font-size:11px;padding:8px 12px;text-align:left;font-weight:600;border-bottom:1px solid #334155}
+.sample-table td{padding:9px 12px;font-size:12px;color:#e2e8f0;border-bottom:1px solid #1e293b;vertical-align:top;line-height:1.6}
+.sample-table tr:last-child td{border-bottom:none}
+.q-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px}
+.q-basic{background:rgba(74,222,128,.15);color:#86efac}
+.q-mid{background:rgba(251,191,36,.12);color:#fde68a}
+.q-adv{background:rgba(239,68,68,.15);color:#fca5a5}
+
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.comp-table th{padding:14px 18px;font-size:13px;font-weight:700;text-align:left}
+.comp-table th:first-child{background:#f8fafc;color:#475569;width:28%}
+.comp-table th:nth-child(2){background:#fef2f2;color:#dc2626}
+.comp-table th:nth-child(3){background:#f0fdf4;color:#16a34a}
+.comp-table td{padding:14px 18px;font-size:13px;border-top:1px solid #f1f5f9;vertical-align:top;line-height:1.7}
+.comp-table td:first-child{background:#fafafa;font-weight:600;color:#334155}
+.comp-table td:nth-child(2){color:#64748b}
+.comp-table td:nth-child(3){color:#166534;font-weight:600}
+
+.steps-wrap{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.step-card{background:#fff;border-radius:14px;padding:18px;text-align:center;border:1px solid #e2e8f0;flex:1;min-width:140px}
+.step-num{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.step-card h4{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:4px}
+.step-card p{font-size:11px;color:#64748b;line-height:1.5}
+.step-arrow{display:flex;align-items:center;color:#94a3b8;font-size:18px;padding-top:16px;flex-shrink:0}
+
+.roadmap{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.rm-card{background:#fff;border-radius:14px;padding:20px;border-top:4px solid #16a34a;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.rm-card.active{border-top-color:#15803d;background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+.rm-phase{font-size:11px;font-weight:700;color:#16a34a;letter-spacing:.1em;margin-bottom:6px}
+.rm-card h4{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px}
+.rm-card ul{list-style:none;padding:0}
+.rm-card ul li{font-size:12px;color:#64748b;padding:2px 0;padding-left:14px;position:relative;line-height:1.5}
+.rm-card ul li::before{content:'→';position:absolute;left:0;color:#16a34a;font-size:11px}
+
+.support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+.support-item{background:#fff;border-radius:14px;padding:20px;border:1px solid #e2e8f0;display:flex;gap:14px;align-items:flex-start}
+.sup-icon{font-size:24px;flex-shrink:0}
+.sup-title{font-size:13px;font-weight:700;color:#0f172a;margin-bottom:3px}
+.sup-desc{font-size:12px;color:#64748b;line-height:1.5}
+
+.price-block{background:linear-gradient(135deg,#0f2027,#14532d);border-radius:20px;padding:36px;text-align:center;color:#fff}
+.price-label{font-size:12px;color:#86efac;letter-spacing:.1em;margin-bottom:8px}
+.price-main{font-size:48px;font-weight:900;color:#4ade80;margin-bottom:4px}
+.price-note{font-size:13px;color:#94a3b8;margin-bottom:20px}
+.guarantee{font-size:12px;color:#86efac}
+
+footer{background:#0f172a;color:#64748b;text-align:center;padding:32px 24px;font-size:12px}
+footer strong{color:#94a3b8}
+
+@keyframes dot-pop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes content-in{0%{opacity:0;transform:translateX(-8px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes fade-in{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes agent-in{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">教育現場 × AI従業員</div>
+  <h1>「教える時間」を取り戻す。<br><span>カリキュラム・試験・校務</span>を<br>AI従業員に任せる</h1>
+  <p class="hero-lead">カリキュラム作成、試験問題づくり、管理ツールへの入力、保護者・関係者への連絡——教育の本質ではない「準備と事務」をAIが下支えします。生徒と向き合う時間を増やすためのご提案です。</p>
+  <div class="hero-tags">
+    <span>📚 カリキュラム作成</span>
+    <span>📝 試験問題作成</span>
+    <span>🔗 管理ツール連携</span>
+    <span>📋 校務・関連業務</span>
+  </div>
+</div>
+
+<!-- CONTEXT -->
+<div class="context">
+  <div class="context-inner">
+    <div class="ctx-item"><div class="ctx-icon">🏫</div><div><strong>対象</strong>学校・塾・研修機関などの教育現場</div></div>
+    <div class="ctx-item"><div class="ctx-icon">🎯</div><div><strong>ご関心</strong>カリキュラム・試験問題・管理ツール連携・関連業務</div></div>
+    <div class="ctx-item"><div class="ctx-icon">⚡</div><div><strong>ゴール</strong>準備・事務の時間を生徒に向き合う時間へ</div></div>
+  </div>
+</div>
+
+<!-- 課題 -->
+<div class="section">
+  <div class="sec-label">Current Problems</div>
+  <div class="sec-title">教育現場の時間は、どこに消えているのか</div>
+  <div class="sec-sub">授業そのものより、その前後の「準備・作問・記録・連絡」が現場の時間を奪っています。</div>
+  <div class="problem-grid">
+    <div class="prob-card">
+      <div class="prob-icon">📚</div>
+      <div class="prob-title">カリキュラム作成が属人化</div>
+      <div class="prob-desc">年間計画・単元設計・シラバスをベテランの経験頼みで作成。作り直しや新コース立ち上げのたびに膨大な時間</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">📝</div>
+      <div class="prob-title">試験問題づくりに深夜残業</div>
+      <div class="prob-desc">定期試験・小テスト・模試の作問、難易度調整、解説作成。類題を毎回ゼロから考えている</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">💻</div>
+      <div class="prob-title">管理ツールへの二重入力</div>
+      <div class="prob-desc">成績・出欠・指導記録を紙やExcelからシステムへ転記。同じ情報を何度も入力している</div>
+    </div>
+    <div class="prob-card">
+      <div class="prob-icon">📨</div>
+      <div class="prob-title">連絡・報告業務が積み上がる</div>
+      <div class="prob-desc">保護者連絡、面談記録、報告書、会議資料。書き物が授業準備の時間を圧迫している</div>
+    </div>
+  </div>
+</div>
+
+<!-- AI AGENTS -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">AI Employees</div>
+    <div class="sec-title">教育現場に配置するAI従業員 4体</div>
+    <div class="sec-sub" style="margin-bottom:40px">教育の判断（何をどう教えるか）は先生が持ち、その下準備と事務をAIが担う設計です。</div>
+
+    <!-- AGENT 1 -->
+    <div class="agent" id="a1">
+      <div class="agent-header">
+        <div class="agent-rank star">★ 1体目 — カリキュラム作成AI</div>
+        <div class="agent-name">カリキュラム設計AI従業員</div>
+        <div class="agent-tagline">学習目標から年間計画・単元展開・各回の指導案まで一気に草案化</div>
+        <div class="agent-tasks">
+          <span class="task-tag">年間指導計画</span>
+          <span class="task-tag">単元・コマ割り設計</span>
+          <span class="task-tag">シラバス作成</span>
+          <span class="task-tag">教材・課題の対応づけ</span>
+          <span class="task-tag">習熟度別の分岐案</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#16a34a;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#16a34a;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#16a34a;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>条件を入力する</strong>
+            <p>対象学年・期間・到達目標・週あたりコマ数・使用教材・生徒の現在レベルを伝えるだけ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>目標から逆算して単元を展開</strong>
+            <p>到達目標→中間マイルストーン→単元→各回のテーマ・演習・宿題まで逆算配置。復習回・予備回も組み込む</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>年間計画表＋各回指導案の草案が完成</strong>
+            <p>先生は現場感覚での調整と教育判断に集中。新コースの立ち上げ期間が数週間→数日に</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">数週間→数日</div>
+          <div class="saving-label">カリキュラム設計期間</div>
+        </div>
+        <div style="font-size:13px;color:#166534;line-height:1.7">
+          属人化していた設計ノウハウを型として蓄積。<br><strong>誰が作っても一定品質＋ベテランは監修に回れる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 2 -->
+    <div class="agent" id="a2">
+      <div class="agent-header">
+        <div class="agent-rank star">★ 2体目 — 試験問題作成AI</div>
+        <div class="agent-name">作問・テスト作成AI従業員</div>
+        <div class="agent-tagline">単元と難易度を指定するだけで、問題・模範解答・解説・類題までセットで生成</div>
+        <div class="agent-tasks">
+          <span class="task-tag">定期試験・小テスト作問</span>
+          <span class="task-tag">難易度3段階調整</span>
+          <span class="task-tag">模範解答・解説作成</span>
+          <span class="task-tag">類題の量産</span>
+          <span class="task-tag">誤答分析→弱点課題</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#16a34a;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#16a34a;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#16a34a;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>範囲と条件を指定</strong>
+            <p>「二次関数の単元、50分試験、基礎6割・標準3割・応用1割、平均点60点想定で」と伝える</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>出題バランスを設計して作問</strong>
+            <p>出題意図（何を測る問題か）つきで問題を生成。配点案・想定所要時間・つまずきポイントも添える</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>問題＋解答＋解説＋類題が同時に完成</strong>
+            <p>再テスト用の類題、欠席者用の別バージョンも一瞬。作問の深夜残業がなくなる</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAMPLE -->
+      <div class="sample-box">
+        <div class="sample-header"><span>📝</span><span>出力サンプル — 中3数学「二次関数」小テスト設計（抜粋）</span></div>
+        <div class="sample-body">
+          <table class="sample-table">
+            <thead><tr><th>No</th><th>難易度</th><th>出題意図</th><th>問題（要約）</th><th>配点</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td><span class="q-tag q-basic">基礎</span></td><td>用語と定義の確認</td><td>y=ax²のグラフの名称と軸の式を答える</td><td>10点</td></tr>
+              <tr><td>2</td><td><span class="q-tag q-basic">基礎</span></td><td>代入計算の定着</td><td>y=2x²でx=3のときのyの値</td><td>10点</td></tr>
+              <tr><td>3</td><td><span class="q-tag q-mid">標準</span></td><td>変化の割合の理解</td><td>xが1→4に増加するときの変化の割合</td><td>15点</td></tr>
+              <tr><td>4</td><td><span class="q-tag q-adv">応用</span></td><td>実生活への転移</td><td>制動距離の文章題（速度と距離の関係）</td><td>20点</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="saving">
+        <div>
+          <div class="saving-num">70%削減</div>
+          <div class="saving-label">作問・解説作成時間</div>
+        </div>
+        <div style="font-size:13px;color:#166534;line-height:1.7">
+          1回の試験作成が半日→1時間台に。<br><strong>浮いた時間で「誤答分析→個別フォロー」まで手が回る</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 3 -->
+    <div class="agent" id="a3">
+      <div class="agent-header">
+        <div class="agent-rank">3体目 — 管理ツール連携</div>
+        <div class="agent-name">成績・記録データAI従業員</div>
+        <div class="agent-tagline">採点結果や指導メモを、管理ツールに入る形へ自動整形。二重入力をなくす</div>
+        <div class="agent-tasks">
+          <span class="task-tag">成績データの整形</span>
+          <span class="task-tag">指導記録の構造化</span>
+          <span class="task-tag">CSV/Excel変換</span>
+          <span class="task-tag">成績推移の分析コメント</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#16a34a;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#16a34a;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#16a34a;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>手元のデータをそのまま渡す</strong>
+            <p>採点済み答案の点数メモ、授業後の走り書き、Excelの成績表——形式バラバラでOK（氏名は出席番号等に置換して扱う）</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>管理ツールの形式に自動整形</strong>
+            <p>お使いのシステム（Classi・Comiru・スタディサプリ等の校務支援ツール）の取込形式に合わせたCSV/表に変換。指導記録は定型フォーマットに構造化</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>貼り付け・取込するだけの状態に</strong>
+            <p>さらに成績推移から「伸びている生徒・停滞している生徒」の気づきコメントも自動生成</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">二重入力ゼロ</div>
+          <div class="saving-label">転記作業の解消</div>
+        </div>
+        <div style="font-size:13px;color:#166534;line-height:1.7">
+          「紙→Excel→システム」の3度手間を1度に。<br><strong>データが溜まるほど個別指導の精度も上がる</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENT 4 -->
+    <div class="agent" id="a4">
+      <div class="agent-header">
+        <div class="agent-rank">4体目 — 関連業務連携</div>
+        <div class="agent-name">校務・連絡文書AI従業員</div>
+        <div class="agent-tagline">保護者連絡・面談記録・報告書・会議資料——授業以外の書き物を一手に引き受ける</div>
+        <div class="agent-tasks">
+          <span class="task-tag">保護者向け連絡文</span>
+          <span class="task-tag">面談記録の整理</span>
+          <span class="task-tag">報告書・稟議の下書き</span>
+          <span class="task-tag">行事案内・お知らせ</span>
+          <span class="task-tag">会議アジェンダ・議事録</span>
+        </div>
+      </div>
+      <div class="ft-row">
+        <div class="ft-line" style="height:250px">
+          <div class="ft-dot" style="top:10px;background:#16a34a;animation-delay:.1s"></div>
+          <div class="ft-dot" style="top:95px;background:#16a34a;animation-delay:.4s"></div>
+          <div class="ft-dot" style="top:180px;background:#16a34a;animation-delay:.7s"></div>
+        </div>
+        <div style="flex:1">
+          <div class="ft-content" style="animation-delay:.2s">
+            <span class="ft-badge input">INPUT</span>
+            <strong>要点を箇条書きか口頭メモで伝える</strong>
+            <p>「来週の三者面談の案内を保護者向けに」「今日の面談内容を記録に」——それだけ</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.5s">
+            <span class="ft-badge auto">AI処理</span>
+            <strong>相手と場面に合わせた文書に変換</strong>
+            <p>保護者向けは丁寧に、社内向けは簡潔に。学校・塾の文書の型（前文・時候の挨拶等）も反映</p>
+          </div>
+          <div class="ft-content" style="animation-delay:.8s">
+            <span class="ft-badge output">OUTPUT</span>
+            <strong>確認して送るだけの文書が完成</strong>
+            <p>面談記録は「事実・所感・次のアクション」に構造化され、引き継ぎにもそのまま使える</p>
+          </div>
+        </div>
+      </div>
+      <div class="saving">
+        <div>
+          <div class="saving-num">毎日30分+</div>
+          <div class="saving-label">書き物時間の削減</div>
+        </div>
+        <div style="font-size:13px;color:#166534;line-height:1.7">
+          年間換算100時間超の削減。<br><strong>その時間がそのまま授業準備と生徒対応に戻る</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section">
+  <div class="sec-label">Why ShigotoAI</div>
+  <div class="sec-title">独学 vs シゴトAI</div>
+  <div class="sec-sub" style="margin-bottom:24px">ChatGPTを触るだけでは「教育現場の型」は残りません。業務に合わせた設計が差になります。</div>
+  <table class="comp-table">
+    <thead>
+      <tr><th>比較項目</th><th>❌ 独学・動画学習</th><th>✅ シゴトAI</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>カリキュラム作成</td>
+        <td>毎回プロンプトを工夫。一般論の計画しか出ない</td>
+        <td>自校の教材・進度・生徒層を覚えた専用AIを設計</td>
+      </tr>
+      <tr>
+        <td>試験問題の品質</td>
+        <td>難易度がばらつく。解説の質が安定しない</td>
+        <td>出題意図・配点・難易度バランスまで型化して安定</td>
+      </tr>
+      <tr>
+        <td>管理ツール連携</td>
+        <td>どう繋げばいいか調べるところで止まる</td>
+        <td>お使いのツールの取込形式に合わせて一緒に設計</td>
+      </tr>
+      <tr>
+        <td>個人情報の扱い</td>
+        <td>何を入力していいか判断がつかず不安</td>
+        <td>氏名を置換して扱う運用ルールから一緒に整備</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4 STEPS -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Coaching Steps</div>
+    <div class="sec-title">4ステップでAI従業員を設計</div>
+    <div class="sec-sub" style="margin-bottom:24px">専任のAI顧問が、教科・学年・使用ツールを聞きながら現場に合う型を作ります。</div>
+    <div class="steps-wrap">
+      <div class="step-card"><div class="step-num">1</div><h4>初回面談<br>50分</h4><p>担当業務・使用ツール・一番重い作業をヒアリング</p></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">2</div><h4>プランナー<br>15分</h4><p>最初に作るAI従業員と成功基準を決定</p></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">3</div><h4>AI従業員<br>15分</h4><p>教材・過去問・文書の型を教え込んで作成</p></div>
+      <div class="step-arrow">→</div>
+      <div class="step-card"><div class="step-num">4</div><h4>育成<br>15分</h4><p>実際の授業準備で使って精度を調整</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="section">
+  <div class="sec-label">3-Month Roadmap</div>
+  <div class="sec-title">3ヶ月ロードマップ</div>
+  <div class="sec-sub" style="margin-bottom:24px">1体が現場で使えると確認できてから、次へ展開します。</div>
+  <div class="roadmap">
+    <div class="rm-card active">
+      <div class="rm-phase">1週目〜</div>
+      <h4>★作問AIから開始</h4>
+      <ul>
+        <li>直近の小テストで試作</li>
+        <li>難易度・出題意図の型を調整</li>
+        <li>「使える」を最初の8日で実感</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">1ヶ月目</div>
+      <h4>カリキュラムAI</h4>
+      <ul>
+        <li>次学期の計画で実戦投入</li>
+        <li>教材・進度データを学習させる</li>
+        <li>指導案の型を整備</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">2ヶ月目</div>
+      <h4>データ・連携AI</h4>
+      <ul>
+        <li>成績・記録の整形を自動化</li>
+        <li>管理ツールの取込形式に対応</li>
+        <li>二重入力を解消</li>
+      </ul>
+    </div>
+    <div class="rm-card">
+      <div class="rm-phase">3ヶ月目</div>
+      <h4>校務AI＋チーム化</h4>
+      <ul>
+        <li>連絡・報告文書を型化</li>
+        <li>4体を連携させ授業準備を一気通貫</li>
+        <li>同僚にも展開できる状態に</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT + PRICE -->
+<div style="background:#fff;padding:64px 24px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="sec-label">Support</div>
+    <div class="sec-title">シゴトAIのサポート体制</div>
+    <div class="sec-sub" style="margin-bottom:24px">3ヶ月間、現場で使いながら一緒に精度を上げます。</div>
+    <div class="support-grid">
+      <div class="support-item"><div class="sup-icon">🎯</div><div><div class="sup-title">初回面談50分</div><div class="sup-desc">担当業務をヒアリングして最初のAI従業員を設計</div></div></div>
+      <div class="support-item"><div class="sup-icon">🎫</div><div><div class="sup-title">顧問チケット3枚（30分×3回）</div><div class="sup-desc">専任AI顧問と設計・改善・次の展開を実施</div></div></div>
+      <div class="support-item"><div class="sup-icon">💬</div><div><div class="sup-title">LINEサポート 3ヶ月無制限</div><div class="sup-desc">授業準備で詰まったときにすぐ相談できる</div></div></div>
+      <div class="support-item"><div class="sup-icon">🎓</div><div><div class="sup-title">セミナー・講義 永久参加</div><div class="sup-desc">教育×AIの最新活用事例をキャッチアップし続けられる</div></div></div>
+    </div>
+
+    <div class="price-block">
+      <div class="price-label">3ヶ月 一括プログラム料金</div>
+      <div class="price-main">¥298,000</div>
+      <div class="price-note">サポート3ヶ月 ／ セミナー・講義 永久参加</div>
+      <div class="guarantee">🛡️ 8日間効果保証 — 実務で使えないと感じたら全額返金</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>シゴトAI</strong> — あなたの業務に合わせたAI従業員を設計・配置する3ヶ月プログラム<br>
+  <span style="margin-top:8px;display:block">© 2024 ShigotoAI. All rights reserved.</span>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    el.style.animation = 'agent-in .4s ease forwards';
+    el.querySelectorAll('.ft-dot').forEach(d => {
+      const delay = parseFloat(d.style.animationDelay||'0')*1000;
+      setTimeout(()=>{ d.style.animation='dot-pop .35s cubic-bezier(.34,1.56,.64,1) forwards'; }, delay);
+    });
+    el.querySelectorAll('.ft-content').forEach(c => {
+      const delay = parseFloat(c.style.animationDelay||'0')*1000+200;
+      setTimeout(()=>{ c.style.animation='content-in .3s ease forwards'; }, delay);
+    });
+    el.querySelectorAll('.saving').forEach(s => {
+      setTimeout(()=>{ s.style.animation='fade-in .4s ease forwards'; }, 1600);
+    });
+    obs.unobserve(el);
+  });
+},{threshold:.15});
+document.querySelectorAll('.agent').forEach(a=>obs.observe(a));
+</script>
+</body>
+</html>
